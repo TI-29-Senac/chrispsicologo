@@ -10,7 +10,7 @@
     <header>
         <nav class="menu">
           <div class="container">
-            <img src="img/logo/logochris.png" alt="Logo Chris Psicologia" class="logo">
+            <img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo">
             
             <ul class="menu-navegacao">
               <li><a href="#servicos">Serviços</a></li>
@@ -23,13 +23,65 @@
         </nav>
       </header>
       
-      
-
     <main>
         <section class="hero">
             <div class="conteudo-hero">
-                <p>Contrate os nossos serviços</p>
+                <p>Cuidar da saúde mental é um ato de <br>
+                   coragem e amor próprio.<br>
+                  Estamos aqui para te acolher, ouvir e <br>
+                caminhar ao seu lado</p>
             </div>
+            <div class="cerebro">
+              <img src="img/icons/cerebro.png" alt="cerebro" class="cerebro-img">
+            </div>
+            <div class="barra-banner">
+              <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso merece ser ouvido.</p>
+            </section> 
+            
+            <div class="sentimentos-container">
+              <div class="card" onclick="toggleCard(this)">
+                <input type="radio" name="sentimento" /> Ansiedade
+              </div>
+              <div class="card-content">
+                A ansiedade pode surgir de diversas formas...<br>Vamos entender melhor como ela afeta seu dia a dia.
+              </div>
+            
+              <div class="card" onclick="toggleCard(this)">
+                <input type="radio" name="sentimento" /> Depressão
+              </div>
+              <div class="card-content">
+                A depressão é uma condição séria, mas existe tratamento...<br>Você não está sozinho(a).
+              </div>
+            
+              <div class="card" onclick="toggleCard(this)">
+                <input type="radio" name="sentimento" /> Fobia Social
+              </div>
+              <div class="card-content">
+                A fobia social pode dificultar relações pessoais e profissionais.<br>Saiba como superá-la com apoio.
+              </div>
+            
+              <div class="card" onclick="toggleCard(this)">
+                <input type="radio" name="sentimento" /> Luto
+              </div>
+              <div class="card-content">
+                O luto é uma experiência profunda...<br>Respeite seu tempo e acolha seus sentimentos.
+              </div>
+            
+              <div class="card" onclick="toggleCard(this)">
+                <input type="radio" name="sentimento" /> Traumas
+              </div>
+              <div class="card-content">
+                Traumas podem deixar marcas, mas a cura é possível.<br>Vamos trilhar esse caminho juntos.
+              </div>
+            
+              <div class="card" onclick="toggleCard(this)">
+                <input type="radio" name="sentimento" /> Outros
+              </div>
+              <div class="card-content">
+                Seja qual for o motivo, estamos prontos para te escutar.<br>Conte conosco.
+              </div>
+            </div>
+            <script src="js/cards.js"></script>      
     </main>
 </body>
 </html>

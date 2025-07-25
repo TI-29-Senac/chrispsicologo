@@ -1,9 +1,46 @@
 .hero {
     width: 100%;
     height: 600px;
-    background-image: url(/img/banners/banner1.png);
+    background-image: url(/img/banners/banner_1.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     position: relative;
+}
+
+.barra-banner {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 87px;
+    background-color: rgba(93, 109, 104, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-family: 'Questrial', sans-serif;
+}
+
+.conteudo-hero {
+    color: #5D6D68;
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: center;
+    position: relative;
+    top: 8rem;
+    right: 17rem;
+    font-family: 'Questrial', sans-serif;
+}
+
+.cerebro-img {
+    position: absolute;
+    top: 2rem;
+    right: 23rem;
+    width: 500px;
+    height: auto;
+    background-image: url(/img/banners/cerebro.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
 }
