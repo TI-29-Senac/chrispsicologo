@@ -1,6 +1,6 @@
 .hero {
     width: 100%;
-    height: 600px;
+    height: 753px;
     background-image: url(/img/banners/banner_1.png);
     background-repeat: no-repeat;
     background-size: cover;
@@ -12,8 +12,8 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 87px;
-    background-color: rgba(93, 109, 104, 0.8);
+    height: 75px;
+    background-color: #5D6D68;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,7 +24,6 @@
 
 .conteudo-hero {
     color: #5D6D68;
-    font-weight: bold;
     font-size: 2rem;
     text-align: center;
     position: relative;
@@ -35,12 +34,35 @@
 
 .cerebro-img {
     position: absolute;
-    top: 2rem;
-    right: 23rem;
+    top: 4rem;
+    right: 18rem;
     width: 500px;
     height: auto;
-    background-image: url(/img/banners/cerebro.png);
-    background-repeat: no-repeat;
+    aspect-ratio: 1 / 1;
     background-size: contain;
+    background-repeat: no-repeat;
     background-position: center;
-}
+    transition: background-image 0.5s ease-in-out;
+  }
+
+  .cerebro-carrossel {
+    position: absolute;
+    top: 4rem;
+    right: 18rem;
+    width: 500px;
+    height: auto;
+    overflow: hidden;
+  }
+  
+  .carrossel-track {
+    display: flex;
+    transition: transform 3s ease-in-out;
+    width: max-content;
+  }
+  
+  .carrossel-track img {
+    width: 500px;
+    height: auto;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
