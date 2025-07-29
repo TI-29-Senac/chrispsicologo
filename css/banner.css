@@ -66,3 +66,22 @@
     flex-shrink: 0;
     object-fit: contain;
   }
+
+  .folhas {
+    position: absolute;
+    width: 180px; 
+    pointer-events: none; 
+    z-index: 5; 
+    opacity: 0.9;
+    
+  }
+  .canto-esquerdo {
+    top: 555px;
+    left: 0;
+  }
+  
+  .canto-direito {
+    top: 555px;
+    right: 0;
+    transform: scaleX(-1); 
+  }
