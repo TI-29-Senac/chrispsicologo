@@ -10,7 +10,7 @@
     <header>
         <nav class="menu">
           <div class="container">
-            <img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo">
+            <img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo" id="logo">
             
             <ul class="menu-navegacao">
               <li><a href="#servicos">Serviços</a></li>
@@ -18,22 +18,30 @@
               <li><a href="#hero">Sobre</a></li>
             </ul>
       
-            <a href="#"><img src="img/icons/more-horizontal-svgrepo-com.svg" alt="mais" class="more"></a>
+            <button><img src="img/icons/more-horizontal-svgrepo-com.svg" alt="mais" class="more"></button>
           </div>
         </nav>
       </header>
       
     <main>
         <section class="hero">
-          
+          <div class="foia">
           <img src="img/icons/folha_queda.gif" class="folhas canto-esquerdo" alt="folhas caindo">
           <img src="img/icons/folha_queda.gif" class="folhas canto-direito" alt="folhas caindo">
+          <img src="img/icons/folha_queda.gif" class="folhas meio-esquerdo" alt="folhas caindo">
+          <img src="img/icons/folha_queda.gif" class="folhas meio-direito" alt="folhas caindo">
+          <img src="img/icons/planta1.png" class="planta lado-esquerdo" alt="folhas caindo">
+          <img src="img/icons/planta1.png" class="planta lado-direito" alt="folhas caindo">
+        </div>
 
             <div class="conteudo-hero">
                 <p>Cuidar da saúde mental é um ato de <br>
                    coragem e amor próprio.<br>
                   Estamos aqui para te acolher, ouvir e <br>
                 caminhar ao seu lado</p>
+            </div>
+            <div class="botao-container">
+              <button class="consulta-botao">Agendar Consulta</button>
             </div>
             <div class="cerebro-carrossel">
               <div class="carrossel-track" id="carrosselTrack">
@@ -48,9 +56,6 @@
             </section> 
             <div class="fundo">
               <div class="conteudo-destaque">
-            
-
-
             <h3 class="sentimentos-titulo">Você sente que algo precisa mudar ? Nós estamos aqui para te ouvir.</h3>
             <div class="sentimentos-container">
               
@@ -96,13 +101,19 @@
                 Seja qual for o motivo, estamos prontos para te escutar.<br>Conte conosco.
               </div>
             </div>
-            
           </div> 
+          <div class="barra-quebra"></div>
+
+          <div class="mais-conteudo">
+            <h3 class="profissionais-titulo">Nossos Profissionais</h3>
+            <p class="profissionais-titulo">Nossa equipe é especializada no cuidado emocional de quem enfrenta desafios na rotina, nas relações e em si mesmo.
+              Juntos, podemos construir novos caminhos para uma vida mais leve e equilibrada.</p>
+          </div>
         </div> 
       </main>
 
-
-            <script src="js/cards.js"></script>
-            <script src="js/cerebro.js"></script> 
+      <script src="js/header.js"></script>
+      <script src="js/cards.js"></script>
+      <script src="js/cerebro.js"></script> 
 </body>
 </html>
