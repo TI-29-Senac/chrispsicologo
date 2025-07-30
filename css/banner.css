@@ -124,15 +124,24 @@
 
   .botao-container {
     display: flex;
-    justify-content: center;
-    margin-top: 3rem;
+    justify-content: flex-start;   /* Alinha à esquerda */
+    padding-left: 33rem;           /* Move o botão para a esquerda visivelmente */
+    margin-top: 12rem;
+    cursor: pointer;
   }
   
   .consulta-botao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 300px;
     height: 100px;
     font-size: 2rem;
     color: #5D6D68;
-    padding: 30px 10px;
+    text-decoration: none;
+    background-color: #f0f0f0;
+    border-radius: 8px;
   }
+  
+  
   
