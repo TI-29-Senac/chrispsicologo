@@ -14,7 +14,7 @@
             
             <ul class="menu-navegacao">
               <li><a href="#servicos">Serviços</a></li>
-              <li><a href="#contato">Contato</a></li>
+              <li><a href="contato.html">Contato</a></li>
               <li><a href="#hero">Sobre</a></li>
             </ul>
       
@@ -41,7 +41,7 @@
                 caminhar ao seu lado</p>
             </div>
             <div class="botao-container">
-              <a href="#" class="consulta-botao">Agendar Consulta</a>
+              <a href="contato.html" class="consulta-botao">Agendar Consulta</a>
             </div>
             <div class="cerebro-carrossel">
               <div class="carrossel-track" id="carrosselTrack">
@@ -59,42 +59,42 @@
             <h3 class="sentimentos-titulo">Você sente que algo precisa mudar ? Nós estamos aqui para te ouvir.</h3>
             <div class="sentimentos-container">
               
-              <div class="card" onclick="toggleCard(this)">
+              <div class="card-sentimento" onclick="toggleCard(this)">
                 <input type="radio" name="sentimento" /> Ansiedade
               </div>
               <div class="card-content">
                 A ansiedade pode surgir de diversas formas...<br>Vamos entender melhor como ela afeta seu dia a dia.
               </div>
             
-              <div class="card" onclick="toggleCard(this)">
+              <div class="card-sentimento" onclick="toggleCard(this)">
                 <input type="radio" name="sentimento" /> Depressão
               </div>
               <div class="card-content">
                 A depressão é uma condição séria, mas existe tratamento...<br>Você não está sozinho(a).
               </div>
             
-              <div class="card" onclick="toggleCard(this)">
+              <div class="card-sentimento" onclick="toggleCard(this)">
                 <input type="radio" name="sentimento" /> Fobia Social
               </div>
               <div class="card-content">
                 A fobia social pode dificultar relações pessoais e profissionais.<br>Saiba como superá-la com apoio.
               </div>
             
-              <div class="card" onclick="toggleCard(this)">
+              <div class="card-sentimento" onclick="toggleCard(this)">
                 <input type="radio" name="sentimento" /> Luto
               </div>
               <div class="card-content">
                 O luto é uma experiência profunda...<br>Respeite seu tempo e acolha seus sentimentos.
               </div>
             
-              <div class="card" onclick="toggleCard(this)">
+              <div class="card-sentimento" onclick="toggleCard(this)">
                 <input type="radio" name="sentimento" /> Traumas
               </div>
               <div class="card-content">
                 Traumas podem deixar marcas, mas a cura é possível.<br>Vamos trilhar esse caminho juntos.
               </div>
             
-              <div class="card" onclick="toggleCard(this)">
+              <div class="card-sentimento" onclick="toggleCard(this)">
                 <input type="radio" name="sentimento" /> Outros
               </div>
               <div class="card-content">
@@ -104,16 +104,129 @@
           </div> 
           <div class="barra-quebra"></div>
 
-          <div class="mais-conteudo">
-            <h3 class="profissionais-titulo">Nossos Profissionais</h3>
-            <p class="profissionais-titulo">Nossa equipe é especializada no cuidado emocional de quem enfrenta desafios na rotina, nas relações e em si mesmo.
-              Juntos, podemos construir novos caminhos para uma vida mais leve e equilibrada.</p>
+          <div class="mais-conteudo profissionais">
+            <h2 class="profissionais-titulo">Nossos Profissionais</h2>
+            <p class="descricao">
+              Nossa equipe é especializada em acolher quem enfrenta desafios emocionais. Juntos, podemos construir novos caminhos para uma vida mais leve e equilibrada.
+            </p>
+          
+            <div class="carrossel">
+              <button class="seta esquerda" aria-label="Anterior" onclick="moverCarrossel(-1)">&#10094;</button>
+          
+              <div class="cards">
+                <div class="card">
+                  <div class="foto" style="background-image: url('img/profissionais/mario.png'); background-size: cover; background-position: center;"></div>
+                  <h3>Chris Teixeira</h3>
+                  <div class="avaliacoes">
+                    ⭐⭐⭐⭐☆
+                    <span>Nome do Avaliador</span>
+                    <p>Texto da avaliação resumida.</p>
+                  </div>
+                </div>
+          
+                <div class="card">
+                  <div class="foto" style="background-image: url('img/profissionais/pedro.png'); background-size: cover; background-position: center;"></div>
+                  <h3>Kenji Nakamura</h3>
+                  <div class="avaliacoes" onclick="alert('Abrir avaliações')">
+                    ⭐⭐⭐⭐⭐
+                    <span>Nome do Avaliador</span>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                  </div>
+                </div>
+          
+                <div class="card">
+                  <div class="foto" style="background-image: url('img/profissionais/luana.png'); background-size: cover; background-position: center;"></div>
+                  <h3>Luana Duarte</h3>
+                  <div class="avaliacoes">
+                    ⭐⭐⭐⭐☆
+                    <span>Nome do Avaliador</span>
+                    <p>Texto da avaliação resumida.</p>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="foto" style="background-image: url('img/profissionais/Larissa.png'); background-size: cover; background-position: center;"></div>
+                  <h3>Larissa Teixeira</h3>
+                  <div class="avaliacoes">
+                    ⭐⭐⭐⭐☆
+                    <span>Nome do Avaliador</span>
+                    <p>Texto da avaliação resumida.</p>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="foto" style="background-image: url('img/profissionais/Larissa.png'); background-size: cover; background-position: center;"></div>
+                  <h3>Larissa Teixeira</h3>
+                  <div class="avaliacoes">
+                    ⭐⭐⭐⭐☆
+                    <span>Nome do Avaliador</span>
+                    <p>Texto da avaliação resumida.</p>
+                  </div>
+                </div>
+
+              </div>
+          
+              <button class="seta direita" aria-label="Próximo" onclick="moverCarrossel(1)">&#10095;</button>
+            </div>
           </div>
+          
+          
         </div> 
       </main>
+      <p class="footer-frase">Cuidar da mente é um ato de coragem</p>
+      <footer class="footer">
+         
+          <div class="footer-container">
+        <div class="footer-logo">
+        <img src="img/logo/logochris.svg" alt="Chris Psicologia">
+        </div>
+         
+        <div class="footer-grid">
+          <div class="footer-col col-psicologia">
+            <h4>Chris Psicologia</h4>
+            <ul>
+              <li><a href="#">Sobre a Clínica</a></li>
+              <li><a href="#">Psicólogos</a></li>
+            </ul>
+          </div>
+        
+          <div class="footer-col col-redes">
+            <h4>Redes Sociais</h4>
+            <div class="footer-icons">
+              <img src="img/icons/instagram.svg" alt="Instagram">
+              <img src="img/icons/whatsapp.svg" alt="WhatsApp">
+              <img src="img/icons/linkedin.svg" alt="LinkedIn">
+            </div>
+          </div>
+        
+          <div class="footer-col col-localizacao">
+            <h4>Localização</h4>
+            <p>Avenida Marechal Tito, 1500<br>São Miguel Paulista - SP</p>
+          </div>
+        
+          <div class="footer-col col-plataforma">
+            <h4>Plataforma</h4>
+            <ul>
+              <li><a href="#">Termos de Uso</a></li>
+              <li><a href="#">Política de Privacidade</a></li>
+            </ul>
+          </div>
+        
+          <div class="footer-col col-contato">
+            <h4>Contato</h4>
+            <p>11 2564-5527<br>chrispsicologia@contato.com.br</p>
+          </div>
+        
+          <div class="footer-col col-mapa">
+            <img src="img/banners/mapa.png" alt="Mapa" class="mapa">
+          </div>
+        </div>
+        
+        </footer>
 
       <script src="js/header.js"></script>
       <script src="js/cards.js"></script>
-      <script src="js/cerebro.js"></script> 
+      <script src="js/cerebro.js"></script>
+      <script src="js/profissionais.js"></script> 
 </body>
 </html>
