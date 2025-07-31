@@ -20,3 +20,29 @@ window.addEventListener('scroll', function() {
   
     console.log(logo.classList);
   });
+
+ 
+
+  const botaoMais = document.getElementById('btn-more');
+const menuLateral = document.getElementById('menu-lateral');
+const botaoFechar = document.getElementById('botao-fechar');
+const overlay = document.getElementById('fundo-escuro');
+
+if (botaoMais && menuLateral && botaoFechar && overlay) {
+  botaoMais.addEventListener('click', () => {
+    menuLateral.classList.add('aberto');
+    overlay.classList.add('ativo');
+  });
+
+  botaoFechar.addEventListener('click', () => {
+    menuLateral.classList.remove('aberto');
+    overlay.classList.remove('ativo');
+  });
+
+  overlay.addEventListener('click', () => {
+    menuLateral.classList.remove('aberto');
+    overlay.classList.remove('ativo');
+  });
+} else {
+  console.warn('Algum dos elementos do menu lateral não foi encontrado no DOM.');
+}
