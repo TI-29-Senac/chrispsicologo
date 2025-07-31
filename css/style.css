@@ -87,6 +87,7 @@ header {
   background-color: #e4e4e4;
 }
 
+
 /* #endregion */
 
 /* MAIS region */
@@ -381,20 +382,20 @@ header {
 
 .planta {
   position: absolute;
-  width: 1200px;
+  width: 230px;
   height: auto;
   z-index: 2;
   opacity: 1;
 }
 
 .lado-esquerdo {
-  top: -550px;
-  right: 1150px;
+  top: 20px;
+  right: 1680px;
 }
 
 .lado-direito {
-  top: -185px;
-  right: -450px;
+  top: 0px;
+  right: 0px;
   transform: scaleX(-1) scaleY(-1);
 }
 
@@ -426,12 +427,30 @@ header {
   background-position: center;
   padding: 30px 0;
 }
+.planta-esquerda,
+.planta-direita {
+  position: absolute;
+  top: 0.2rem;
+  width: 240px;
+  height: auto;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.planta-esquerda {
+  left: 0;
+}
+
+.planta-direita {
+  right: 0;
+  transform: scaleX(-1);
+  transform: scaleY(-1);
+}
 
 .conteudo-destaque,
 .mais-conteudo {
   background-color: rgba(250, 246, 238, 0.85);
-  /* <-- transparência aqui */
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
   padding: 40px 20px;
   max-width: 900px;
   margin: 0 auto;
@@ -449,6 +468,7 @@ header {
   font-family: 'questrial', sans-serif;
   font-size: 1.2rem;
   padding: 4px;
+  z-index: 20;
 }
 
 /* #endregion */
@@ -519,7 +539,7 @@ header {
   margin: 0 auto;
   background: #faf6ee;
   padding: 60px 20px;
-  border-radius: 10px;
+  border-radius: 0px 0px 10px 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   overflow-y: hidden;
 }
@@ -634,7 +654,6 @@ header {
 
 .cards::-webkit-scrollbar {
   display: none;
-  /* Chrome, Edge, Safari */
 }
 
 .card {
@@ -653,7 +672,6 @@ header {
   transform: scale(0.85);
 }
 
-/* Card em destaque com opacidade e escala maior */
 .card.destaque {
   opacity: 1;
   transform: scale(1.1);
