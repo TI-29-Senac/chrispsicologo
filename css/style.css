@@ -88,20 +88,42 @@ header {
 }
 
 /* #endregion */
+
 /* MAIS region */
 .more {
+  display: block;
+  width: 64px;
   height: 4rem;
-  cursor: pointer;
+  clip-path: inset(40% 0 40% 0);
+  margin-bottom: 35px;
 }
 
+.mais-titulo{
+  color: white;
+  font-family: 'questrial', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.1rem;
+}
+.svg-wrapper {
+  height: 3.5rem; /* menor que a imagem */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 #btn-more {
+  margin-top: 2.5rem;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0; 
 }
 
 #btn-more:hover img {
@@ -109,7 +131,13 @@ header {
   transform: scale(1.1);
   transition: all 0.3s ease;
 }
-
+#btn-more h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  user-select: none; /* opcional, só pra evitar seleção ao clicar */
+}
 .botao-fechar {
   align-self: flex-end;
   background: none;
@@ -245,6 +273,8 @@ header {
   margin-top: 11rem;
   padding-left: 0;
   z-index: 15;
+  font-family: 'Questrial', sans-serif;
+  font-size: 1rem;
 }
 
 .consulta-botao {
@@ -486,10 +516,9 @@ header {
 
 .mais-conteudo.profissionais {
   max-width: 900px;
-  /* container mais controlado */
   margin: 0 auto;
   background: #faf6ee;
-  padding: 40px 20px;
+  padding: 60px 20px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   overflow-y: hidden;
@@ -515,6 +544,7 @@ header {
   padding-left: calc((800px - 300px) / 2);
   padding-right: calc((800px - 300px) / 2);
   padding-top: 40px;
+  padding-bottom: 40px;
   scrollbar-width: none;
 }
 
@@ -534,10 +564,8 @@ header {
 }
 
 .profissionais {
-  /* Remova margens extras que empurram o conteúdo */
   margin: 0 auto;
   padding: 40px 20px 20px;
-  /* padding menor embaixo para segurar */
   text-align: center;
   font-family: 'Questrial', sans-serif;
   color: #5D6D68;
@@ -546,7 +574,6 @@ header {
 .descricao {
   max-width: 600px;
   margin: 0 auto 30px;
-  /* margem menor abaixo para não empurrar muito */
   color: #5D6D68;
   font-size: 1.1rem;
   line-height: 1.4;
@@ -621,11 +648,7 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  /* Scroll snap para alinhar o card no centro */
   scroll-snap-align: center;
-
-  /* Cards fora do destaque ficam menores e com menos opacidade */
   opacity: 0.4;
   transform: scale(0.85);
 }
@@ -648,7 +671,7 @@ header {
   transition: transform 0.3s ease;
 }
 
-/* Borda e escala maior na foto do card destaque */
+
 .card.destaque .foto {
   border-color: #3a4a47;
   transform: scale(1.05);
@@ -682,6 +705,8 @@ header {
   margin-left: auto;
   margin-right: auto;
   transition: transform 0.3s ease;
+  font-family: 'questrial', sans-serif;
+  font-size: 1.1rem;
 }
 
 /* Hover aumenta escala e opacidade no card e suas partes */
@@ -876,7 +901,6 @@ header {
 
 .footer-icons a:focus,
 .footer-col a:focus {
-  outline: 2px solid #99b198;
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -886,6 +910,7 @@ header {
   max-width: 200px;
   margin-top: 10px;
   border-radius: 8px;
+  margin-left: 100px;
 }
 
 /* #endregion */
