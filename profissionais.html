@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós Chris Psicologia</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+      <main>
+        <div class="fundo-profissionais">
+            <img src="/img/icons/planta-verde.svg" class="planta-esquerda" alt="" aria-hidden="true">
+          <img src="/img/icons/planta-verde.svg" class="planta-direita" alt="" aria-hidden="true">
+          <div class="mais-conteudo profissionais">
+            <h2 class="profissionais-titulo">Nossos Profissionais</h2>
+            <p class="descricao">
+              Nossa equipe é especializada em acolher quem enfrenta desafios emocionais. Juntos, podemos construir novos
+              caminhos para uma vida mais leve e equilibrada.
+            </p>
+    
+            <div class="carrossel">
+              <button class="seta esquerda" aria-label="Anterior" onclick="moverCarrossel(-1)">&#10094;</button>
+    
+              <div class="cards" id="cards-carrossel">
+              </div>
+    
+            <button class="seta direita" aria-label="Próximo" onclick="moverCarrossel(1)">&#10095;</button>
+    
+          </div>
+    
+          <div class="btn-ver-profissionais">
+            <a href="profissionais.html" class="botao-link">Ver nossos profissionais</a>
+          </div>
+          
+          </div>
+        </div>
+      </main>
+
+
+      <footer id="footer"></footer>
+      
+ <script src="js/header.js" defer></script>
+  <script src="js/cards.js" defer></script>
+  <script src="js/cerebro.js" defer></script>
+  <script src="js/profissionais.js" defer></script>
+  <script src="js/carrossel.js" defer></script>
+  <script src="js/inicio.js" defer></script>
+  <script src="js/footer.js" defer></script>
+
+</body>
+</html>

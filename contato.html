@@ -10,10 +10,51 @@
     <div id="navbar"></div>
 
       <main>
-
+        <section class="hero">
+          <div class="foia">
+            <img src="img/icons/folha_queda.gif" class="folhas canto-esquerdo" alt="folhas caindo">
+            <img src="img/icons/folha_queda.gif" class="folhas canto-direito" alt="folhas caindo">
+            <img src="img/icons/folha_queda.gif" class="folhas meio-esquerdo" alt="folhas caindo">
+            <img src="img/icons/folha_queda.gif" class="folhas meio-direito" alt="folhas caindo">
+            <img src="img/icons/plantas-bege.svg" class="planta lado-esquerdo" alt="folhas caindo">
+            <img src="img/icons/plantas-bege.svg" class="planta lado-direito" alt="folhas caindo">
+          </div>
+        
+          <div class="conteudo-hero">
+            <h2>Fale Conosco</h2>
+            <p class="texto-contato">Preencha o formulário abaixo para entrar em contato conosco.<br> Estamos prontos para ouvir você.</p>
+        
+            <form id="form-contato" action="envia-contato.php" method="post">
+              <label for="nome">Nome</label><br>
+              <input type="text" id="nome" name="nome" required><br><br>
+        
+              <label for="email">E-mail</label><br>
+              <input type="email" id="email" name="email" required><br><br>
+        
+              <label for="mensagem">Mensagem</label><br>
+              <textarea id="mensagem" name="mensagem" rows="4" required></textarea><br><br>
+        
+              <button type="submit" class="consulta-botao">Enviar Mensagem</button>
+            </form>
+          </div>
+        
+          <div class="cerebro-carrossel">
+            <div class="carrossel-track" id="carrosselTrack">
+              <img src="img/icons/cerebro.png" alt="cerebro">
+              <img src="img/icons/arvore.svg" alt="cerebro">
+              <img src="img/icons/livros.svg" alt="cerebro">
+            </div>
+          </div>
+        
+          <div class="barra-banner">
+            <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso
+              merece ser ouvido.</p>
+          </div>
+        </section>
+        
       </main>
 
-
+      <div class="barra-quebra">Cuidar da mente é um ato de coragem</div>
       <footer id="footer"></footer>
     
  <script src="js/header.js" defer></script>

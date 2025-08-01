@@ -1,11 +1,15 @@
 const track = document.getElementById('carrosselTrack');
 const imagens = track.querySelectorAll('img');
 const total = imagens.length;
-const slideWidth = 500; // largura do slide
+let slideWidth = imagens[0].offsetWidth;
+window.addEventListener('resize', () => {
+  slideWidth = imagens[0].offsetWidth;
+});
+
 
 let index = 0;
 
-// Clona os slides para criar efeito infinito suave
+
 for (let i = 0; i < total; i++) {
   const clone = imagens[i].cloneNode(true);
   track.appendChild(clone);
@@ -16,14 +20,22 @@ function moverSlide() {
   track.style.transition = 'transform 0.7s ease-in-out';
   track.style.transform = `translateX(${-index * slideWidth}px)`;
 
-  // Quando chegar no final da cópia, volta para o início sem transição
-  if (index === total) {
+
+  if (index >= total) {
     setTimeout(() => {
       track.style.transition = 'none';
-      track.style.transform = 'translateX(0)';
+      track.style.transform = 'translateX(0px)';
       index = 0;
-    }, 3000); // tempo igual a duração da transição
+  
+      // força reflow para garantir o reset
+      void track.offsetWidth;
+  
+      // reativa a transição para o próximo movimento
+      setTimeout(() => {
+        track.style.transition = 'transform 0.7s ease-in-out';
+      }, 20);
+    }, 700);
   }
-}
+}  
 
 setInterval(moverSlide, 5000);

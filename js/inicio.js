@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <li><a href="servicos.html">Serviços</a></li>
         <li><a href="contato.html">Contato</a></li>
         <li><a href="sobre.html">Sobre</a></li>
+        <li><a href="profissionais.html">Nossos Profissionais</a></li>
       </ul>
    
       <div class="redes-menu-lateral">
@@ -113,15 +114,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     ativarMenuLateral();
-    
-    const urlpath = window.location.pathname;
-    const ancora = document.getElementById("ancora-home");
-    if (ancora) {
-      if (urlpath == "/contato.html") {
-        ancora.classList.add("hidden");
-      } else {
-        ancora.classList.remove("hidden");
-      }
-    }
     
   });

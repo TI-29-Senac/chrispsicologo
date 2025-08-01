@@ -59,3 +59,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   destacarCardCentral(); 
 });
+
+
+
+// Ao clicar em qualquer imagem do carrossel quem somos
+document.querySelectorAll('.faixa-imagens img').forEach(img => {
+  img.addEventListener('click', () => {
+    const lightbox = document.getElementById('lightbox');
+    const imgAmpliada = document.getElementById('img-ampliada');
+    imgAmpliada.src = img.src;
+    lightbox.classList.remove('hidden');
+  });
+});
+
+function fecharLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  lightbox.classList.add('hidden');
+  document.getElementById('img-ampliada').src = '';
+}
+
+// Fecha ao apertar ESC
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    fecharLightbox();
+  }
+});
+
+// Fecha ao clicar fora da imagem
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if (e.target.id === 'lightbox') {
+    fecharLightbox();
+  }
+});
+

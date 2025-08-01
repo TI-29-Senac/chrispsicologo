@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const footer = document.getElementById("footer");
     footer.innerHTML = `
     <footer class="footer">
+    <img src="/img/icons/vaso.svg" class="planta-footer planta-esquerda" alt="" aria-hidden="true">
+    <img src="/img/icons/vaso.svg" class="planta-footer planta-direita" alt="" aria-hidden="true">
  
     <div class="footer-container">
       <div class="footer-logo">
@@ -13,8 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="footer-col col-psicologia">
           <h4>Chris Psicologia</h4>
           <ul>
-            <li><a href="#">Sobre a Clínica</a></li>
-            <li><a href="#">Psicólogos</a></li>
+            <li><a href="sobre.html">Sobre a Clínica</a></li>
+            <li><a href="profissionais.html">Psicólogos</a></li>
           </ul>
         </div>
  
@@ -66,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
             target="_blank"><img src="img/banners/mapa.png" alt="Mapa" class="mapa"></a>
         </div>
       </div>
- 
   </footer>
 `
  
