@@ -8,10 +8,36 @@ document.addEventListener("DOMContentLoaded", () => {
           <img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo" id="logo">
    
           <ul class="menu-navegacao">
-            <li><a href="servicos.html">Serviços</a></li>
-            <li><a href="contato.html" id="ancora-home">Contato</a></li>
-            <li><a href="sobre.html">Sobre</a></li>
-          </ul>
+  ${(() => {
+    const path = window.location.pathname;
+
+    if (path.includes("contato.html")) {
+      return `
+        <li><a href="index.html">Início</a></li>
+        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+      `;
+    } else if (path.includes("servicos.html")) {
+      return `
+        <li><a href="index.html">Início</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+      `;
+    } else if (path.includes("sobre.html")) {
+      return `
+        <li><a href="index.html">Início</a></li>
+        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      `;
+    } else {
+      return `
+        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+      `;
+    }
+  })()}
+</ul>
    
           <button id="btn-more" aria-label="Mais opções">
             <h3 class="mais-titulo">Menu</h3>
