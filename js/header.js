@@ -23,7 +23,7 @@ window.addEventListener('scroll', function() {
 
  
 
-  const botaoMais = document.getElementById('btn-more');
+const botaoMais = document.getElementById('btn-more');
 const menuLateral = document.getElementById('menu-lateral');
 const botaoFechar = document.getElementById('botao-fechar');
 const overlay = document.getElementById('fundo-escuro');
