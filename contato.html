@@ -10,7 +10,7 @@
     <div id="navbar"></div>
 
       <main>
-        <section class="hero">
+        <section class="contato-hero">
           <div class="foia">
             <img src="img/icons/folha_queda.gif" class="folhas canto-esquerdo" alt="folhas caindo">
             <img src="img/icons/folha_queda.gif" class="folhas canto-direito" alt="folhas caindo">
@@ -20,37 +20,71 @@
             <img src="img/icons/plantas-bege.svg" class="planta lado-direito" alt="folhas caindo">
           </div>
         
-          <div class="conteudo-hero">
-            <h2>Fale Conosco</h2>
-            <p class="texto-contato">Preencha o formulário abaixo para entrar em contato conosco.<br> Estamos prontos para ouvir você.</p>
-        
-            <form id="form-contato" action="envia-contato.php" method="post">
-              <label for="nome">Nome</label><br>
-              <input type="text" id="nome" name="nome" required><br><br>
-        
-              <label for="email">E-mail</label><br>
-              <input type="email" id="email" name="email" required><br><br>
-        
-              <label for="mensagem">Mensagem</label><br>
-              <textarea id="mensagem" name="mensagem" rows="4" required></textarea><br><br>
-        
-              <button type="submit" class="consulta-botao">Enviar Mensagem</button>
-            </form>
-          </div>
-        
-          <div class="cerebro-carrossel">
-            <div class="carrossel-track" id="carrosselTrack">
-              <img src="img/icons/cerebro.png" alt="cerebro">
-              <img src="img/icons/arvore.svg" alt="cerebro">
-              <img src="img/icons/livros.svg" alt="cerebro">
+          <div class="contato-conteudo">
+            <h2>Contato</h2>
+            <div class="contato-item">
+              <img src="img/icons/email.svg" alt="email">
+              <p>chrispsicologia@contato.com.br</p>
             </div>
+            <div class="contato-item">
+              <img src="img/icons/phone.svg" alt="email">
+              <p>11 46206-4836</p>
+            </div>
+        
+            <h2>Nos Acompanhe nas redes</h2>
+            <div class="contato-redes">
+              <div class="contato-item">
+                <img src="img/icons/instagram.svg" alt="instagram">
+                <p>@Chris Psicologia</p>
+              </div>
+              <div class="contato-item">
+                <img src="img/icons/whatsapp.svg" alt="whatsapp">
+                <p>11 96206-4836</p>
+              </div>
+              <div class="contato-item">
+                <img src="img/icons/linkedin.svg" alt="linkedin">
+                <p>Clínica Chris Psicologia</p>
+              </div>
+            </div>
+        
+            <h2>Horário de Atendimento</h2>
+            <p class="contato-texto">Segunda a sexta das 09:00 às 17:00</p>
           </div>
         
-          <div class="barra-banner">
-            <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso
-              merece ser ouvido.</p>
+          <div class="contato-mapa">
+            <h3 class="contato-endereco-titulo">Endereço</h3>
+            <p class="contato-endereco">Avenida Marechal Tito, <br>1500 - São Miguel Paulista</p>
+            <a href="https://www.google.com.br/maps/place/Senac+S%C3%A3o+Miguel+Paulista/@-23.4955972,-46.434437,17z/data=!3m1!4b1!4m6!3m5!1s0x94ce63dda7be6fb9:0xa74e7d5a53104311!8m2!3d-23.4955972!4d-46.4318621!16s%2Fg%2F11c5bl2g7p?entry=ttu&g_ep=EgoyMDI1MDcyOC4wIKXMDSoASAFQAw%3D%3D"
+            target="_blank"><img src="img/banners/mapa.png" alt="mapa-localizacao"/></a>
+          </div>
+        
+          <div class="contato-barra">
           </div>
         </section>
+
+        <section class="contato-formulario">
+          <img src="/img/icons/planta-verde.svg" class="planta-esquerda" alt="" aria-hidden="true">
+      <img src="/img/icons/planta-verde.svg" class="planta-direita" alt="" aria-hidden="true">
+          <div class="form-container">
+          <h2>Contate-nos:</h2>
+          <form class="formulario-contato" id="form-contato">
+            <label for="nome">Nome *</label>
+            <input type="text" id="nome" name="nome" required>
+        
+            <label for="email">E-mail *</label>
+            <input type="email" id="email" name="email" required>
+        
+            <label for="mensagem">Mensagem *</label>
+            <textarea id="mensagem" name="mensagem" rows="5" required></textarea>
+        
+            <button type="submit" class="botao-enviar">Enviar</button>
+          </form>
+          <div id="status-mensagem"></div>
+          </div>
+        </section>
+        
+
+
         
       </main>
 
@@ -64,6 +98,8 @@
   <script src="js/carrossel.js" defer></script>
   <script src="js/inicio.js" defer></script>
   <script src="js/footer.js" defer></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/script-form.js" defer></script>
 
 </body>
 </html>

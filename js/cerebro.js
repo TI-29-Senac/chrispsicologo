@@ -16,6 +16,7 @@ for (let i = 0; i < total; i++) {
 }
 
 function moverSlide() {
+  slideWidth = imagens[0].offsetWidth; // garante atualização
   index++;
   track.style.transition = 'transform 0.7s ease-in-out';
   track.style.transform = `translateX(${-index * slideWidth}px)`;
