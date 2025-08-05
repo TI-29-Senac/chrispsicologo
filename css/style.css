@@ -280,7 +280,7 @@ header {
   width: 100%;
   margin-top: 157px;
   height: 760px;
-  background-image: url(/img/banners/banner_1.png);
+  background-image: url(../img/banners/banner_1.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -1854,4 +1854,12 @@ header {
 
 /* #end region */
 
-
+.conteudo-hero-servicos {
+  color: #ad9b7f;
+  font-size: 3.5rem;
+  text-align: center;
+  justify-content: center;
+  position: relative;
+  top: 16rem;
+  font-family: 'Questrial', sans-serif;
+}

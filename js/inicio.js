@@ -54,9 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
       <ul class="links-menu-lateral">
         <li><a href="index.html">Início</a></li>
         <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="agendar.html">Agendar</a></li>
         <li><a href="contato.html">Contato</a></li>
         <li><a href="sobre.html">Sobre</a></li>
-        <li><a href="profissionais.html">Nossos Profissionais</a></li>
+        <li><a href="profissionais.html">Profissionais</a></li>
       </ul>
    
       <div class="redes-menu-lateral">
