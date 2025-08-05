@@ -280,7 +280,7 @@ header {
   width: 100%;
   margin-top: 157px;
   height: 760px;
-  background-image: url(/img/banners/banner_1.png);
+  background-image: url(../img/banners/banner_1.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -514,7 +514,7 @@ header {
 /* #region Fundo e Seções */
 .fundo {
   position: relative;
-  background-image: url('/img/banners/banner_1.png');
+  background-image: url('../img/banners/banner_1.png');
   background-size: cover;
   background-position: center;
   padding: 30px 0;
