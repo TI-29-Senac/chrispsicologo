@@ -1286,6 +1286,25 @@ header {
   margin-left: 100px;
 }
 
+.planta-footer {
+  position: absolute;
+  top: 18rem; 
+  width: 220px;  
+  opacity: 0.4;  /* Opcional: deixar mais suave */
+  pointer-events: none;
+  z-index: 1;
+}
+
+.planta-esquerda {
+  left: 20px; 
+   transform: scaleX(-1); 
+}
+
+.planta-direita {
+  right: 20px;
+  transform: scaleX(-1); 
+}
+
 @media (max-width: 728px) {
   .planta-esquerda,
   .planta-direita {
@@ -1660,3 +1679,166 @@ header {
 }
 
 /* #endregion */
+
+/* #region Quem somos */
+
+
+.quem-somos {
+  position: relative;
+  padding: 13rem 20px 60px;
+  background-color: #fdfaf4;
+  background-image: url('/img/banners/banner_1.png'); 
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover; 
+  font-family: 'Questrial', sans-serif;
+  color: #4a4a4a;
+}
+
+.quem-somos .planta-esquerda,
+.quem-somos .planta-direita {
+  top: 5rem;
+  width: 160px;
+  opacity: 0.15;
+  position: absolute;
+  z-index: 0;
+}
+
+.quem-somos .planta-esquerda {
+  top: 10rem;
+  left: 0;
+}
+
+.quem-somos .planta-direita {
+  top: 10rem;
+  right: 0;
+  transform: scaleX(-1) scaleY(-1);
+}
+
+.card-central-quem-somos {
+  background: #faf6ee;
+  padding: 40px 30px;
+  border-radius: 10px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.titulo-quem-somos {
+  font-size: 2rem;
+  color: #5D6D68;
+  margin-bottom: 20px;
+}
+
+.descricao-quem-somos {
+  font-size: 1.15rem;
+  color: #5D6D68;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+
+/* #end region */
+/* #regiom quem somos - valores */
+
+.valores {
+  position: relative;
+  background-color: #e9f5ea;
+  padding: 8rem 2rem;
+  text-align: center;
+  font-family: 'Questrial', sans-serif;
+  color: #333;
+  overflow: hidden;
+}
+
+.titulo-valores {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: #4a4a4a;
+}
+
+.cards-valores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card-valor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #5d6d68;
+  color: #fff;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  min-height: 350px; /* Define altura mínima para cards iguais */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.titulo-card-valores {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #fff; /* para manter contraste dentro do card */
+}
+
+.conteudo-card-valores {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+  padding-top: 0;
+}
+
+.conteudo-card-valores img {
+  width: 70px;
+  margin-bottom: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 70px;
+}
+
+img[src*="maos.svg"] {
+  margin-top: -4.5rem; /* Ajuste até parecer alinhado */
+}
+
+img[src*="engrenagem.svg"] {
+  margin-top: 1.5rem; 
+}
+
+.folhas-lado {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  opacity: 0.5;
+  z-index: 10;
+  pointer-events: none; /* para não interferir em cliques */
+}
+
+.folhas-esquerda {
+  left: 0rem;
+  transform: scaleX(1); /* normal, aparece do lado esquerdo */
+}
+
+.folhas-direita {
+  right: 0;
+  transform: scaley(-1); /* espelha horizontalmente para o lado direito */
+}
+
+/* #end region */
+
+

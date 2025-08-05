@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
  
         <div class="footer-col col-contato">
           <h4>Contato</h4>
-          <p>11 2564-5527<br>chrispsicologia@contato.com.br</p>
+          <p>11 46206-4836<br>chrispsicologia@contato.com.br</p>
         </div>
  
         <div class="footer-col col-mapa">
