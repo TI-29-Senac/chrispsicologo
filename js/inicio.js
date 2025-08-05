@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
  
-  const nav = document.getElementById("navbar");
+  const nav = document.getElementById("navbar"); 
   nav.innerHTML = `
        <header>
       <nav class="menu">
         <div class="container">
-          <img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo" id="logo">
+          <a href="index.html"><img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo" id="logo"></a>
    
           <ul class="menu-navegacao">
   ${(() => {
