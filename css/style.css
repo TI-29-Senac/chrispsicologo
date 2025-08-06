@@ -1290,7 +1290,7 @@ header {
   position: absolute;
   top: 18rem; 
   width: 220px;  
-  opacity: 0.4;  /* Opcional: deixar mais suave */
+  opacity: 0.4;  
   pointer-events: none;
   z-index: 1;
 }
