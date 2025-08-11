@@ -517,7 +517,8 @@ header {
   background-image: url('../img/banners/banner_1.png');
   background-size: cover;
   background-position: center;
-  padding: 30px 0;
+  padding: 30px 0px;
+
 }
 .planta-esquerda,
 .planta-direita {
@@ -543,14 +544,18 @@ header {
 .conteudo-destaque,
 .mais-conteudo {
   background-color: rgba(250, 246, 238, 0.85);
-  border-radius: 10px 10px 0px 0px;
+  border-radius: 10px 10px 10px 10px;
   padding: 40px 20px;
   max-width: 900px;
   margin: 0 auto;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 10;
+  margin-bottom: 60px;
+  margin-top: 30px;
 }
+
+
 
 .barra-quebra {
   width: 100%;
@@ -573,6 +578,8 @@ header {
   margin: 60px auto;
   padding: 0 20px;
   font-family: 'Questrial', sans-serif;
+  margin-bottom: 50px;
+  overflow: auto;
 }
 
 .sentimentos-titulo {
@@ -889,6 +896,8 @@ header {
   font-family: 'Questrial', sans-serif;
   position: relative;
   overflow: visible;
+  margin-top: 50px;
+  margin-bottom: 20px;
 }
 
 .mais-conteudo.quem-somos {
@@ -1002,11 +1011,14 @@ header {
 
 .servicos {
   position: relative;
-  padding: 0px 20px 30px;
+  padding: 50px 20px 30px;
   background-color: #eefaea;
   font-family: 'Questrial', sans-serif;
   color: #4a4a4a;
+  margin-top: 0; 
+
 }
+
 
 .servicos .planta-esquerda,
 .servicos .planta-direita {
@@ -1037,6 +1049,7 @@ header {
   font-family: 'Questrial', sans-serif;
   position: relative;
   overflow: visible;
+
 }
 
 .card-titulo {
