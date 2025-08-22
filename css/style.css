@@ -342,43 +342,32 @@ header {
 /* #endregion */
 
 /* #region Carrossel */
-.cerebro-img {
-  position: absolute;
-  top: 4rem;
-  right: 12rem;
-  width: 500px;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition: background-image 0.5s ease-in-out;
-}
-
 .cerebro-carrossel {
   position: absolute;
   top: 0rem;
   right: 20rem;
   width: 500px;
+  height: 500px;
   overflow: hidden;
-  box-sizing: border-box; /* para o padding ser considerado na largura */
   z-index: 10;
 }
 
-.carrossel-track {
-  display: flex;
-  transition: transform 3s ease-in-out;
-  width: max-content;
-  gap: 30px;
-  flex-wrap: nowrap; 
+.cerebro-carrossel img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
 }
 
-.carrossel-track img {
-  width: 500px;
-  height: auto;
-  flex-shrink: 0;
-  object-fit: contain;
+.cerebro-carrossel img.active {
+  opacity: 1;
+  z-index: 2;
 }
+
 
 @media (max-width: 1024px) {
   .barra-quebra {
@@ -524,7 +513,7 @@ header {
 .planta-direita {
   position: absolute;
   top: 0.2rem;
-  width: 220px;
+  width: 250px;
   height: auto;
   opacity: 0.3;
   pointer-events: none;
@@ -540,7 +529,6 @@ header {
   transform: scaleX(-1);
   transform: scaleY(-1);
 }
-
 
 
 .barra-quebra {
@@ -561,12 +549,11 @@ header {
 .mais-conteudo.profissionais,
 .conteudo-destaque,
 .mais-conteudo {
-  max-width: 900px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
-  background: #faf6ee;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: transparent;
+  border-radius: 10px;
   padding: 60px 20px;
   position: relative;
   overflow: visible;
@@ -575,12 +562,22 @@ header {
   margin-bottom: 40px;
 }
 
+.mais-conteudo.quem-somos {
+  background: transparent;
+  box-shadow: none;
+}
+
+.mais-conteudo.profissionais,
+.mais-conteudo{
+  background-color: #d6e3d600;
+}
+
+
 .conteudo-destaque,
 .mais-conteudo {
   background-color: rgba(250, 246, 238, 0.85);
   border-radius: 10px;
   padding: 40px 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   margin-top: 40px;
   margin-bottom: 40px;
   overflow-y: hidden; 
@@ -592,7 +589,7 @@ header {
   max-width: 600px;
   width: 100%;
   margin: 60px auto;
-  padding: 0 20px;
+  padding: 0 0px;
   font-family: 'Questrial', sans-serif;
   margin-bottom: 50px;
   overflow: auto;
@@ -602,7 +599,7 @@ header {
   color: #5D6D68;
   text-align: center;
   font-family: 'Questrial', sans-serif;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   padding: 50px 20px 5px 5px;
 }
 
@@ -611,7 +608,7 @@ header {
   border-radius: 8px;
   margin-bottom: 10px;
   color: white;
-  padding: 15px 20px;
+  padding: 15px 30px;
   cursor: pointer;
   transition: 0.3s ease;
   display: flex;
@@ -636,7 +633,7 @@ header {
   overflow: hidden;
   color: #333;
   border-radius: 0 0 8px 8px;
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   max-height: 0;
   transition: max-height 0.4s ease, padding 0.4s ease;
 }
@@ -655,7 +652,7 @@ header {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 60px 0;
+  padding: 20px 0;
   position: relative;
 }
 .fundo-profissionais .planta-esquerda,
@@ -695,7 +692,7 @@ header {
   padding-left: calc((800px - 300px) / 2);
   padding-right: calc((800px - 300px) / 2);
   padding-top: 40px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   scrollbar-width: none;
 }
 
@@ -710,8 +707,8 @@ header {
   color: #5D6D68;
   text-align: center;
   font-family: 'Questrial', sans-serif;
-  font-size: 1.3rem;
-  padding: 50px 20px 5px 5px;
+  font-size: 1.5rem;
+  padding: 20px 20px 5px 5px;
 }
 
 .profissionais {
@@ -892,19 +889,17 @@ header {
 
 /* #region Quem Somos */
 
-
-
-
 .mais-conteudo.quem-somos {
   position: relative; 
-  overflow: visible; 
+  overflow: visible;
+  padding: 80px 20px;
 }
 
 
 .mais-conteudo.quem-somos .planta-esquerda,
 .mais-conteudo.quem-somos .planta-direita {
   position: absolute;
-  width: 180px;
+  width: 250px;
   height: auto;
   opacity: 0.5; 
   z-index: 0; 
@@ -931,7 +926,7 @@ header {
 
 .quem-somos-titulo {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   color: #5D6D68;
   margin-bottom: 20px;
   font-family: 'questrial' sans-serif;
@@ -939,11 +934,11 @@ header {
 
 .quem-somos-descricao {
   text-align: center;
-  max-width: 700px;
+  max-width: 850px;
   margin: 0 auto 40px;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   color: #4a5b5c;
-  line-height: 1.6;
+  line-height: 1.8;
   font-family: 'questrial' sans-serif;
 }
 
@@ -963,8 +958,8 @@ header {
 
 
 .faixa-imagens img {
-  width: 260px;
-  height: 180px;
+  width: 320px;
+  height: 320px;
   border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
@@ -1018,7 +1013,7 @@ header {
 .card-central {
   background: #faf6ee;
   padding: 30px 20px;
-  border-radius: 0 0 10px 10px;
+  border-radius: 10px;
   max-width: 900px;
   margin: 30px auto 40px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -1049,7 +1044,7 @@ header {
 
 
 .card-titulo {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #5D6D68;
   margin-bottom: 10px;
 }
@@ -1086,20 +1081,20 @@ header {
 
 .card-servico img {
   width: 100%;
-  height: 200px;
+  height: 190px;
   object-fit: cover;
   margin-bottom: 10px;
   border-radius: 5px;
 }
 
 .card-servico h3 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #5D6D68;
   margin-bottom: 0px;
 }
 
 .card-servico p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #5D6D68;
 }
 
