@@ -350,13 +350,14 @@ header {
   pointer-events: auto;
 }
 
+/* Mobile até 728px */
 @media (max-width: 728px) {
   .menu-navegacao {
-    display: none;
+    display: none; /* esconde menu normal */
   }
 
   #btn-more {
-    display: flex;
+    display: flex; /* mostra botão hamburguer */
     align-items: center;
     gap: 0.5rem;
   }
@@ -367,16 +368,18 @@ header {
   }
 }
 
-@media (max-width: 729px) {
+/* Desktop a partir de 729px */
+@media (min-width: 729px) {
   #btn-more {
-    display: none;
+    display: none; /* esconde botão hamburguer */
   }
 
   .menu-navegacao {
-    display: flex;
+    display: flex; /* mostra menu normal */
     gap: 2rem;
   }
 }
+
 
 /* #endregion */
 
@@ -476,24 +479,23 @@ header {
 
 @media (max-width: 768px) {
   .hero {
-    margin-top: 120px;
-    padding: 2rem 1rem;
+    margin-top: 80px;
+    padding: 2rem 0rem;
     height: auto;
   }
 
   .conteudo-hero {
-    position: static; /* tira o top/right */
+    position: static; 
     font-size: 1.2rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     width: 100%;
   }
 
   .botao-container {
-    justify-content: center;
-    margin: 1rem 0;
+    margin: 3rem 0;
     width: 100%;
-    padding: 0;
+    padding: 1rem;
   }
 
   .consulta-botao {
@@ -502,7 +504,9 @@ header {
     height: 50px;
     font-size: 1rem;
     margin: 0 auto;
-    display: block;
+    display: flex;
+    padding: 1rem;
+    margin-right: -10%;
   }
 
   .cerebro-carrossel {
@@ -514,9 +518,6 @@ header {
     display: none;
   }
 }
-
-
-
 
 /* #endregion */
 
@@ -1661,6 +1662,139 @@ header {
   z-index: 3;
   font-weight: 300;
 }
+
+@media (max-width: 768px) {
+  /* Conteúdo principal */
+  .contato-conteudo {
+    position: relative;
+    top: auto;
+    left: auto;
+    max-width: 90%;
+    margin: 2rem auto 0 auto;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    text-align: center;
+  }
+
+  .contato-conteudo h2 {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .contato-conteudo h3 {
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    margin-top: 0.8rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .contato-item {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 0.6rem;
+  }
+
+  .contato-item p {
+    margin: 0;
+  }
+
+  .contato-redes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .contato-texto {
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  /* Mapa */
+  .contato-mapa {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    margin: 2rem auto 0 auto;
+    width: 90%;
+    max-width: 360px;
+    text-align: center;
+    z-index: 2;
+  }
+
+  .contato-mapa img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  /* Formulário */
+  #form-contato {
+    width: 90%;
+    margin: 1.5rem auto;
+    gap: 12px;
+  }
+
+  /* Barra inferior */
+  .contato-barra {
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contato-formulario {
+    padding: 40px 10px;
+  }
+
+  .formulario-contato input,
+  .formulario-contato textarea {
+    width: 100%; /* Inputs ocupam toda a largura no mobile */
+    font-size: 1rem;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .contato-formulario h2,
+  .form-container h2 {
+    font-size: 1.6rem;
+  }
+
+  .formulario-contato label {
+    font-size: 1rem;
+  }
+
+  /* Evita que títulos e textos fiquem esmagados */
+  .contato-formulario p,
+  .contato-formulario span {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+
+  .contato-formulario .rede-social {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  iframe {
+    width: 100% !important;
+    height: 250px;
+    border-radius: 10px;
+  }
+  .contato-hero {
+    margin-top: 80px;
+    height: 800px; 
+  }
+}
  /* Formulario contato */
 
  .contato-formulario {
@@ -2177,6 +2311,47 @@ header {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Tablet (até 1024px) → 2 colunas */
+@media (max-width: 1024px) {
+  .serv-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile (até 768px) → 1 coluna */
+@media (max-width: 768px) {
+  .serv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .serv-title {
+    font-size: 1.6rem;
+  }
+
+  .serv-subtitle {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .serv-card {
+    padding: 1.5rem;
+  }
+
+  .serv-card-title {
+    font-size: 1.1rem;
+  }
+
+  .serv-card-text {
+    font-size: 1rem;
+  }
+
+  .serv-btn {
+    width: 100%; /* Botão ocupa toda a largura no mobile */
+    text-align: center;
+  }
+}
+
  
 
  /* #end region */
@@ -2297,21 +2472,65 @@ header {
 
 /* Responsividade */
 @media (max-width: 768px) {
+  .timeline::before {
+    left: 20px; 
+  }
+
   .timeline-item {
-    width: 100%;
-    padding: 20px 20px;
-    text-align: left !important;
-    margin-left: 0 !important;
+    width: 100%;     
+    padding-left: 50px; 
+    padding-right: 20px;
+    text-align: left;   
+    left: 0 !important; 
   }
 
   .timeline-item .timeline-icon {
-    left: -15px !important;
-    right: auto !important;
+    left: -15px;   
+    right: auto;
   }
 
-  .timeline::before {
-    left: 15px;
+  .timeline-content {
+    max-width: 100%;
+    display: block;
   }
 }
 
   /* #end region */
+
+.folha {
+  position: absolute;
+  width: 60px;
+  top: -150px; /* começa mais alto */
+  z-index: 5;
+  opacity: 0.9;
+  pointer-events: none;
+  transform-origin: center;
+  animation-name: cair;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  fill: #b7a68a;
+}
+
+.f1 { left: 5%; animation-duration: 12s; animation-delay: 0s; }
+.f2 { left: 5%; animation-duration: 14s; animation-delay: 1s; }
+.f3 { left: 95%; animation-duration: 11s; animation-delay: 0.5s; }
+.f4 { left: 90%; animation-duration: 13s; animation-delay: 1.2s; }
+.f5 { left: 0%; animation-duration: 16s; animation-delay: 1.8s; }
+.f6 { left: 95%; animation-duration: 15s; animation-delay: 1.5s; }
+
+@keyframes cair {
+  0% { transform: translate(0,0) rotate(0deg); opacity: 0.5; }
+  25% { transform: translate(20px,25vh) rotate(60deg); opacity: 0.45; }
+  50% { transform: translate(-15px,50vh) rotate(120deg); opacity: 0.4; }
+  75% { transform: translate(10px,75vh) rotate(180deg); opacity: 0.35; }
+  100% { transform: translate(-5px,100vh) rotate(240deg); opacity: 0.3; }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .folha { width: 50px; }
+}
+
+
+
+
