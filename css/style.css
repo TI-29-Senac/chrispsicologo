@@ -350,14 +350,14 @@ header {
   pointer-events: auto;
 }
 
-/* Mobile até 728px */
+
 @media (max-width: 728px) {
   .menu-navegacao {
-    display: none; /* esconde menu normal */
+    display: none;
   }
 
   #btn-more {
-    display: flex; /* mostra botão hamburguer */
+    display: flex; 
     align-items: center;
     gap: 0.5rem;
   }
@@ -367,19 +367,6 @@ header {
     padding: 0 1rem;
   }
 }
-
-/* Desktop a partir de 729px */
-@media (min-width: 729px) {
-  #btn-more {
-    display: none; /* esconde botão hamburguer */
-  }
-
-  .menu-navegacao {
-    display: flex; /* mostra menu normal */
-    gap: 2rem;
-  }
-}
-
 
 /* #endregion */
 
@@ -1711,7 +1698,7 @@ header {
     text-align: center;
     margin-top: 0.5rem;
   }
-
+  
   /* Mapa */
   .contato-mapa {
     position: relative;
@@ -2502,7 +2489,7 @@ header {
   width: 60px;
   top: -150px; /* começa mais alto */
   z-index: 5;
-  opacity: 0.9;
+  opacity: 1.5;
   pointer-events: none;
   transform-origin: center;
   animation-name: cair;
@@ -2519,11 +2506,11 @@ header {
 .f6 { left: 95%; animation-duration: 15s; animation-delay: 1.5s; }
 
 @keyframes cair {
-  0% { transform: translate(0,0) rotate(0deg); opacity: 0.5; }
-  25% { transform: translate(20px,25vh) rotate(60deg); opacity: 0.45; }
-  50% { transform: translate(-15px,50vh) rotate(120deg); opacity: 0.4; }
-  75% { transform: translate(10px,75vh) rotate(180deg); opacity: 0.35; }
-  100% { transform: translate(-5px,100vh) rotate(240deg); opacity: 0.3; }
+  0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  25% { transform: translate(20px,25vh) rotate(60deg); opacity: 1; }
+  50% { transform: translate(-15px,50vh) rotate(120deg); opacity: 1; }
+  75% { transform: translate(10px,75vh) rotate(180deg); opacity: 1; }
+  100% { transform: translate(-5px,100vh) rotate(240deg); opacity: 1; }
 }
 
 /* Responsivo */
