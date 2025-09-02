@@ -27,4 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-  
+
+
+
+  /* Página de profissionais */
+
+document.querySelectorAll('.abrir-avaliacoes').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const profId = btn.dataset.prof;
+    const modal = document.querySelector(`.modal-avaliacoes[data-prof="${profId}"]`);
+    
+    // Aqui você pode carregar do banco via fetch/ajax
+    // Ex: carregarComentarios(profId).then(...)
+
+    modal.style.display = 'block';
+  });
+});
+
+document.querySelectorAll('.fechar-modal').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.closest('.modal-avaliacoes').style.display = 'none';
+  });
+});

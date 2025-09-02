@@ -9,61 +9,439 @@
 <body>
     <div id="navbar"></div>
 
-      <main>
-        <section class="hero">
-          <div class="foia">
-            <img src="/img/icons/folha.svg" class="folha f1" alt="folhas caindo">
-        <img src="/img/icons/folha.svg" class="folha f2" alt="folhas caindo">
-        <img src="/img/icons/folha.svg" class="folha f3" alt="folhas caindo">
-        <img src="/img/icons/folha.svg" class="folha f4" alt="folhas caindo">
-        <img src="/img/icons/folha.svg" class="folha f5" alt="folhas caindo">
-        <img src="/img/icons/folha.svg" class="folha f6" alt="folhas caindo">
-            <img src="img/icons/plantas-bege.svg" class="planta lado-esquerdo" alt="folhas caindo">
-            <img src="img/icons/plantas-bege.svg" class="planta lado-direito" alt="folhas caindo">
-          </div>
-    
-          <div class="conteudo-hero-servicos">
-            <p>&#9888; Página em manutenção...</p>
-          </div>
+     <main>
+  <section class="hero-profissionais-aba">
+    <div class="foia">
+      
+      
+    </div>
 
- 
+    <div class="section-header">
+        <h2>NOSSOS PROFISSIONAIS</h2>     
+      </div>
+      <div class="profissionais">
+  <div class="container">
 
-
-
-    
-          <div class="barra-banner">
-            <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso
-              merece ser ouvido.</p>
-              
-        </section>
-        
-        <div class="fundo-profissionais">
-            <img src="/img/icons/planta-verde.svg" class="planta-esquerda" alt="" aria-hidden="true">
-          <img src="/img/icons/planta-verde.svg" class="planta-direita" alt="" aria-hidden="true">
-          <div class="mais-conteudo profissionais">
-            <h2 class="profissionais-titulo">Nossos Profissionais</h2>
-            <p class="descricao">
-              Nossa equipe é especializada em acolher quem enfrenta desafios emocionais. Juntos, podemos construir novos
-              caminhos para uma vida mais leve e equilibrada.
-            </p>
-    
-            <div class="carrossel">
-              <button class="seta esquerda" aria-label="Anterior" onclick="moverCarrossel(-1)">&#10094;</button>
-    
-              <div class="cards" id="cards-carrossel">
-              </div>
-    
-            <button class="seta direita" aria-label="Próximo" onclick="moverCarrossel(1)">&#10095;</button>
-    
-          </div>
-    
-          <div class="btn-ver-profissionais">
-            <a href="profissionais.html" class="botao-link">Ver nossos profissionais</a>
-          </div>
-          
-          </div>
+    <div class="profissional">
+      <div class="card-prof">
+        <h3>Chris Nunes</h3>
+        <div class="foto"> <img src="/img/profissionais/chris.png" alt=""></div>
+        <div class="especialidades">
+          Psicoterapia <br>
+          Ansiedade <br>
+          Luto
         </div>
-      </main>
+        <div class="valor">Valor da Consulta: R$ 260,00</div>
+        <a href="#" class="btn">Agenda Disponível</a>
+      </div>
+
+      <div class="detalhes">
+        <h4>Formação e Cursos</h4>
+        <p>
+          A psicóloga Veluma é especialista em Terapia Cognitivo Comportamental. Atende demandas como Terapia Individual e Terapia de Casal, luto,
+          ansiedade generalizada, adolescentes em diversos âmbitos (escolar, aconselhamento parental, orientação sexual e demais conflitos próprios da idade)
+          e de conflitos profissionais, amorosos e familiares.
+        </p>
+
+        <h4>Avaliações</h4>
+<div class="avaliacoes-prof">
+  <div class="resumo-avaliacoes" id="abrir-avaliacoes">
+    <div class="estrelas-media-container">
+      <div class="estrelas-media">
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+      </div>
+      <span class="nota-media">5.0</span>
+    </div>
+    <span class="total-avaliacoes">29 Avaliações</span>
+  </div>
+</div>
+
+<div class="modal-avaliacoes" id="modal-avaliacoes">
+  <div class="modal-conteudo">
+    <span class="fechar-modal" id="fechar-modal">&times;</span>
+    <h4>Comentários dos Clientes</h4>
+    <div class="comentarios">
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Ótima profissional, me ajudou muito a lidar com ansiedade.</p>
+      </div>
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Atendimento excelente, recomendo!</p>
+      </div>
+      <!-- Adicione mais comentários aqui -->
+    </div>
+  </div>
+</div>
+
+        <h4>Duração e Tipo de Atendimento</h4>
+<div class="tipos">
+  <div class="conteudo">
+    <ul>
+      <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
+      <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
+      <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+    </ul>
+  </div>
+</div>
+
+      </div>
+    </div>
+
+    <div class="profissional">
+      <div class="card-prof">
+        <h3>Helena Costa</h3>
+        <div class="foto"> <img src="/img/profissionais/helena.png" alt="Helena"></div>
+        <div class="especialidades">
+          Psicoterapia <br>
+          Ansiedade <br>
+          Luto
+        </div>
+        <div class="valor">Valor da Consulta: R$ 260,00</div>
+        <a href="#" class="btn">Agenda Disponível</a>
+      </div>
+
+      <div class="detalhes">
+        <h4>Formação e Cursos</h4>
+        <p>
+          A psicóloga Veluma é especialista em Terapia Cognitivo Comportamental. Atende demandas como Terapia Individual e Terapia de Casal, luto,
+          ansiedade generalizada, adolescentes em diversos âmbitos (escolar, aconselhamento parental, orientação sexual e demais conflitos próprios da idade)
+          e de conflitos profissionais, amorosos e familiares.
+        </p>
+
+        <h4>Avaliações</h4>
+<div class="avaliacoes-prof">
+  <div class="resumo-avaliacoes" id="abrir-avaliacoes">
+    <div class="estrelas-media-container">
+      <div class="estrelas-media">
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+      </div>
+      <span class="nota-media">5.0</span>
+    </div>
+    <span class="total-avaliacoes">29 Avaliações</span>
+  </div>
+</div>
+
+<div class="modal-avaliacoes" id="modal-avaliacoes">
+  <div class="modal-conteudo">
+    <span class="fechar-modal" id="fechar-modal">&times;</span>
+    <h4>Comentários dos Clientes</h4>
+    <div class="comentarios">
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Ótima profissional, me ajudou muito a lidar com ansiedade.</p>
+      </div>
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Atendimento excelente, recomendo!</p>
+      </div>
+      <!-- Adicione mais comentários aqui -->
+    </div>
+  </div>
+</div>
+
+        <h4>Duração e Tipo de Atendimento</h4>
+        <div class="tipos">
+  <div class="conteudo">
+    <ul>
+      <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
+      <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
+      <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+    </ul>
+  </div>
+</div>
+      </div>
+    </div>
+
+    <div class="profissional">
+      <div class="card-prof">
+        <h3>Carla Dias</h3>
+        <div class="foto"> <img src="/img/profissionais/Larissa.png" alt=""></div>
+        <div class="especialidades">
+          Psicoterapia <br>
+          Ansiedade <br>
+          Luto
+        </div>
+        <div class="valor">Valor da Consulta: R$ 260,00</div>
+        <a href="#" class="btn">Agenda Disponível</a>
+      </div>
+
+      <div class="detalhes">
+        <h4>Formação e Cursos</h4>
+        <p>
+          A psicóloga Veluma é especialista em Terapia Cognitivo Comportamental. Atende demandas como Terapia Individual e Terapia de Casal, luto,
+          ansiedade generalizada, adolescentes em diversos âmbitos (escolar, aconselhamento parental, orientação sexual e demais conflitos próprios da idade)
+          e de conflitos profissionais, amorosos e familiares.
+        </p>
+
+        <h4>Avaliações</h4>
+<div class="avaliacoes-prof">
+  <div class="resumo-avaliacoes" id="abrir-avaliacoes">
+    <div class="estrelas-media-container">
+      <div class="estrelas-media">
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+      </div>
+      <span class="nota-media">5.0</span>
+    </div>
+    <span class="total-avaliacoes">29 Avaliações</span>
+  </div>
+</div>
+
+<div class="modal-avaliacoes" id="modal-avaliacoes">
+  <div class="modal-conteudo">
+    <span class="fechar-modal" id="fechar-modal">&times;</span>
+    <h4>Comentários dos Clientes</h4>
+    <div class="comentarios">
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Ótima profissional, me ajudou muito a lidar com ansiedade.</p>
+      </div>
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Atendimento excelente, recomendo!</p>
+      </div>
+      <!-- Adicione mais comentários aqui -->
+    </div>
+  </div>
+</div>
+
+        <h4>Duração e Tipo de Atendimento</h4>
+        <div class="tipos">
+  <div class="conteudo">
+    <ul>
+      <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
+      <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
+      <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+    </ul>
+  </div>
+</div>
+      </div>
+    </div>
+
+    <div class="profissional">
+      <div class="card-prof">
+        <h3>Luana Duarte</h3>
+        <div class="foto"> <img src="/img/profissionais/luana.png" alt=""></div>
+        <div class="especialidades">
+          Psicologia Clínica <br>
+          Existencial <br>
+          Gestálica
+        </div>
+        <div class="valor">Valor da Consulta: R$ 210,00</div>
+        <a href="#" class="btn">Agenda Disponível</a>
+      </div>
+
+      <div class="detalhes">
+        <h4>Formação e Cursos</h4>
+        <p>
+          
+          Formação em Psicologia Clínica com ênfase nas abordagens
+  Existencial e Gestáltica. Realizou cursos voltados para o desenvolvimento humano, relacionamentos
+  interpessoais e manejo de questões emocionais. Atua em demandas como autoconhecimento,
+  dificuldades em relacionamentos, ansiedade, conflitos familiares e profissionais, além de
+  oferecer acompanhamento terapêutico em momentos de crise e transição de vida.
+        </p>
+
+        <h4>Avaliações</h4>
+<div class="avaliacoes-prof">
+  <div class="resumo-avaliacoes" id="abrir-avaliacoes">
+    <div class="estrelas-media-container">
+      <div class="estrelas-media">
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+      </div>
+      <span class="nota-media">5.0</span>
+    </div>
+    <span class="total-avaliacoes">29 Avaliações</span>
+  </div>
+</div>
+
+<div class="modal-avaliacoes" id="modal-avaliacoes">
+  <div class="modal-conteudo">
+    <span class="fechar-modal" id="fechar-modal">&times;</span>
+    <h4>Comentários dos Clientes</h4>
+    <div class="comentarios">
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Ótima profissional, me ajudou muito a lidar com ansiedade.</p>
+      </div>
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Atendimento excelente, recomendo!</p>
+      </div>
+      <!-- Adicione mais comentários aqui -->
+    </div>
+  </div>
+</div>
+
+        <h4>Duração e Tipo de Atendimento</h4>
+       <div class="tipos">
+  <div class="conteudo">
+    <ul>
+      <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
+      <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
+      <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+    </ul>
+  </div>
+</div>
+      </div>
+    </div>
+
+    <div class="profissional">
+      <div class="card-prof">
+        <h3>Yan Nakamura</h3>
+        <div class="foto"> <img src="/img/profissionais/pedro.png" alt=""></div>
+        <div class="especialidades">
+          Psicoterapia <br>
+          Ansiedade <br>
+          Luto
+        </div>
+        <div class="valor">Valor da Consulta: R$ 260,00</div>
+        <a href="#" class="btn">Agenda Disponível</a>
+      </div>
+
+      <div class="detalhes">
+        <h4>Formação e Cursos</h4>
+        <p>
+          A psicóloga Veluma é especialista em Terapia Cognitivo Comportamental. Atende demandas como Terapia Individual e Terapia de Casal, luto,
+          ansiedade generalizada, adolescentes em diversos âmbitos (escolar, aconselhamento parental, orientação sexual e demais conflitos próprios da idade)
+          e de conflitos profissionais, amorosos e familiares.
+        </p>
+
+        <h4>Avaliações</h4>
+<div class="avaliacoes-prof">
+  <div class="resumo-avaliacoes" id="abrir-avaliacoes">
+    <div class="estrelas-media-container">
+      <div class="estrelas-media">
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+        <span class="estrela preenchida">★</span>
+      </div>
+      <span class="nota-media">5.0</span>
+    </div>
+    <span class="total-avaliacoes">29 Avaliações</span>
+  </div>
+</div>
+
+<div class="modal-avaliacoes" id="modal-avaliacoes">
+  <div class="modal-conteudo">
+    <span class="fechar-modal" id="fechar-modal">&times;</span>
+    <h4>Comentários dos Clientes</h4>
+    <div class="comentarios">
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Ótima profissional, me ajudou muito a lidar com ansiedade.</p>
+      </div>
+      <div class="comentario">
+        <div class="comentario-estrelas">
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+          <span class="estrela preenchida">★</span>
+        </div>
+        <p>Atendimento excelente, recomendo!</p>
+      </div>
+      <!-- Adicione mais comentários aqui -->
+    </div>
+  </div>
+</div>
+
+        <h4>Duração e Tipo de Atendimento</h4>
+        <div class="tipos">
+  <div class="conteudo">
+    <ul>
+      <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
+      <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
+      <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+    </ul>
+  </div>
+</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+  </section>
+  <div class="barra-banner-profissionais">
+    <p>
+      Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar.
+      E isso merece ser ouvido.
+    </p>
+  </div>
+</main>
+
 
 
       <footer id="footer"></footer>
