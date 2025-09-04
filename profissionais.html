@@ -11,98 +11,69 @@
 
      <main>
   <section class="hero-profissionais-aba">
-    <div class="foia">
-      
-      
-    </div>
+    <div class="foia"></div>
 
-    <div class="section-header">
-        <h2>NOSSOS PROFISSIONAIS</h2>     
-      </div>
       <div class="profissionais">
-  <div class="container">
+  <div class="container" id="container-profissionais"> </div>
+    <div class="section-header">
+      <h2>NOSSOS PROFISSIONAIS</h2> 
+    </div>
 
     <div class="profissional">
-      <div class="card-prof">
-        <h3>Chris Nunes</h3>
-        <div class="foto"> <img src="/img/profissionais/chris.png" alt=""></div>
-        <div class="especialidades">
-          Psicoterapia <br>
-          Ansiedade <br>
-          Luto
-        </div>
-        <div class="valor">Valor da Consulta: R$ 260,00</div>
-        <a href="#" class="btn">Agenda Disponível</a>
-      </div>
-
-      <div class="detalhes">
-        <h4>Formação e Cursos</h4>
-        <p>
-          A psicóloga Veluma é especialista em Terapia Cognitivo Comportamental. Atende demandas como Terapia Individual e Terapia de Casal, luto,
-          ansiedade generalizada, adolescentes em diversos âmbitos (escolar, aconselhamento parental, orientação sexual e demais conflitos próprios da idade)
-          e de conflitos profissionais, amorosos e familiares.
-        </p>
-
-        <h4>Avaliações</h4>
-<div class="avaliacoes-prof">
-  <div class="resumo-avaliacoes" id="abrir-avaliacoes">
-    <div class="estrelas-media-container">
-      <div class="estrelas-media">
-        <span class="estrela preenchida">★</span>
-        <span class="estrela preenchida">★</span>
-        <span class="estrela preenchida">★</span>
-        <span class="estrela preenchida">★</span>
-        <span class="estrela preenchida">★</span>
-      </div>
-      <span class="nota-media">5.0</span>
+  <div class="card-prof">
+    <h3>Chris Nunes</h3>
+    <div class="foto"> 
+      <img src="/img/profissionais/chris.png" alt="">
     </div>
-    <span class="total-avaliacoes">29 Avaliações</span>
-  </div>
-</div>
 
-<div class="modal-avaliacoes" id="modal-avaliacoes">
-  <div class="modal-conteudo">
-    <span class="fechar-modal" id="fechar-modal">&times;</span>
-    <h4>Comentários dos Clientes</h4>
-    <div class="comentarios">
-      <div class="comentario">
-        <div class="comentario-estrelas">
+    <!-- Avaliações vão logo abaixo da foto -->
+    <div class="avaliacoes-prof" id="abrir-avaliacoes">
+      <div class="estrelas-media-container">
+             <span class="total-avaliacoes">29 Avaliações</span>
+        <div class="estrelas-media">
           <span class="estrela preenchida">★</span>
           <span class="estrela preenchida">★</span>
           <span class="estrela preenchida">★</span>
           <span class="estrela preenchida">★</span>
           <span class="estrela preenchida">★</span>
         </div>
-        <p>Ótima profissional, me ajudou muito a lidar com ansiedade.</p>
+        <span class="nota-media">5.0</span>
       </div>
-      <div class="comentario">
-        <div class="comentario-estrelas">
-          <span class="estrela preenchida">★</span>
-          <span class="estrela preenchida">★</span>
-          <span class="estrela preenchida">★</span>
-          <span class="estrela preenchida">★</span>
-          <span class="estrela preenchida">★</span>
-        </div>
-        <p>Atendimento excelente, recomendo!</p>
-      </div>
-      <!-- Adicione mais comentários aqui -->
     </div>
-  </div>
-</div>
 
-        <h4>Duração e Tipo de Atendimento</h4>
-<div class="tipos">
-  <div class="conteudo">
-    <ul>
-      <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
-      <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
-      <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+    <div class="valor">Valor da Consulta: R$ 260,00</div>
+    <a href="#" class="btn">Agenda Disponível</a>
+  </div>
+
+  <div class="detalhes">
+    <!-- Especialidades viram lista -->
+    <h4>Especialidades</h4>
+    <ul class="especialidades-lista">
+      <li>Psicoterapia</li>
+      <li>Ansiedade</li>
+      <li>Luto</li>
     </ul>
+
+    <h4>Formação e Cursos</h4>
+    <p>
+      A psicóloga Veluma é especialista em Terapia Cognitivo Comportamental. Atende demandas como Terapia Individual e Terapia de Casal, luto,
+      ansiedade generalizada, adolescentes em diversos âmbitos (escolar, aconselhamento parental, orientação sexual e demais conflitos próprios da idade)
+      e de conflitos profissionais, amorosos e familiares.
+    </p>
+
+    <h4>Duração e Tipo de Atendimento</h4>
+    <div class="tipos">
+      <div class="conteudo">
+        <ul>
+          <li><img src="/img/icons/relogio.svg" alt="" class="icon-prof"> Sessão com duração de 60min</li>   
+          <li><img src="/img/icons/old-man.svg" alt="" class="icon-prof"> Idosos</li>
+          <li><img src="/img/icons/aneis.svg" alt="" class="icon-prof"> Casais</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
-      </div>
-    </div>
 
     <div class="profissional">
       <div class="card-prof">
@@ -445,7 +416,6 @@
 
 
       <footer id="footer"></footer>
-      
  <script src="js/header.js" defer></script>
   <script src="js/cards.js" defer></script>
   <script src="js/cerebro.js" defer></script>

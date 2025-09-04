@@ -743,7 +743,7 @@ header {
   scroll-snap-type: x mandatory;
   padding-left: calc((800px - 300px) / 2);
   padding-right: calc((800px - 300px) / 2);
-  padding-top: 20px;
+  padding-top: 60px;
   padding-bottom: 20px;
   scrollbar-width: none;
 }
@@ -1530,7 +1530,7 @@ header {
   border-radius: 5px;
 }
 
-.contatos, .formulario {
+.contatos{
   padding: 20px;
 }
 
@@ -1551,7 +1551,8 @@ header {
   font-family: 'questrial', sans-serif;
   color: #5D6D68;
   font-size: 1.7rem;
-  text-align: lwft;
+  text-align: left;
+  margin-top: 7%;
 }
 
 .endereco p{
@@ -1560,12 +1561,14 @@ header {
   color: #5D6D68;
   font-size: 1.2rem;
   text-align: left;
+  line-height: 1.6;
+
 }
 
 .contato-grid {
   display: grid;
   grid-template-columns: 1fr 1fr; /* 2 colunas lado a lado */
-  gap: 40px;
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -1603,9 +1606,10 @@ header {
   border-radius: 5px;
   margin-left: -10%;
   margin-top: 8%;
+  border: 1px solid #5D6D68;
 }
 .mapa h3{
-  margin-top: 70%;
+  margin-top: 32%;
   margin-left: -5%;
 }
 
@@ -1665,6 +1669,7 @@ header {
 }
 
 .formulario button {
+  display: block; 
   padding: 10px 20px;
   background-color: #5D6D68;
   color: #fff;
@@ -2627,6 +2632,24 @@ background-color: transparent;
   width: 20px;
   height: auto;
   flex-shrink: 0;
+}
+
+
+.especialidades-lista {
+  list-style: disc;
+  margin: 0 0 20px 20px; 
+  padding: 0;
+  color: #5D6D68;
+  font-size: 1rem;
+  font-family: questrial, sans-serif;
+}
+.especialidades-lista li {
+  margin-bottom: 6px;
+}
+
+.card-prof .avaliacoes-prof {
+  justify-content: center;
+  margin: 15px 0;
 }
 
 
