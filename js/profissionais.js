@@ -38,20 +38,19 @@ document.addEventListener("DOMContentLoaded", () => {
   {
     nome: "Chris Nunes",
     foto: "/img/profissionais/chris.png",
-    valor: "R$ 260,00",
+    valor: "260,00",
     especialidades: ["Psicoterapia Individual",
-       "Terapia de Casal",
         "Relacionamentos",
          "Psicologia do Envelhecimento",
           "Ansiedade e Depressão em Adultos",
            "Luto e Perdas",
             "Conflitos Profissionais e Familiares",
-             "Estresse e Burnout",
               "Comunicação e Mediação de Conflitos"],
     duracao: "Sessão com duração de 60min",
     tipos: [
       { icone: "/img/icons/old-man.svg", texto: "Idosos" },
-      { icone: "/img/icons/aneis.svg", texto: "Casais" }
+      { icone: "/img/icons/casais.svg", texto: "Casais" },
+      { icone: "/img/icons/adulto.svg", texto: "Adultos" }
     ],
     avaliacoes: {
       nota: 5.0,
@@ -65,21 +64,19 @@ document.addEventListener("DOMContentLoaded", () => {
   {
     nome: "Helena Costa",
     foto: "/img/profissionais/helena.png",
-    valor: "R$ 280,00",
+    valor: "280,00",
     especialidades: ["Psicoterapia para Mulheres",
-"Saúde Emocional Feminina",
 "Ansiedade, Depressão e Estresse em Mulheres",
 "Autoestima e Autoconhecimento",
 "Relacionamentos Afetivos e Abusivos",
 "Luto, Perdas e Ciclos de Vida",
-"Sexualidade e Identidade Feminina",
 "Psicologia da Maternidade e Pós-Parto",
 "Apoio Psicológico na Gravidez e Planejamento Familiar"],
     duracao: "Sessão com duração de 50min",
     tipos: [
-      { icone: "/img/icons/aneis.svg", texto: "Mulheres"},
-      { icone: "/img/icons/relogio.svg", texto: "Abordagens Femininas" },
-      { icone: "/img/icons/relogio.svg", texto: "Maternidade" }
+      { icone: "/img/icons/mulheres.svg", texto: "Mulheres"},
+      { icone: "/img/icons/publico_feminino.svg", texto: "Abordagens Femininas" },
+      { icone: "/img/icons/maternidade.svg", texto: "Maternidade" }
     ],
     avaliacoes: {
       nota: 5.0,
@@ -93,20 +90,19 @@ document.addEventListener("DOMContentLoaded", () => {
   {
     nome: "Carla Dias",
     foto: "/img/profissionais/carla.png",
-    valor: "R$ 240,00",
+    valor: "240,00",
     especialidades: ["Psicoterapia Individual",
 "Terapia de Casal e Família",
 "Ansiedade e Depressão em Adultos",
 "Psicologia do Envelhecimento",
 "Estresse Ocupacional e Burnout",
 "Luto e Processos de Perda",
-"Conflitos Amorosos e Familiares",
 "Desenvolvimento de Habilidades Sociais"],
     duracao: "Sessão com duração de 45min",
     tipos: [
-      { icone: "/img/icons/old-man.svg", texto: "Adultos"},
+      { icone: "/img/icons/adulto.svg", texto: "Adultos"},
       { icone: "/img/icons/old-man.svg", texto: "Idosos"},
-      { icone: "/img/icons/old-man.svg", texto: "Casais"}
+      { icone: "/img/icons/casais.svg", texto: "Casais"}
     ],
     avaliacoes: {
       nota: 5.0,
@@ -120,19 +116,18 @@ document.addEventListener("DOMContentLoaded", () => {
   {
     nome: "Luana Duarte",
     foto: "/img/profissionais/luana.png",
-    valor: "R$ 300,00",
+    valor: "300,00",
     especialidades: ["Psicoterapia Infantil",
 "Orientação Parental",
 "Transtornos de Aprendizagem e Desenvolvimento",
 "Ansiedade e Autoestima em Crianças e Adolescentes",
 "Conflitos Escolares e Bullying",
-"Adolescência e Identidade",
 "Orientação em Relacionamentos e Sexualidade na Adolescência",
 "Luto e Adaptação a Mudanças"],
     duracao: "Sessão com duração de 55min",
     tipos: [
-      { icone: "/img/icons/relogio.svg", texto: "Crianças"},
-      { icone: "/img/icons/aneis.svg", texto: "Adolescentes"}
+      { icone: "/img/icons/crianca.svg", texto: "Crianças"},
+      { icone: "/img/icons/adolescente.svg", texto: "Adolescentes"}
     ],
     avaliacoes: {
       nota: 5.0,
@@ -146,20 +141,19 @@ document.addEventListener("DOMContentLoaded", () => {
   {
     nome: "Yan Nakamura",
     foto: "/img/profissionais/yan.png",
-    valor: "R$ 270,00",
+    valor: "270,00",
     especialidades: ["Psicoterapia para Jovens Adultos e Adolescentes",
 "Orientação Vocacional e Profissional",
 "Ansiedade, Autoestima e Identidade",
-"Conflitos Escolares e Acadêmicos",
 "Relacionamentos Interpessoais",
 "Luto e Mudanças de Ciclo de Vida",
 "Sexualidade e Questões de Gênero",
 "Psicoterapia Familiar e Mediação de Conflitos"],
     duracao: "Sessão com duração de 60min",
     tipos: [
-      { icone: "/img/icons/old-man.svg", texto: "Jovens Adultos" },
-      { icone: "/img/icons/relogio.svg", texto: "Adolescentes"},
-      { icone: "/img/icons/relogio.svg", texto: "Família"}
+      { icone: "/img/icons/adulto.svg", texto: "Jovens Adultos" },
+      { icone: "/img/icons/adolescente.svg", texto: "Adolescentes"},
+      { icone: "/img/icons/familia.svg", texto: "Família"}
     ],
     avaliacoes: {
       nota: 5.0,
@@ -172,8 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 ];
 
-
-  // Renderizar cada profissional
   profissionais.forEach((prof, index) => {
     const card = document.createElement("div");
     card.classList.add("profissional");
@@ -192,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
 
-        <div class="valor">Valor da Consulta: ${prof.valor}</div>
+        <div class="valor">Valor da Consulta: R$${prof.valor}</div> 
         <a href="#" class="btn">Agenda Disponível</a>
       </div>
 
@@ -202,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ${prof.especialidades.map(e => `<li>${e}</li>`).join("")}
         </ul>
 
-        <h4>Duração e Tipo de Atendimento</h4>
+        <h4 class="espaco-prof">Duração e Tipo de Atendimento</h4>
         <div class="tipos">
           <ul>
             <li><img src="/img/icons/relogio.svg" class="icon-prof"> ${prof.duracao}</li>

@@ -667,7 +667,7 @@ header {
   color: #5D6D68;
   text-align: center;
   font-family: 'Questrial', sans-serif;
-  font-size: 1.4rem;
+  font-size: 2rem;
   padding: 50px 20px 5px 5px;
 }
 
@@ -759,7 +759,7 @@ header {
   color: #5D6D68;
   text-align: center;
   font-family: 'Questrial', sans-serif;
-  font-size: 1.8rem;
+  font-size: 2rem;
   padding: 10px 20px 5px 5px;
 }
 
@@ -775,7 +775,7 @@ header {
   max-width: 600px;
   margin: 0 auto 50px;
   color: #5D6D68;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   line-height: 1.4;
 }
 
@@ -949,7 +949,7 @@ header {
 
 .quem-somos-titulo {
   text-align: center;
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: #5D6D68;
   margin-bottom: 20px;
   font-family: 'questrial' sans-serif;
@@ -959,7 +959,7 @@ header {
   text-align: center;
   max-width: 850px;
   margin: 0 auto 40px;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: #4a5b5c;
   line-height: 1.8;
   font-family: 'questrial' sans-serif;
@@ -1802,7 +1802,7 @@ header {
   }
 
   .titulo-quem-somos {
-    font-size: 1.6rem;
+    font-size: 2rem;
   }
 
   .descricao-quem-somos {
@@ -2162,6 +2162,7 @@ header {
   padding: 60px 20px;
   background: #d6e3d6;
   text-align: center;
+  position: relative;
 }
 
 .timeline-planta {
@@ -2171,12 +2172,12 @@ header {
 }
 
 .timeline-planta.lado-esquerdo {
-  top: 111%;
+  top: 7%;
   left: 1%;
 }
 
 .timeline-planta.lado-direito {
-  top: 111%;
+  top: 7%;
   right: 1%;
   transform: scaleX(-1);
 }
@@ -2289,28 +2290,34 @@ header {
 
 
 /* Responsividade */
-@media (max-width: 768px) {
-  .timeline::before {
-    left: 20px; 
-  }
-
+@media (min-width: 768px) {
   .timeline-item {
-    width: 100%;     
-    padding-left: 50px; 
-    padding-right: 20px;
-    text-align: left;   
-    left: 0 !important; 
+    width: 50%;
+    padding: 20px 40px;
   }
 
-  .timeline-item .timeline-icon {
-    left: -15px;   
-    right: auto;
+  .timeline-item:nth-child(odd) {
+    left: 0;
+    text-align: right;
+  }
+
+  .timeline-item:nth-child(even) {
+    left: 50%;
+    text-align: left;
+  }
+
+  .timeline-icon {
+    top: 20px;
+    width: 30px;
+    height: 30px;
   }
 
   .timeline-content {
-    max-width: 100%;
-    display: block;
+    display: inline-block;
+    max-width: 90%;
+    margin-top: 0;
   }
+
 }
 
   /* #end region */
@@ -2383,17 +2390,26 @@ header {
 /* Profissionais */ 
 
 .profissionais {
-  padding: 60px 20px;
+  padding: 20px 20px;
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.profissionais .profissional {
+  flex: 1 1 300px;
+  box-sizing: border-box;
+  position: relative; 
 }
 
 .profissionais .container {
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 40px; 
+  flex-direction: column;
 }
-
 
 .section-header {
   margin-top: 3rem;
@@ -2413,7 +2429,6 @@ header {
 .section-header p {
   max-width: 700px;
   margin: 0 auto;
-  font-size: 15px;
   color: #5D6D68;
   line-height: 1.6;
   font-family: questrial, sans-serif;
@@ -2422,8 +2437,9 @@ header {
 .profissional {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 20px;
-  align-items: start;
+  gap: 15%;
+  align-items: center;
+  margin-left: 10%;
 }
 
 .card-prof {
@@ -2435,7 +2451,7 @@ header {
 .card-prof h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  font-size: 22px;
+  font-size: 1.5rem;
   font-family: questrial, sans-serif;
 }
 
@@ -2457,14 +2473,16 @@ header {
 
 .especialidades {
   margin: 10px 0;
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: #5D6D68;
 }
 
 .valor {
-  margin: 15px 0;
-  font-size: 1rem;
+  margin: 20px 0px;
+  font-size: 1.3rem;
   color: #5D6D68;
+  max-width: 400px;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -2485,27 +2503,31 @@ background-color: transparent;
 }
 
 .detalhes {
-
   text-align: left; 
   color: #5D6D68;
   font-family: questrial, sans-serif;
-  line-height: 1.6;
+  line-height: 1.2;
 }
 
 .detalhes h4 {
-  margin-top: 1rem;
+  margin-top: 0rem;
   margin-bottom: 8px;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: #5D6D68;
   font-family: questrial, sans-serif;
 }
 
 .detalhes p {
   margin-bottom: 20px;
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: 1.3rem !important;
+  line-height: 1.0;
   color: #5D6D68;
   font-family: questrial, sans-serif;
+}
+
+.espaco-prof {
+  margin-top: 18% !important;
+  margin-bottom: 2% !important;
 }
 
 /* Avaliações resumidas */
@@ -2513,7 +2535,7 @@ background-color: transparent;
 .avaliacoes-prof {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
   cursor: pointer;
 }
 
@@ -2521,25 +2543,23 @@ background-color: transparent;
   display: flex;
   flex-direction: column; 
   align-items: center;   
-  gap: 6px;               
+  gap: 2px;               
 }
 
-.estrelas-media .estrela {
-  font-size: 1.2rem;
-  color: #ccc;
+.estrelas-media {
+  font-size: 1.3rem;
+  color: #5D6D68;
 }
 
-.estrelas-media .estrela.preenchida {
-  color: #f5c518;
-}
 
 .nota-media {
+  font-size: 1.2rem;
   font-weight: bold;
   color: #5D6D68;
 }
 
 .total-avaliacoes {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   font-weight: 500;
   color: #5D6D68;
 }
@@ -2563,11 +2583,12 @@ background-color: transparent;
   margin: 50px auto;
   padding: 20px;
   border-radius: 12px;
-  max-width: 500px;
+  height: 500px;
+  overflow-y: scroll;
   position: relative;
   color: #5D6D68;
   font-family: 'questrial',sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
 .fechar-modal {
@@ -2592,24 +2613,20 @@ background-color: transparent;
   margin-right: 2px;
 }
 
-.comentario-estrelas .estrela.preenchida {
-  color: #f5c518;
-}
-
 .comentario p {
   margin: 4px 0 0 0;
   color: #5D6D68;
-  font-size: 16px;
+  font-size: 1.3rem;
   font-family: questrial, sans-serif;
 }
 
 
 .tipos {
   display: flex;
-  align-items: flex-start; /* alinha ícone e bloco de texto pelo topo */
+  align-items: flex-start; 
   gap: 10px;
   color: #5D6D68;
-  font-size: 1rem;
+  font-size: 1.3rem;
 }
 
 .tipos .conteudo p {
@@ -2627,8 +2644,9 @@ background-color: transparent;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
+
 
 .icon-prof {
   width: 20px;
@@ -2642,11 +2660,12 @@ background-color: transparent;
   margin: 0 0 20px 20px; 
   padding: 0;
   color: #5D6D68;
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-family: questrial, sans-serif;
 }
+
 .especialidades-lista li {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .card-prof .avaliacoes-prof {
@@ -2704,7 +2723,7 @@ background-color: transparent;
 .hero-profissionais-aba {
   width: 100%;
   margin-top: 157px;
-  height: 3000px;
+  height: 3100px;
   background-image: url(../img/banners/banner3.png);
   background-repeat: no-repeat;
   background-size: cover;
@@ -2807,7 +2826,29 @@ background-color: transparent;
   transform: scaleX(-1);
 }
 
+body::-webkit-scrollbar {
+  width: 16px; 
+  height: 12px;
+  box-shadow: none;
+}
 
+body::-webkit-scrollbar-track {
+  background: #f1e3cd; /* Cor do fundo da barra de rolagem */
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #5D6D68; /* Cor da "pegada" */
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+  box-shadow: none; /* Espaçamento interno da thumb */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #41524c;
+  box-shadow: none; 
+}
 
 
 
