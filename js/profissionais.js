@@ -30,110 +30,222 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  /* Página de profissionais */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("container-profissionais");
 
-  // Array de profissionais — no futuro, você vai buscar via fetch/axios do banco
-  const profissionais = [
-    {
-      id: 1,
-      nome: "Chris Nunes",
-      profissao: "Psicólogo",
-      especialidade: "Formado em Psicologia PCD e Inclusão Social",
-      foto: "img/profissionais/chris.png",
-      valor: "R$ 260,00",
-      avaliacoes: [
-        { estrelas: 5, comentario: "Ótima profissional, me ajudou muito a lidar com ansiedade." },
-        { estrelas: 5, comentario: "Atendimento excelente, recomendo!" }
-      ],
-      duracao: "60min",
-      tipo: ["Idosos", "Casais"]
-    },
-    {
-      id: 2,
-      nome: "Yan Nakamura",
-      profissao: "Psicólogo",
-      especialidade: "Formado em Psicoterapia Infantil e Adolescente",
-      foto: "img/profissionais/pedro.png",
-      valor: "R$ 260,00",
-      avaliacoes: [
-        { estrelas: 4, comentario: "Muito paciente." },
-        { estrelas: 5, comentario: "Excelente profissional." }
-      ],
-      duracao: "60min",
-      tipo: ["Adolescentes", "Casais"]
+ const profissionais = [
+  {
+    nome: "Chris Nunes",
+    foto: "/img/profissionais/chris.png",
+    valor: "R$ 260,00",
+    especialidades: ["Psicoterapia Individual",
+       "Terapia de Casal",
+        "Relacionamentos",
+         "Psicologia do Envelhecimento",
+          "Ansiedade e Depressão em Adultos",
+           "Luto e Perdas",
+            "Conflitos Profissionais e Familiares",
+             "Estresse e Burnout",
+              "Comunicação e Mediação de Conflitos"],
+    duracao: "Sessão com duração de 60min",
+    tipos: [
+      { icone: "/img/icons/old-man.svg", texto: "Idosos" },
+      { icone: "/img/icons/aneis.svg", texto: "Casais" }
+    ],
+    avaliacoes: {
+      nota: 5.0,
+      total: 29,
+      comentarios: [
+        "Ótima profissional, me ajudou muito a lidar com ansiedade.",
+        "Atendimento excelente, recomendo!"
+      ]
     }
-    // Adicione outros profissionais aqui
-  ];
+  },
+  {
+    nome: "Helena Costa",
+    foto: "/img/profissionais/helena.png",
+    valor: "R$ 280,00",
+    especialidades: ["Psicoterapia para Mulheres",
+"Saúde Emocional Feminina",
+"Ansiedade, Depressão e Estresse em Mulheres",
+"Autoestima e Autoconhecimento",
+"Relacionamentos Afetivos e Abusivos",
+"Luto, Perdas e Ciclos de Vida",
+"Sexualidade e Identidade Feminina",
+"Psicologia da Maternidade e Pós-Parto",
+"Apoio Psicológico na Gravidez e Planejamento Familiar"],
+    duracao: "Sessão com duração de 50min",
+    tipos: [
+      { icone: "/img/icons/aneis.svg", texto: "Mulheres"},
+      { icone: "/img/icons/relogio.svg", texto: "Abordagens Femininas" },
+      { icone: "/img/icons/relogio.svg", texto: "Maternidade" }
+    ],
+    avaliacoes: {
+      nota: 5.0,
+      total: 15,
+      comentarios: [
+        "Profissional excelente, muito atenciosa!",
+        "Gostei bastante das sessões, recomendo."
+      ]
+    }
+  },
+  {
+    nome: "Carla Dias",
+    foto: "/img/profissionais/carla.png",
+    valor: "R$ 240,00",
+    especialidades: ["Psicoterapia Individual",
+"Terapia de Casal e Família",
+"Ansiedade e Depressão em Adultos",
+"Psicologia do Envelhecimento",
+"Estresse Ocupacional e Burnout",
+"Luto e Processos de Perda",
+"Conflitos Amorosos e Familiares",
+"Desenvolvimento de Habilidades Sociais"],
+    duracao: "Sessão com duração de 45min",
+    tipos: [
+      { icone: "/img/icons/old-man.svg", texto: "Adultos"},
+      { icone: "/img/icons/old-man.svg", texto: "Idosos"},
+      { icone: "/img/icons/old-man.svg", texto: "Casais"}
+    ],
+    avaliacoes: {
+      nota: 5.0,
+      total: 10,
+      comentarios: [
+        "Minha filha melhorou muito depois das sessões.",
+        "Profissional dedicada, ótimo acompanhamento."
+      ]
+    }
+  },
+  {
+    nome: "Luana Duarte",
+    foto: "/img/profissionais/luana.png",
+    valor: "R$ 300,00",
+    especialidades: ["Psicoterapia Infantil",
+"Orientação Parental",
+"Transtornos de Aprendizagem e Desenvolvimento",
+"Ansiedade e Autoestima em Crianças e Adolescentes",
+"Conflitos Escolares e Bullying",
+"Adolescência e Identidade",
+"Orientação em Relacionamentos e Sexualidade na Adolescência",
+"Luto e Adaptação a Mudanças"],
+    duracao: "Sessão com duração de 55min",
+    tipos: [
+      { icone: "/img/icons/relogio.svg", texto: "Crianças"},
+      { icone: "/img/icons/aneis.svg", texto: "Adolescentes"}
+    ],
+    avaliacoes: {
+      nota: 5.0,
+      total: 21,
+      comentarios: [
+        "Uma excelente psicóloga, mudou minha vida.",
+        "Muito empática e atenciosa."
+      ]
+    }
+  },
+  {
+    nome: "Yan Nakamura",
+    foto: "/img/profissionais/yan.png",
+    valor: "R$ 270,00",
+    especialidades: ["Psicoterapia para Jovens Adultos e Adolescentes",
+"Orientação Vocacional e Profissional",
+"Ansiedade, Autoestima e Identidade",
+"Conflitos Escolares e Acadêmicos",
+"Relacionamentos Interpessoais",
+"Luto e Mudanças de Ciclo de Vida",
+"Sexualidade e Questões de Gênero",
+"Psicoterapia Familiar e Mediação de Conflitos"],
+    duracao: "Sessão com duração de 60min",
+    tipos: [
+      { icone: "/img/icons/old-man.svg", texto: "Jovens Adultos" },
+      { icone: "/img/icons/relogio.svg", texto: "Adolescentes"},
+      { icone: "/img/icons/relogio.svg", texto: "Família"}
+    ],
+    avaliacoes: {
+      nota: 5.0,
+      total: 18,
+      comentarios: [
+        "Me ajudou muito a lidar com o estresse do trabalho.",
+        "Sessões muito produtivas e diretas."
+      ]
+    }
+  }
+];
 
-  const container = document.getElementById('container-profissionais');
 
-  profissionais.forEach(prof => {
-    const card = document.createElement('div');
-    card.classList.add('profissional');
+  // Renderizar cada profissional
+  profissionais.forEach((prof, index) => {
+    const card = document.createElement("div");
+    card.classList.add("profissional");
     card.innerHTML = `
       <div class="card-prof">
-        <div class="foto"><img src="${prof.foto}" alt="${prof.nome}"></div>
         <h3>${prof.nome}</h3>
-        <div class="especialidades">${prof.profissao} - ${prof.especialidade}</div>
+        <div class="foto"><img src="${prof.foto}" alt="${prof.nome}"></div>
+
+        <div class="avaliacoes-prof" data-index="${index}">
+          <div class="estrelas-media-container">
+            <span class="total-avaliacoes">${prof.avaliacoes.total} Avaliações</span>
+            <div class="estrelas-media">
+              ${"★".repeat(Math.round(prof.avaliacoes.nota))}
+            </div>
+            <span class="nota-media">${prof.avaliacoes.nota.toFixed(1)}</span>
+          </div>
+        </div>
+
         <div class="valor">Valor da Consulta: ${prof.valor}</div>
-        <a href="#" class="btn abrir-avaliacoes" data-prof="${prof.id}">Ver Avaliações</a>
+        <a href="#" class="btn">Agenda Disponível</a>
       </div>
+
       <div class="detalhes">
+        <h4>Especialidades</h4>
+        <ul class="especialidades-lista">
+          ${prof.especialidades.map(e => `<li>${e}</li>`).join("")}
+        </ul>
+
         <h4>Duração e Tipo de Atendimento</h4>
         <div class="tipos">
           <ul>
-            <li><img src="img/icons/relogio.svg" class="icon-prof"> Sessão com duração de ${prof.duracao}</li>
-            ${prof.tipo.map(t => `<li><img src="img/icons/aneis.svg" class="icon-prof"> ${t}</li>`).join('')}
+            <li><img src="/img/icons/relogio.svg" class="icon-prof"> ${prof.duracao}</li>
+            ${prof.tipos.map(t => `
+              <li><img src="${t.icone}" class="icon-prof"> ${t.texto}</li>
+            `).join("")}
           </ul>
-        </div>
-      </div>
-      <div class="modal-avaliacoes" data-prof="${prof.id}">
-        <div class="modal-conteudo">
-          <span class="fechar-modal" data-prof="${prof.id}">&times;</span>
-          <h4>Comentários dos Clientes</h4>
-          <div class="comentarios">
-            ${prof.avaliacoes.map(av => `
-              <div class="comentario">
-                <div class="comentario-estrelas">
-                  ${'★'.repeat(av.estrelas)}${'☆'.repeat(5 - av.estrelas)}
-                </div>
-                <p>${av.comentario}</p>
-              </div>
-            `).join('')}
-          </div>
         </div>
       </div>
     `;
     container.appendChild(card);
   });
 
-  // Função para abrir modal
-  document.querySelectorAll('.abrir-avaliacoes').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
-      const profId = btn.dataset.prof;
-      const modal = document.querySelector(`.modal-avaliacoes[data-prof="${profId}"]`);
-      modal.style.display = 'flex';
+  // Modal de avaliações
+  const modal = document.getElementById("modal-avaliacoes");
+  const fechar = document.getElementById("fechar-modal");
+  const comentariosContainer = document.getElementById("comentarios-container");
+
+  // Abrir modal ao clicar em avaliações
+  document.querySelectorAll(".avaliacoes-prof").forEach(el => {
+    el.addEventListener("click", e => {
+      const index = el.dataset.index;
+      const comentarios = profissionais[index].avaliacoes.comentarios;
+
+      // Preenche os comentários
+      comentariosContainer.innerHTML = comentarios.map(c => `
+        <div class="comentario">
+          <div class="comentario-estrelas">
+            ${"★".repeat(5)}
+          </div>
+          <p>${c}</p>
+        </div>
+      `).join("");
+
+      modal.style.display = "flex";
     });
   });
 
-  // Fechar modal
-  document.querySelectorAll('.fechar-modal').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const profId = btn.dataset.prof;
-      const modal = document.querySelector(`.modal-avaliacoes[data-prof="${profId}"]`);
-      modal.style.display = 'none';
-    });
+ 
+  fechar.addEventListener("click", () => modal.style.display = "none");
+  window.addEventListener("click", e => {
+    if (e.target === modal) modal.style.display = "none";
   });
-
-  // Fechar modal clicando fora
-  document.querySelectorAll('.modal-avaliacoes').forEach(modal => {
-    modal.addEventListener('click', e => {
-      if (e.target === modal) modal.style.display = 'none';
-    });
-  });
-
 });
+
 

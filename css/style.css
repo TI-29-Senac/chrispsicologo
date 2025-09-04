@@ -2512,16 +2512,16 @@ background-color: transparent;
 
 .avaliacoes-prof {
   display: flex;
-  align-items: center; /* Mantém estrelas e nota alinhadas horizontalmente */
+  align-items: center;
   gap: 10px;
   cursor: pointer;
 }
 
 .estrelas-media-container {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
+  flex-direction: column; 
+  align-items: center;   
+  gap: 6px;               
 }
 
 .estrelas-media .estrela {
@@ -2539,12 +2539,11 @@ background-color: transparent;
 }
 
 .total-avaliacoes {
+  font-size: 0.95rem;
+  font-weight: 500;
   color: #5D6D68;
-  font-size: 1rem;
-  line-height: 1.7;
 }
 
-/* Modal */
 .modal-avaliacoes {
   display: none;
   position: fixed;
@@ -2566,6 +2565,9 @@ background-color: transparent;
   border-radius: 12px;
   max-width: 500px;
   position: relative;
+  color: #5D6D68;
+  font-family: 'questrial',sans-serif;
+  font-size: 1.2rem;
 }
 
 .fechar-modal {
@@ -2574,7 +2576,7 @@ background-color: transparent;
   right: 15px;
   font-size: 2rem;
   cursor: pointer;
-  color: #555;
+  color: #5D6D68;
 }
 
 .comentario {
@@ -2650,6 +2652,14 @@ background-color: transparent;
 .card-prof .avaliacoes-prof {
   justify-content: center;
   margin: 15px 0;
+}
+
+.titulo-aba-prof{
+  font-family: 'questrial', sans-serif;
+  color:#5D6D68;
+  text-align: center;
+  margin-top: 50px;
+  font-size: 2rem;
 }
 
 
