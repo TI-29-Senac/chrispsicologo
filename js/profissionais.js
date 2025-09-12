@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
  const profissionais = [
   {
     nome: "Chris Nunes",
-    foto: "/img/profissionais/chris.png",
+    foto: "img/profissionais/chris.png",
     valor: "260,00",
     especialidades: ["Psicoterapia Individual",
         "Relacionamentos",
@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
               "Comunicação e Mediação de Conflitos"],
     duracao: "Sessão com duração de 60min",
     tipos: [
-      { icone: "/img/icons/old-man.svg", texto: "Idosos" },
-      { icone: "/img/icons/casais.svg", texto: "Casais" },
-      { icone: "/img/icons/adulto.svg", texto: "Adultos" }
+      { icone: "img/icons/old-man.svg", texto: "Idosos" },
+      { icone: "img/icons/casais.svg", texto: "Casais" },
+      { icone: "img/icons/adulto.svg", texto: "Adultos" }
     ],
     avaliacoes: {
       nota: 5.0,
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   },
   {
     nome: "Helena Costa",
-    foto: "/img/profissionais/helena.png",
+    foto: "img/profissionais/helena.png",
     valor: "280,00",
     especialidades: ["Psicoterapia para Mulheres",
 "Ansiedade, Depressão e Estresse em Mulheres",
@@ -74,9 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
 "Apoio Psicológico na Gravidez e Planejamento Familiar"],
     duracao: "Sessão com duração de 50min",
     tipos: [
-      { icone: "/img/icons/mulheres.svg", texto: "Mulheres"},
-      { icone: "/img/icons/publico_feminino.svg", texto: "Abordagens Femininas" },
-      { icone: "/img/icons/maternidade.svg", texto: "Maternidade" }
+      { icone: "img/icons/mulheres.svg", texto: "Mulheres"},
+      { icone: "img/icons/publico_feminino.svg", texto: "Abordagens Femininas" },
+      { icone: "img/icons/maternidade.svg", texto: "Maternidade" }
     ],
     avaliacoes: {
       nota: 5.0,
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
   },
   {
     nome: "Carla Dias",
-    foto: "/img/profissionais/carla.png",
+    foto: "img/profissionais/carla.png",
     valor: "240,00",
     especialidades: ["Psicoterapia Individual",
 "Terapia de Casal e Família",
@@ -100,9 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
 "Desenvolvimento de Habilidades Sociais"],
     duracao: "Sessão com duração de 45min",
     tipos: [
-      { icone: "/img/icons/adulto.svg", texto: "Adultos"},
-      { icone: "/img/icons/old-man.svg", texto: "Idosos"},
-      { icone: "/img/icons/casais.svg", texto: "Casais"}
+      { icone: "img/icons/adulto.svg", texto: "Adultos"},
+      { icone: "img/icons/old-man.svg", texto: "Idosos"},
+      { icone: "img/icons/casais.svg", texto: "Casais"}
     ],
     avaliacoes: {
       nota: 5.0,
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
   },
   {
     nome: "Luana Duarte",
-    foto: "/img/profissionais/luana.png",
+    foto: "img/profissionais/luana.png",
     valor: "300,00",
     especialidades: ["Psicoterapia Infantil",
 "Orientação Parental",
@@ -126,8 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
 "Luto e Adaptação a Mudanças"],
     duracao: "Sessão com duração de 55min",
     tipos: [
-      { icone: "/img/icons/crianca.svg", texto: "Crianças"},
-      { icone: "/img/icons/adolescente.svg", texto: "Adolescentes"}
+      { icone: "img/icons/crianca.svg", texto: "Crianças"},
+      { icone: "img/icons/adolescente.svg", texto: "Adolescentes"}
     ],
     avaliacoes: {
       nota: 5.0,
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
   },
   {
     nome: "Yan Nakamura",
-    foto: "/img/profissionais/yan.png",
+    foto: "img/profissionais/yan.png",
     valor: "270,00",
     especialidades: ["Psicoterapia para Jovens Adultos e Adolescentes",
 "Orientação Vocacional e Profissional",
@@ -151,9 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
 "Psicoterapia Familiar e Mediação de Conflitos"],
     duracao: "Sessão com duração de 60min",
     tipos: [
-      { icone: "/img/icons/adulto.svg", texto: "Jovens Adultos" },
-      { icone: "/img/icons/adolescente.svg", texto: "Adolescentes"},
-      { icone: "/img/icons/familia.svg", texto: "Família"}
+      { icone: "img/icons/adulto.svg", texto: "Jovens Adultos" },
+      { icone: "img/icons/adolescente.svg", texto: "Adolescentes"},
+      { icone: "img/icons/familia.svg", texto: "Família"}
     ],
     avaliacoes: {
       nota: 5.0,
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <h4 class="espaco-prof">Duração e Tipo de Atendimento</h4>
         <div class="tipos">
           <ul>
-            <li><img src="/img/icons/relogio.svg" class="icon-prof"> ${prof.duracao}</li>
+            <li><img src="img/icons/relogio.svg" class="icon-prof"> ${prof.duracao}</li>
             ${prof.tipos.map(t => `
               <li><img src="${t.icone}" class="icon-prof"> ${t.texto}</li>
             `).join("")}

@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const footer = document.getElementById("footer");
     footer.innerHTML = `
     <footer class="footer">
-    <img src="/img/icons/vaso.svg" class="planta-footer planta-esquerda" alt="" aria-hidden="true">
-    <img src="/img/icons/vaso.svg" class="planta-footer planta-direita" alt="" aria-hidden="true">
+    <img src="img/icons/vaso.svg" class="planta-footer planta-esquerda" alt="" aria-hidden="true">
+    <img src="img/icons/vaso.svg" class="planta-footer planta-direita" alt="" aria-hidden="true">
  
     <div class="footer-container">
       <div class="footer-logo">
@@ -64,9 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
  
         <div class="footer-col col-mapa">
-          <a href="https://www.google.com.br/maps/place/Senac+S%C3%A3o+Miguel+Paulista/@-23.4955972,-46.434437,17z/data=!3m1!4b1!4m6!3m5!1s0x94ce63dda7be6fb9:0xa74e7d5a53104311!8m2!3d-23.4955972!4d-46.4318621!16s%2Fg%2F11c5bl2g7p?entry=ttu&g_ep=EgoyMDI1MDcyOC4wIKXMDSoASAFQAw%3D%3D"
-            target="_blank"><img src="img/banners/mapa.png" alt="Mapa" class="mapa"></a>
-        </div>
+            <h3>Localização</h3>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.0254648900896!2d-46.434437023916374!3d-23.495592259180643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce63dda7be6fb9%3A0xa74e7d5a53104311!2sSenac%20S%C3%A3o%20Miguel%20Paulista!5e0!3m2!1spt-BR!2sbr!4v1756813804076!5m2!1spt-BR!2sbr" width="250" height="150" style="border:0; border-radius:10px; margin-top: 1rem" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
       </div>
   </footer>
 `
