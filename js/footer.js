@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="footer-col col-plataforma">
           <h4>Plataforma</h4>
           <ul>
-            <li><a href="#">Termos de Uso</a></li>
-            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="termos.html">Termos de Uso</a></li>
+            <li><a href="politicas.html">Política de Privacidade</a></li>
           </ul>
         </div>
  

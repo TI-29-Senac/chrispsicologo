@@ -8,13 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
       { "foto": "img/profissionais/carla.png", "nome": "Carla Dias","profissao": "Psicóloga", "especialidade": "Pós-graduada em Neurociência e Psicologia Aplicada"},
       { "foto": "img/profissionais/helena.png", "nome": "Helena Costa", "profissao": "Terapeuta", "especialidade": "Formado em Terapia Cognitiva Comportamental"}
     ];
+
+    const profissionaisDuplicados = [];
+    var repeticoes = 5;
+    for (let i = 0; i < repeticoes; i++) {
+      profissionais.forEach((item) => {
+        profissionaisDuplicados.push(item);
+      });}
+        
   
     const cardsContainer = document.getElementById("cards-carrossel");
   
     
-    const totalReps = 3;
+    const totalReps = 5;
     for (let i = 0; i < totalReps; i++) {
-      profissionais.forEach((item) => {
+      profissionaisDuplicados.forEach((item) => {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
@@ -30,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+ // aqui ja e da pagina dos profis fexo
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("container-profissionais");
 
