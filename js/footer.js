@@ -1,0 +1,74 @@
+document.addEventListener("DOMContentLoaded", () => {
+   
+    const footer = document.getElementById("footer");
+    footer.innerHTML = `
+    <footer class="footer">
+    <img src="img/icons/vaso.svg" class="planta-footer planta-esquerda" alt="" aria-hidden="true">
+    <img src="img/icons/vaso.svg" class="planta-footer planta-direita" alt="" aria-hidden="true">
+ 
+    <div class="footer-container">
+      <div class="footer-logo">
+        <img src="img/logo/logochris.svg" alt="Chris Psicologia">
+      </div>
+ 
+      <div class="footer-grid">
+        <div class="footer-col col-psicologia">
+          <h4>Chris Psicologia</h4>
+          <ul>
+            <li><a href="sobre.html">Sobre a Clínica</a></li>
+            <li><a href="profissionais.html">Psicólogos</a></li>
+          </ul>
+        </div>
+ 
+        <div class="footer-col col-redes">
+          <h4>Redes Sociais</h4>
+          <div class="footer-icons">
+            <a href="https://instagram.com" class="icon-instagram" target="_blank" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5zm8.5 2.75a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 1.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z" />
+              </svg></a>
+            <a href="https://wa.me/seunumerodowhats" class="icon-whatsapp" target="_blank" aria-label="WhatsApp">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M3.50002 12C3.50002 7.30558 7.3056 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C10.3278 20.5 8.77127 20.0182 7.45798 19.1861C7.21357 19.0313 6.91408 18.9899 6.63684 19.0726L3.75769 19.9319L4.84173 17.3953C4.96986 17.0955 4.94379 16.7521 4.77187 16.4751C3.9657 15.176 3.50002 13.6439 3.50002 12ZM12 1.5C6.20103 1.5 1.50002 6.20101 1.50002 12C1.50002 13.8381 1.97316 15.5683 2.80465 17.0727L1.08047 21.107C0.928048 21.4637 0.99561 21.8763 1.25382 22.1657C1.51203 22.4552 1.91432 22.5692 2.28599 22.4582L6.78541 21.1155C8.32245 21.9965 10.1037 22.5 12 22.5C17.799 22.5 22.5 17.799 22.5 12C22.5 6.20101 17.799 1.5 12 1.5ZM14.2925 14.1824L12.9783 15.1081C12.3628 14.7575 11.6823 14.2681 10.9997 13.5855C10.2901 12.8759 9.76402 12.1433 9.37612 11.4713L10.2113 10.7624C10.5697 10.4582 10.6678 9.94533 10.447 9.53028L9.38284 7.53028C9.23954 7.26097 8.98116 7.0718 8.68115 7.01654C8.38113 6.96129 8.07231 7.046 7.84247 7.24659L7.52696 7.52195C6.76823 8.18414 6.3195 9.2723 6.69141 10.3741C7.07698 11.5163 7.89983 13.314 9.58552 14.9997C11.3991 16.8133 13.2413 17.5275 14.3186 17.8049C15.1866 18.0283 16.008 17.7288 16.5868 17.2572L17.1783 16.7752C17.4313 16.5691 17.5678 16.2524 17.544 15.9269C17.5201 15.6014 17.3389 15.308 17.0585 15.1409L15.3802 14.1409C15.0412 13.939 14.6152 13.9552 14.2925 14.1824Z"
+                  fill="currentColor" />
+              </svg>
+            </a>
+            <a href="https://linkedin.com" class="icon-linkedin" target="_blank" aria-label="LinkedIn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M4.98 3.5a2.5 2.5 0 11-.001 5.001A2.5 2.5 0 014.98 3.5zM3 9h4v12H3zM8.5 9h3.5v1.69a3.95 3.95 0 013.5-1.88c3.75 0 4.5 2.47 4.5 5.68V21h-4v-5.19c0-1.23-.02-2.82-1.72-2.82-1.72 0-1.98 1.34-1.98 2.73V21H8.5z" />
+              </svg></a>
+ 
+          </div>
+        </div>
+ 
+ 
+        <div class="footer-col col-localizacao">
+          <h4>Localização</h4>
+          <p>Avenida Marechal Tito, 1500<br>São Miguel Paulista - SP</p>
+        </div>
+ 
+        <div class="footer-col col-plataforma">
+          <h4>Plataforma</h4>
+          <ul>
+            <li><a href="termos.html">Termos de Uso</a></li>
+            <li><a href="politicas.html">Política de Privacidade</a></li>
+          </ul>
+        </div>
+ 
+        <div class="footer-col col-contato">
+          <h4>Contato</h4>
+          <p>11 46206-4836<br>chrispsicologia@contato.com.br</p>
+        </div>
+ 
+        <div class="footer-col col-mapa">
+            <h3>Localização</h3>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.0254648900896!2d-46.434437023916374!3d-23.495592259180643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce63dda7be6fb9%3A0xa74e7d5a53104311!2sSenac%20S%C3%A3o%20Miguel%20Paulista!5e0!3m2!1spt-BR!2sbr!4v1756813804076!5m2!1spt-BR!2sbr" width="250" height="150" style="border:0; border-radius:10px; margin-top: 1rem" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+      </div>
+  </footer>
+`
+ 
+});

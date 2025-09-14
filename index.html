@@ -1,104 +1,228 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chris Psicologia</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chris Psicologia</title>
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
+
 <body>
-    <header>
-        <nav class="menu">
-          <div class="container">
-            <img src="img/logo/logochris.svg" alt="Logo Chris Psicologia" class="logo">
-            
-            <ul class="menu-navegacao">
-              <li><a href="#servicos">Serviços</a></li>
-              <li><a href="#contato">Contato</a></li>
-              <li><a href="#hero">Sobre</a></li>
-            </ul>
-      
-            <a href="#"><img src="img/icons/more-horizontal-svgrepo-com.svg" alt="mais" class="more"></a>
+  <div id="navbar"></div>
+
+  <div id="fundo-escuro" class="fundo-escuro"></div>
+
+  <main>
+    <section class="hero">
+      <div class="foia">
+        <img src="img/icons/folha.svg" class="folha f1" alt="folhas caindo">
+        <img src="img/icons/folha.svg" class="folha f2" alt="folhas caindo">
+        <img src="img/icons/folha.svg" class="folha f3" alt="folhas caindo">
+        <img src="img/icons/folha.svg" class="folha f4" alt="folhas caindo">
+        <img src="img/icons/folha.svg" class="folha f5" alt="folhas caindo">
+        <img src="img/icons/folha.svg" class="folha f6" alt="folhas caindo">
+        <img src="img/icons/plantas_bege.svg" class="planta1 lado-esquerdo" alt="folhas caindo">
+        <img src="img/icons/plantas_bege.svg" class="planta1 lado-direito" alt="folhas caindo">
+      </div>
+
+      <div class="conteudo-hero">
+        <p>Cuidar da saúde mental é um ato de <br>
+          coragem e amor próprio.<br>
+          Estamos aqui para te acolher, ouvir e <br>
+          caminhar ao seu lado.</p>
+          <div class="botao-container">
+        <a href="profissionais.html" class="consulta-botao">Agendar Consulta</a>
+      </div>
+      </div>
+   
+
+        <div class="cerebro-carrossel">
+  <img src="img/icons/cerebro.png" class="active" />
+  <img src="img/icons/arvore.svg" style="height: 400px; top: 5rem;"/>
+  <img src="img/icons/livro.svg" style="height: 700px;" />
+</div>
+
+
+      <div class="barra-banner">
+        <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso
+          merece ser ouvido.</p></div>
+          
+    </section>
+
+    <div class="fundo">
+      <img src="img/icons/plantaas.svg" class="planta2 lado-esquerdo" alt="" aria-hidden="true">
+      <img src="img/icons/plantaas.svg" class="planta2 lado-direito" alt="" aria-hidden="true">
+      <div class="conteudo-destaque">
+        <h3 class="sentimentos-titulo">Você sente que algo precisa mudar ? Nós estamos aqui para te ouvir.</h3>
+        <div class="sentimentos-container">
+
+          <div class="card-sentimento" onclick="toggleCard(this)">
+            <input type="radio" name="sentimento" /> Ansiedade
           </div>
-        </nav>
-      </header>
+          <div class="card-content">
+            A ansiedade é uma resposta natural ao estresse, mas quando acontece com muita frequência ou intensidade, pode causar preocupação constante, inquietação e sintomas físicos como palpitações e dificuldade para respirar. Entender como ela surge e como lidar ajuda a recuperar o controle e a tranquilidade no dia a dia.
+          </div>
+          
+          <div class="card-sentimento" onclick="toggleCard(this)">
+            <input type="radio" name="sentimento" /> Depressão
+          </div>
+          <div class="card-content">
+            A depressão vai além da tristeza passageira. É uma condição que afeta o humor, os pensamentos e as atitudes, gerando falta de interesse pelas atividades diárias, cansaço e sensação de vazio. Saber que é uma doença tratável pode ajudar a buscar apoio e recuperar a vontade de viver.
+          </div>
+          
+          <div class="card-sentimento" onclick="toggleCard(this)">
+            <input type="radio" name="sentimento" /> Fobia Social
+          </div>
+          <div class="card-content">
+            A fobia social é o medo intenso de ser julgado ou rejeitado em situações sociais, o que pode causar ansiedade, isolamento e dificuldades para manter relacionamentos. Com o suporte adequado, é possível aprender estratégias para enfrentar esses desafios e aumentar a confiança.
+          </div>
+
+          <div class="card-sentimento" onclick="toggleCard(this)">
+            <input type="radio" name="sentimento" /> Luto
+          </div>
+          <div class="card-content">
+            O luto é o processo natural de adaptação à perda de alguém ou algo importante. Ele pode trazer uma mistura intensa de emoções como tristeza, raiva, culpa e confusão. Entender que cada pessoa vive o luto de forma única ajuda a aceitar o tempo necessário para a recuperação e a buscar apoio quando necessário.
+          </div>
+          
+          <div class="card-sentimento" onclick="toggleCard(this)">
+            <input type="radio" name="sentimento" /> Trauma
+          </div>
+          <div class="card-content">
+            O trauma ocorre após vivenciar ou testemunhar eventos assustadores ou dolorosos, que podem afetar a forma como você se sente, pensa e se relaciona. Sintomas comuns incluem flashbacks, ansiedade intensa e sensação de insegurança. Com ajuda adequada, é possível trabalhar essas experiências para retomar o equilíbrio emocional.
+          </div>
+
+          <div class="card-sentimento" onclick="toggleCard(this)">
+            <input type="radio" name="sentimento" /> Outros
+          </div>
+          <div class="card-content">
+            Seja qual for o motivo, estamos prontos para te escutar.<br>Conte conosco.
+          </div>
+        </div>
+      </div>
+      <div class="barra-quebra"></div>
+
+      <div class="fundo-profissionais">
+        <img src="img/icons/plantaas.svg" class="planta3 lado-esquerdo" alt="" aria-hidden="true">
+      <img src="img/icons/plantaas.svg" class="planta3 lado-direito" alt="" aria-hidden="true">
+      <div class="mais-conteudo profissionais">
+        <h2 class="profissionais-titulo">Nossos Profissionais</h2>
+        <p class="descricao">
+          Nossa equipe é especializada em acolher quem enfrenta desafios emocionais. Juntos, podemos construir novos
+          caminhos para uma vida mais leve e equilibrada.
+        </p>
+
+        <div class="carrossel">
+          <button class="seta esquerda" aria-label="Anterior" onclick="moverCarrossel(-1)">&#10094;</button>
+
+          <div class="cards" id="cards-carrossel">
+          </div>
+
+        <button class="seta direita" aria-label="Próximo" onclick="moverCarrossel(1)">&#10095;</button>
+
+      </div>
+
+      <div class="btn-ver-profissionais">
+        <a href="profissionais.html" class="botao-link">Ver nossos profissionais</a>
+      </div>
       
-    <main>
-        <section class="hero">
-            <div class="conteudo-hero">
-                <p>Cuidar da saúde mental é um ato de <br>
-                   coragem e amor próprio.<br>
-                  Estamos aqui para te acolher, ouvir e <br>
-                caminhar ao seu lado</p>
+      </div>
+    </div>
+
+    <div class="barra-quebra"></div>
+
+      <div class="mais-conteudo quem-somos">
+        <img src="img/icons/plantaas.svg" class="planta4 lado-esquerdo" alt="" aria-hidden="true">
+      <img src="img/icons/plantaas.svg" class="planta4 lado-direito" alt="" aria-hidden="true">
+        <h2 class="quem-somos-titulo">Quem Somos</h2>
+        <p class="quem-somos-descricao">
+          Somos uma clínica dedicada ao cuidado emocional e psicológico, oferecendo um ambiente acolhedor e seguro para nossos pacientes.
+        </p>
+      
+        <div class="carrossel-imagens">
+          <div class="faixa-imagens">
+            <img src="img/quem-somos/corredor.png" alt="Imagem da clínica">
+            <img src="img/quem-somos/recepcao.png" alt="Sala de atendimento">
+            <img src="img/quem-somos/sala1.png" alt="Ambiente acolhedor">
+            <img src="img/quem-somos/sala2.png" alt="Recepção">
+            <img src="img/quem-somos/corredor.png" alt="Imagem da clínica">
+            <img src="img/quem-somos/recepcao.png" alt="Sala de atendimento">
+            <img src="img/quem-somos/sala1.png" alt="Ambiente acolhedor">
+            <img src="img/quem-somos/sala2.png" alt="Recepção">
+          </div>
+        </div>
+        <div class="btn-quem-somos-container">
+          <a href="sobre.html" class="btn-quem-somos">Saiba mais</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="barra-quebra"></div>
+
+    <section id="servicos" class="servicos">
+      <img src="img/icons/plantaas.svg" class="planta5 lado-esquerdo" alt="" aria-hidden="true">
+      <img src="img/icons/plantaas.svg" class="planta5 lado-direito" alt="" aria-hidden="true">
+      <div class="container-servicos">
+        <div class="card-central">
+          <h2 class="card-titulo">Serviços</h2>
+          <p class="card-descricao">Acolhimento psicológico em diversas fases da vida com empatia e responsabilidade.</p>
+    
+          <div class="cards-servicos">
+            <div class="card-servico">
+              <img src="img/servicos/psicologia-infantil.jpg" alt="Psicoterapia Infantil">
+              <h3>Psicoterapia Infantil</h3>
+              <p>Ajuda crianças a lidarem com sentimentos, medos e desafios escolares.</p>
             </div>
-            <div class="cerebro-carrossel">
-              <div class="carrossel-track" id="carrosselTrack">
-                <img src="img/icons/cerebro.png" alt="cerebro">
-                <img src="img/icons/cerebro2.png" alt="cerebro">
-                <img src="img/icons/cerebro3.jpg" alt="cerebro">
-              </div>
+    
+            <div class="card-servico">
+              <img src="img/servicos/psicologia-adulto.jpg" alt="Psicoterapia para Adultos">
+              <h3>Psicoterapia para Adultos</h3>
+              <p>Apoio emocional e autoconhecimento para enfrentar ansiedades, depressão e traumas.</p>
             </div>
-            
-            <div class="barra-banner">
-              <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso merece ser ouvido.</p>
-            </section> 
-            <div class="fundo">
-              <div class="conteudo-destaque">
-            
-
-
-            <h3 class="sentimentos-titulo">Você sente que algo precisa mudar ? Nós estamos aqui para te ouvir.</h3>
-            <div class="sentimentos-container">
-              
-              <div class="card" onclick="toggleCard(this)">
-                <input type="radio" name="sentimento" /> Ansiedade
-              </div>
-              <div class="card-content">
-                A ansiedade pode surgir de diversas formas...<br>Vamos entender melhor como ela afeta seu dia a dia.
-              </div>
-            
-              <div class="card" onclick="toggleCard(this)">
-                <input type="radio" name="sentimento" /> Depressão
-              </div>
-              <div class="card-content">
-                A depressão é uma condição séria, mas existe tratamento...<br>Você não está sozinho(a).
-              </div>
-            
-              <div class="card" onclick="toggleCard(this)">
-                <input type="radio" name="sentimento" /> Fobia Social
-              </div>
-              <div class="card-content">
-                A fobia social pode dificultar relações pessoais e profissionais.<br>Saiba como superá-la com apoio.
-              </div>
-            
-              <div class="card" onclick="toggleCard(this)">
-                <input type="radio" name="sentimento" /> Luto
-              </div>
-              <div class="card-content">
-                O luto é uma experiência profunda...<br>Respeite seu tempo e acolha seus sentimentos.
-              </div>
-            
-              <div class="card" onclick="toggleCard(this)">
-                <input type="radio" name="sentimento" /> Traumas
-              </div>
-              <div class="card-content">
-                Traumas podem deixar marcas, mas a cura é possível.<br>Vamos trilhar esse caminho juntos.
-              </div>
-            
-              <div class="card" onclick="toggleCard(this)">
-                <input type="radio" name="sentimento" /> Outros
-              </div>
-              <div class="card-content">
-                Seja qual for o motivo, estamos prontos para te escutar.<br>Conte conosco.
-              </div>
+    
+            <div class="card-servico">
+              <img src="img/servicos/terapia-casal.jpg" alt="Terapia de Casal">
+              <h3>Terapia de Casal</h3>
+              <p>Melhore o diálogo, o respeito e a conexão no relacionamento.</p>
             </div>
-            
-          </div> 
-        </div> 
-      </main>
+    
+            <div class="card-servico">
+              <img src="img/servicos/terapia-familiar.webp" alt="Terapia Familiar">
+              <h3>Terapia Familiar</h3>
+              <p>Mediação e escuta ativa para fortalecer vínculos entre familiares.</p>
+            </div>
+          </div>
 
+          <a href="servicos.html" class="btn-saiba-mais-centralizado">Saiba mais</a>
+        </div>
+      </div>
+    </section>
+    
+    
+    
+    </div>
+  </main>
+  <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
 
-            <script src="js/cards.js"></script>
-            <script src="js/cerebro.js"></script> 
+  <footer id="footer"></footer>
+
+  <script src="js/header.js" defer></script>
+  <script src="js/cards.js" defer></script>
+  <script src="js/cerebro.js" defer></script>
+  <script src="js/profissionais.js" defer></script>
+  <script src="js/carrossel.js" defer></script>
+  <script src="js/inicio.js" defer></script>
+  <script src="js/footer.js" defer></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/script-form.js" defer></script>
+
+  <div id="lightbox" class="lightbox hidden">
+    <span class="fechar-lightbox" onclick="fecharLightbox()">×</span>
+    <img id="img-ampliada" src="" alt="Imagem ampliada">
+  </div>
+  
 </body>
+
 </html>
