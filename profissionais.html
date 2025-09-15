@@ -18,10 +18,18 @@
   </div>
 </section>
 
-<div class="modal-avaliacoes" id="modal-avaliacoes">
+<div class="modal-avaliacoes" id="modal-avaliacoes" style="display: none;">
   <div class="modal-conteudo">
+     
     <span class="fechar-modal" id="fechar-modal">&times;</span>
     <h4>Comentários dos Clientes</h4>
+
+    <div class="linha" id="avaliacoes-template" style="display: none;">
+      <span class="numero-1"><span id="avaliacoes-numero">0</span> ★</span>
+      <div class="barra-1">
+        <div class="barra-2" id="avaliacoes-barra" style="width: 50%;"></div>
+      </div>
+    </div>
     <div class="comentarios" id="comentarios-container">
     </div>
   </div>
