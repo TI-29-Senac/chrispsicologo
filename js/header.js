@@ -47,6 +47,7 @@ if (botaoMais && menuLateral && botaoFechar && overlay) {
   console.warn('Algum dos elementos do menu lateral não foi encontrado no DOM.');
 }
 
+// local storage, ver depois
 
 document.addEventListener("DOMContentLoaded", () => {
  
