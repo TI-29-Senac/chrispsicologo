@@ -41,7 +41,7 @@ function buscarProfissionais() {
 }
 
     function buscarProfissionaisPorEspecialidade($especialidade){
-        $sql = "SELECT * FROM Profissional WHERE especialidade = :especialidade and excluido_em IS NULL";
+        $sql = "SELECT * FROM profissional WHERE especialidade = :especialidade and excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':especialidade', $especialidade);
         $stmt->execute();
@@ -50,12 +50,12 @@ function buscarProfissionais() {
 
 
     // Métodos de inserir usuario
-function inserirProfissional($id_usuario, $especialidade){
-    $sql = "INSERT INTO profissional (id_usuario, especialidade, criado_em) 
-            VALUES (:id_usuario, :especialidade, NOW())";
+function inserirProfissional($id, $especialidade){
+    $sql = "INSERT INTO profissional (id_usuario, especialidade) 
+            VALUES (:id, :especialidade)";
 
     $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->bindParam(':id', $id);
     $stmt->bindParam(':especialidade', $especialidade);
 
     if($stmt->execute()){
@@ -69,7 +69,7 @@ function inserirProfissional($id_usuario, $especialidade){
 function atualizarProfissional($id, $especialidade) {
     $dataatual = date('Y-m-d H:i:s');
 
-    $sql = "UPDATE Profissional 
+    $sql = "UPDATE profissional 
             SET especialidade = :especialidade,
                 atualizado_em = :atual
             WHERE id_usuario = :id";
@@ -85,12 +85,11 @@ function atualizarProfissional($id, $especialidade) {
 
     // Métodos de deletar usuario
 public function deletarProfissional($id_profissional) {
-    $sql = "DELETE FROM Profissional WHERE id_profissional = :id_profissional";
+    $sql = "DELETE FROM profissional WHERE id_profissional = :id_profissional";
     $stmt = $this->db->prepare($sql);
     $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
 
     if ($stmt->execute()) {
-        // Retorna quantas linhas foram apagadas
         return $stmt->rowCount();
     } else {
         return false;
