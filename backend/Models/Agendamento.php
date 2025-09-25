@@ -1,9 +1,6 @@
 <?php
-namespace App\Chrispsicologo\Models;
-
+namespace App\Psico\Models;
 use PDO;
-use PDOException;
-use Exception;
 
 class Agendamento {
     private PDO $db;

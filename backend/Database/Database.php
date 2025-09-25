@@ -1,10 +1,9 @@
 <?php
-namespace App\Database;
-
+namespace App\Psico\Database;
 use PDO;
 use PDOException;
 use Exception;
-use App\Database\Config;
+use App\Psico\Database\Config;
 
 class Database {
     private static $instance = null;

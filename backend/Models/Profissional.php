@@ -1,9 +1,7 @@
 <?php
-namespace App\Chrispsicologo\Models;
-
+namespace App\Psico\Models;
 use PDO;
-use PDOException;
-use Exception;
+
 
 class Profissional {
     private $id_profissional;

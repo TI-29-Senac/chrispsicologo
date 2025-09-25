@@ -1,7 +1,8 @@
 <?php
-require __DIR__ . '/../../vendor/autoload.php';
-use App\Chrispsicologo\Admin\Controllers\UsuarioController;
-use App\Chrispsicologo\Admin\Models\Usuario;
+namespace App\Psico;
+require __DIR__ . '/../vendor/autoload.php';
+use App\Psico\Controllers\UsuarioController;
+
 
 
 // var_dump($_SERVER["REQUEST_URI"]);
