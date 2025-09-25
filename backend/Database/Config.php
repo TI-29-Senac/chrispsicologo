@@ -1,6 +1,5 @@
 <?php
 namespace App\Psico\Database;
-use App\Psico\Database\Config;
 
 class Config {
     public static function get()

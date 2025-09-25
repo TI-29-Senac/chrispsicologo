@@ -14,7 +14,7 @@ class ProfissionalController {
     }
     // Index
     public function index(){
-        $resultado = $this->profissional->buscarProfissional();
+        $resultado = $this->profissional->buscarProfissionais();
         return  $resultado;
     }
 

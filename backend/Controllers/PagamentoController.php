@@ -14,7 +14,7 @@ class PagamentoController {
     }
     // Index
     public function index(){
-        $resultado = $this->pagamento->buscarPagamento();
+        $resultado = $this->pagamento->buscarPagamentos();
         return  $resultado;
     }
 

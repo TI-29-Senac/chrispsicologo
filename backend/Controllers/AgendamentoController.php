@@ -14,7 +14,7 @@ class AgendamentoController {
     }
     // Index
     public function index(){
-        $resultado = $this->agendamento->buscarAgendamento();
+        $resultado = $this->agendamento->buscarAgendamentos();
         return  $resultado;
     }
 

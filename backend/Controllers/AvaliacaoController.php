@@ -14,7 +14,7 @@ class AvaliacaoController {
     }
     // Index
     public function index(){
-        $resultado = $this->avaliacao->buscarAvaliacao();
+        $resultado = $this->avaliacao->buscarAvaliacoes();
         return  $resultado;
     }
 
