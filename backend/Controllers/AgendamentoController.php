@@ -1,20 +1,20 @@
 <?php
 namespace App\Psico\Controllers;
 
-use App\Psico\Models\Profissional;
+use App\Psico\Models\Agendamento;
 use App\Psico\Database\Database;
 
-class ProfissionalController {
-    public $profissional;   
+class AgendamentoController {
+    public $agendamento;   
     public $db;
     public function __construct(){
         $this->db = Database::getInstance();
-        $this->profissional = new Profissional($this->db);
+        $this->agendamento = new Agendamento($this->db);
 
     }
     // Index
     public function index(){
-        $resultado = $this->profissional->buscarProfissional();
+        $resultado = $this->agendamento->buscarAgendamento();
         return  $resultado;
     }
 
