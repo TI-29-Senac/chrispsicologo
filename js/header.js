@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <li><a href="contato.html">Contato</a></li>
         <li><a href="sobre.html">Sobre</a></li>
         <li><a href="profissionais.html">Profissionais</a></li>
-        <li><a href="termos.html">Termos de Uso</a></li>
+        <li><a href="#" onclick="abrirLoginModal(); menuLateral.classList.remove('aberto'); overlay.classList.remove('ativo'); return false;">Painel (Login)</a></li> <li><a href="termos.html">Termos de Uso</a></li>
         <li><a href="politicas.html">Politicas de Privacidade</a></li>
       </ul>
    

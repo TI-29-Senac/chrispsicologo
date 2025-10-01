@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperação de Senha - Chris Psicologia</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <section class="contato-hero">
+            <div class="foia">
+                <img src="img/icons/folha.svg" class="folha f1" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f2" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f3" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f4" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f5" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f6" alt="folhas caindo">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-esquerdo" alt="">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-direito" alt="">
+            </div>
+
+            <section class="contato-section">
+                <div class="formulario-registro-container">
+                    <div class="formulario-registro">
+                        <h3>Recuperar Senha</h3>
+                        <p class="subtitulo-registro">Informe seu e-mail de cadastro. Enviaremos um link para redefinição da sua senha.</p>
+
+                        <form id="form-recuperar-senha" action="/backend/recuperar-senha" method="POST">
+                            <label for="email_recuperacao">E-mail de Cadastro *</label>
+                            <input type="email" id="email_recuperacao" name="email" required>
+
+                            <button type="submit" id="btn-recuperar-senha">Enviar Link de Redefinição</button>
+                            <p id="status-mensagem-recuperacao" style="margin-top: 15px; text-align: center;"></p>
+                        </form>
+                        
+                        <div style="margin-top: 20px; text-align: center;">
+                           <a href="index.html" style="color: #5D6D68; text-decoration: underline;">Lembrei da minha senha! Voltar para o Login.</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
+    <footer id="footer"></footer>
+
+    <script src="js/header.js" defer></script>
+    <script src="js/footer.js" defer></script>
+      <script src="js/login-modal-injector.js" defer></script> 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script> 
+    <script src="js/esqueci-senha.js" defer></script> 
+    
+    <script src="js/login.js" defer></script>
+  <script src="js/registro.js" defer></script>
+
+
+</html>

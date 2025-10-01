@@ -126,4 +126,26 @@ public function atualizarUsuarios() {
             echo "Erro ao deletar usuário.";
         }
     }
+
+        public function login() {
+        // Assume que o frontend enviará 'email' e 'senha'
+        $email = $_POST['email'] ?? '';
+        $senha = $_POST['senha'] ?? '';
+        
+        header('Content-Type: application/json'); // Garante que a resposta é JSON
+
+        $usuarioAutenticado = $this->usuario->autenticarUsuario($email, $senha);
+
+        if ($usuarioAutenticado) {
+            // Se o login for bem-sucedido
+            http_response_code(200);
+            echo json_encode(["success" => true, "message" => "Login realizado com sucesso!", "user" => $usuarioAutenticado]);
+        } else {
+            // Se o login falhar
+            http_response_code(401); // Unauthorized
+            echo json_encode(["success" => false, "message" => "Email ou senha inválidos."]);
+        }
+    }
+
+
 }

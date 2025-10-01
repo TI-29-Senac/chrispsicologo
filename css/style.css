@@ -3140,5 +3140,169 @@ body::-webkit-scrollbar-thumb:hover {
 /* #end region */
 
 
+/* #region Login Modal Styles */
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Mais alto que o header e o menu lateral */
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease;
+}
+
+.login-modal-overlay.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.login-modal-content {
+    background-color: #faf6ee; /* Cor de fundo do site */
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    font-family: 'Questrial', sans-serif;
+    color: #5D6D68;
+}
+
+.login-modal-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #5D6D68;
+}
+
+.login-modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.login-modal-content input[type="email"],
+.login-modal-content input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.login-modal-content button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #5D6D68;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+
+.login-modal-content button[type="submit"]:hover {
+    background-color: #4a5b5c;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #5D6D68;
+    cursor: pointer;
+}
+/* #endregion */
+
+/* #region Registro de Usuário */
+.formulario-registro-container {
+    max-width: 500px; /* Limita a largura do container do formulário */
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #faf6ee; /* Cor de fundo clara para destaque */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.formulario-registro h3 {
+    font-size: 2.2rem;
+    color: #5D6D68;
+    text-align: center;
+    margin-bottom: 5px;
+    font-family: 'Questrial', sans-serif;
+}
+
+.subtitulo-registro {
+    font-size: 1.1rem;
+    color: #5D6D68;
+    text-align: center;
+    margin-bottom: 25px;
+    font-family: 'Questrial', sans-serif;
+}
+
+.formulario-registro label {
+    display: block;
+    margin-bottom: 5px;
+    color: #5D6D68;
+    font-family: 'Questrial', sans-serif;
+    font-size: 1.1rem;
+}
+
+.formulario-registro input[type="text"],
+.formulario-registro input[type="email"],
+.formulario-registro input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.formulario-registro button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #5D6D68;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.formulario-registro button:hover {
+    background-color: transparent;
+    border: 2px solid #5D6D68;
+    color: #5D6D68;
+}
+
+@media (max-width: 768px) {
+    .formulario-registro-container {
+        padding: 20px;
+        max-width: 95%;
+        margin: 20px auto;
+    }
+}
+/* #endregion */
+
+
 
 

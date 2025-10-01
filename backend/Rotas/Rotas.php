@@ -17,6 +17,8 @@ class Rotas {
                 "/backend/usuario/salvar" => "UsuarioController@salvarUsuarios",
                 "/backend/usuario/atualizar" => "UsuarioController@atualizarUsuarios",
                 "/backend/usuario/deletar" => "UsuarioController@deletarUsuarios",
+                "/backend/login" => "UsuarioController@login",
+
             ]
         ];
     }

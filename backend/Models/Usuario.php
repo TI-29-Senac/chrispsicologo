@@ -104,6 +104,31 @@ public function deletarUsuario(int $id) {
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
+    // ... (dentro da classe Usuario)
+
+    /**
+     * Buscar usuário por Email
+     */
+    public function buscarUsuarioPorEmail(string $email) {
+        $sql = "SELECT * FROM usuario WHERE email_usuario = :email AND excluido_em IS NULL";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    public function autenticarUsuario(string $email, string $senha) {
+        $usuario = $this->buscarUsuarioPorEmail($email);
+
+        if ($usuario && password_verify($senha, $usuario->senha_usuario)) {
+            unset($usuario->senha_usuario);
+            return $usuario;
+        }
+
+        return false;
+    }
+
+
 
     public function atualizarUsuario(int $id, string $nome, string $email, ?string $senha, string $tipo) {
     $dataAtual = date('Y-m-d H:i:s');
