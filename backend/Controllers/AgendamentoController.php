@@ -18,9 +18,15 @@ class AgendamentoController {
         return  $resultado;
     }
 
+    // ===== TESTE DE AGENDAMENTO =====
+
+// Atualizar agendamento
+
+// Buscar agendamentos
+
     // Registrar
 
-
+    
     // Login
 
 

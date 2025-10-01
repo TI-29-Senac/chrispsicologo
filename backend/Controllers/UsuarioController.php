@@ -3,35 +3,127 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Usuario;
 use App\Psico\Database\Database;
+use App\Psico\Core\View;
 
 class UsuarioController {
     public $usuario;   
     public $db;
+
     public function __construct(){
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
-
     }
-    // Index
+
+    // Listar usuários
     public function index(){
         $resultado = $this->usuario->buscarUsuarios();
-        return  $resultado;
+        var_dump($resultado);
     }
 
-    // Registrar
+    public function viewListarUsuarios() {
+        $dados = $this->usuario->buscarUsuarios();
+        View::render("usuario/index", ["usuarios" => $dados]);
+    }
+
+    // Criar usuário
+    public function viewCriarUsuarios() {
+        View::render("usuario/create");
+    }
+
+    // Editar usuário
+    public function viewEditarUsuarios() {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            echo "ID do usuário não informado.";
+            return;
+        }
+
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+
+        if (!$usuario) {
+            echo "Usuário não encontrado.";
+            return;
+        }
+
+        View::render("usuario/edit", ["usuario" => $usuario]);
+    }
+
+    // Excluir usuário
+    public function viewExcluirUsuarios() {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            echo "ID do usuário não informado.";
+            return;
+        }
+
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+
+        if (!$usuario) {
+            echo "Usuário não encontrado.";
+            return;
+        }
+
+        View::render("usuario/delete", ["usuario" => $usuario]);
+    }
+
+    // Salvar usuário (POST)
+    public function salvarUsuarios() {
+        $nome = $_POST['nome_usuario'] ?? '';
+        $email = $_POST['email_usuario'] ?? '';
+        $senha = $_POST['senha_usuario'] ?? '';
+        $tipo = $_POST['tipo_usuario'] ?? 'user';
+        $status = 1;
+
+        $id = $this->usuario->inserirUsuario($nome, $email, $senha, $tipo, $status);
+
+        if ($id) {
+            echo "Usuário criado com sucesso. ID: $id";
+        } else {
+            echo "Erro ao criar usuário.";
+        }
+    }
+
+    // Atualizar usuário (POST)
+public function atualizarUsuarios() {
+    $id = $_POST['id_usuario'] ?? null;
+    $nome = $_POST['nome_usuario'] ?? '';
+    $email = $_POST['email_usuario'] ?? '';
+    $senha = $_POST['senha_usuario'] ?? null; // senha opcional
+    $tipo = $_POST['tipo_usuario'] ?? 'user';
+
+    if (!$id) {
+        echo "ID do usuário não informado.";
+        return;
+    }
+
+    // Atualiza todos os campos do usuário
+    $resultado = $this->usuario->atualizarUsuario((int)$id, $nome, $email, $senha, $tipo);
+
+    if ($resultado) {
+        echo "Usuário atualizado com sucesso.";
+    } else {
+        echo "Erro ao atualizar usuário ou nenhum campo alterado.";
+    }
+}
 
 
-    // Login
+    // Deletar usuário (POST)
+    public function deletarUsuarios() {
+        $id = $_POST['id_usuario'] ?? null;
 
+        if (!$id) {
+            echo "ID do usuário não informado.";
+            return;
+        }
 
-    // Atualizar
+        $resultado = $this->usuario->deletarUsuario((int)$id);
 
-
-    // Deletar
-
-
-    // Chamada de API
-
-
-
+        if ($resultado) {
+            echo "Usuário deletado com sucesso.";
+        } else {
+            echo "Erro ao deletar usuário.";
+        }
+    }
 }

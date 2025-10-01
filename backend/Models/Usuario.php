@@ -19,6 +19,8 @@ class Usuario {
         $this->db = $db;
     }
 
+
+
     /**
      * Inserir um novo usuário
      */
@@ -63,18 +65,24 @@ class Usuario {
     /**
      * Deletar usuário
      */
-    public function deletarUsuario(int $id) {
-        $sql = "DELETE FROM usuario WHERE id_usuario = :id";
+public function deletarUsuario(int $id) {
+    $dataExclusao = date('Y-m-d H:i:s'); 
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $sql = "UPDATE usuario 
+            SET excluido_em = :excluido
+            WHERE id_usuario = :id";
 
-        if ($stmt->execute()) {
-            return $stmt->rowCount(); // retorna quantidade de linhas afetadas
-        }
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':excluido', $dataExclusao);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-        return false;
+    if ($stmt->execute()) {
+        return $stmt->rowCount(); 
     }
+
+    return false;
+}
+
 
     /**
      * Buscar todos os usuários
@@ -95,4 +103,42 @@ class Usuario {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
+
+
+    public function atualizarUsuario(int $id, string $nome, string $email, ?string $senha, string $tipo) {
+    $dataAtual = date('Y-m-d H:i:s');
+
+    if ($senha) {
+        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+        $sql = "UPDATE usuario 
+                SET nome_usuario = :nome,
+                    email_usuario = :email,
+                    senha_usuario = :senha,
+                    tipo_usuario = :tipo,
+                    atualizado_em = :atual
+                WHERE id_usuario = :id";
+    } else {
+        $sql = "UPDATE usuario 
+                SET nome_usuario = :nome,
+                    email_usuario = :email,
+                    tipo_usuario = :tipo,
+                    atualizado_em = :atual
+                WHERE id_usuario = :id";
+    }
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':tipo', $tipo);
+    $stmt->bindParam(':atual', $dataAtual);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($senha) {
+        $stmt->bindParam(':senha', $senhaHash);
+    }
+
+    return $stmt->execute() ? $stmt->rowCount() : false;
 }
+}
+
+
