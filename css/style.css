@@ -396,13 +396,13 @@ header {
   font-size: clamp(1.4rem, 2vw + 0.5rem, 2rem);
   font-family: 'Questrial', sans-serif;
   min-height: 50vh;
-  padding-top: 10vh;
+  padding-top: 12rem;
   padding-left: 20%;        
   box-sizing: border-box;
 }
 
 .botao-container {
-  margin-top: 3rem;
+  margin-top: 2rem;
   z-index: 15;
   font-family: 'Questrial', sans-serif;
   align-self: flex-start;  
