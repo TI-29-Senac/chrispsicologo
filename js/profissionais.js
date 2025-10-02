@@ -1,7 +1,9 @@
-// carrossel-conteudo.js
+// chrispsicologo/js/profissionais.js
 
+// Lógica do Carrossel (Início)
 document.addEventListener('DOMContentLoaded', () => {
-    const profissionais = [
+    // Apenas a estrutura dos cards do carrossel (índex.html)
+    const profissionaisCarrossel = [
       { "foto": "img/profissionais/chris.png", "nome": "Chris Nunes", "profissao": "Psicólogo", "especialidade": "Formado em Psicologia PCD e Inclusão Social" },
       { "foto": "img/profissionais/yan.png", "nome": "Yan Nakamura", "profissao": "Psicólogo", "especialidade": "Formado em Psicoterapia Infantil e Adolescente"},
       { "foto": "img/profissionais/luana.png", "nome": "Luana Duarte", "profissao": "Terapeuta", "especialidade": "Pós-graduada em Psicologia Clínica Existencial e Gestáltica"},
@@ -12,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const profissionaisDuplicados = [];
     var repeticoes = 5;
     for (let i = 0; i < repeticoes; i++) {
-      profissionais.forEach((item) => {
+      profissionaisCarrossel.forEach((item) => {
         profissionaisDuplicados.push(item);
       });}
         
@@ -37,14 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-
- // aqui ja e da pagina dos profis fexo
+// Lógica da Página Profissionais.html (Principal)
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("container-profissionais");
 
-
+  // Adicionamos o id_db para mapear ao banco de dados (Assumimos 1 a 5)
   const profissionais = [
   {
+    id_db: 6, 
     nome: "Chris Nunes",
     foto: "img/profissionais/chris.png",
     valor: "260,00",
@@ -63,15 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
       { icone: "img/icons/casais.svg", texto: "Casais" },
       { icone: "img/icons/adulto.svg", texto: "Adultos" }
     ],
-    avaliacoes: [
-      { comentario: "Excelente profissional, muito atencioso.", nota: 5 },
-      { comentario: "Me ajudou muito na sessão.", nota: 5 },
-      { comentario: "Gostei do atendimento.", nota: 5 },
-      { comentario: "Profissional competente e dedicado.", nota: 5 },
-      { comentario: "Recomendo para todos.", nota: 5 }
-    ]
+    // Removidas as avaliações hardcoded
   },
   {
+    id_db: 7, 
     nome: "Helena Costa",
     foto: "img/profissionais/helena.png",
     valor: "280,00",
@@ -90,15 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
       { icone: "img/icons/publico_feminino.svg", texto: "Abordagens Femininas" },
       { icone: "img/icons/maternidade.svg", texto: "Maternidade" }
     ],
-    avaliacoes: [
-      { comentario: "Excelente profissional, muito atenciosa.", nota: 5 },
-      { comentario: "Ótima escuta e empatia.", nota: 4 },
-      { comentario: "Senti progresso rápido nas sessões.", nota: 5 },
-      { comentario: "Muito profissional e clara.", nota: 5 },
-      { comentario: "Recomendo demais!", nota: 5 }
-    ]
   },
   {
+    id_db: 8, 
     nome: "Carla Dias",
     foto: "img/profissionais/carla.png",
     valor: "240,00",
@@ -117,15 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
       { icone: "img/icons/old-man.svg", texto: "Idosos" },
       { icone: "img/icons/casais.svg", texto: "Casais" }
     ],
-    avaliacoes: [
-      { comentario: "Profissional excelente.", nota: 5 },
-      { comentario: "Muito atenciosa e competente.", nota: 5 },
-      { comentario: "Atendimento impecável.", nota: 5 },
-      { comentario: "Ótima abordagem e técnicas.", nota: 4 },
-      { comentario: "Senti melhorias significativas.", nota: 5 }
-    ]
   },
   {
+    id_db: 9, 
     nome: "Luana Duarte",
     foto: "img/profissionais/luana.png",
     valor: "300,00",
@@ -143,15 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
       { icone: "img/icons/crianca.svg", texto: "Crianças" },
       { icone: "img/icons/adolescente.svg", texto: "Adolescentes" }
     ],
-    avaliacoes: [
-      { comentario: "Excelente trabalho com crianças.", nota: 5 },
-      { comentario: "Atenciosa e empática.", nota: 4 },
-      { comentario: "Recomendo para adolescentes.", nota: 5 },
-      { comentario: "Muito profissional.", nota: 5 },
-      { comentario: "Ajudou muito meu filho.", nota: 5 }
-    ]
   },
   {
+    id_db: 10, 
     nome: "Yan Nakamura",
     foto: "img/profissionais/yan.png",
     valor: "270,00",
@@ -170,13 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
       { icone: "img/icons/adolescente.svg", texto: "Adolescentes" },
       { icone: "img/icons/familia.svg", texto: "Família" }
     ],
-    avaliacoes: [
-      { comentario: "Muito atencioso e competente.", nota: 5 },
-      { comentario: "Ajudou bastante nas sessões.", nota: 4 },
-      { comentario: "Profissional de confiança.", nota: 5 },
-      { comentario: "Ótima escuta e técnicas.", nota: 5 },
-      { comentario: "Recomendo sem dúvidas.", nota: 5 }
-    ]
   }
 ];
 
@@ -184,25 +156,28 @@ document.addEventListener("DOMContentLoaded", () => {
   profissionais.forEach((prof, index) => {
     const card = document.createElement("div");
     card.classList.add("profissional");
-    nota_media = prof.avaliacoes.reduce((acc, curr) => acc + curr.nota, 0) / prof.avaliacoes.length;
-    qtde_avaliacoes = prof.avaliacoes.length;
+    // Placeholders iniciais, que serão atualizados abaixo
+    const nota_media_placeholder = 0.0; 
+    const qtde_avaliacoes_placeholder = 0; 
+    
+    // Adicionamos o 'data-id-db' no elemento de avaliações
     card.innerHTML = `
       <div class="card-prof">
         <h3>${prof.nome}</h3>
         <div class="foto"><img src="${prof.foto}" alt="${prof.nome}"></div>
 
-        <div class="avaliacoes-prof" data-index="${index}">
+        <div class="avaliacoes-prof" data-index="${index}" data-id-db="${prof.id_db}">
           <div class="estrelas-media-container">
-            <span class="total-avaliacoes">${qtde_avaliacoes} Avaliações</span>
-            <div class="estrelas-media">
-              ${"★".repeat(Math.round(nota_media))}${"☆".repeat(5-Math.round(nota_media))}
+            <span class="total-avaliacoes">${qtde_avaliacoes_placeholder} Avaliações</span>
+            <div class="estrelas-media" id="estrelas-prof-${prof.id_db}">
+              ${"★".repeat(Math.round(nota_media_placeholder))}${"☆".repeat(5-Math.round(nota_media_placeholder))}
             </div>
-            <span class="nota-media">${nota_media.toFixed(1)}</span>
+            <span class="nota-media" id="nota-media-prof-${prof.id_db}">${nota_media_placeholder.toFixed(1)}</span>
           </div>
         </div>
 
         <div class="valor">Valor da Consulta: R$${prof.valor}</div> 
-        <a href="#" class="btn">Agenda Disponível</a>
+        <a href="agendar.html" class="btn">Agenda Disponível</a>
       </div>
 
       <div class="detalhes">
@@ -224,80 +199,173 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     container.appendChild(card);
   });
+  
+  
+  // ==========================================================
+  // NOVA FUNÇÃO: BUSCAR DADOS DE AVALIAÇÃO PARA O DISPLAY INICIAL
+  // ==========================================================
+  async function fetchAndRenderProfStats(profissionais) {
+      for (const prof of profissionais) {
+          const id_db = prof.id_db;
+          const totalAvaliacoesEl = document.querySelector(`.avaliacoes-prof[data-id-db="${id_db}"] .total-avaliacoes`);
+          const notaMediaEl = document.getElementById(`nota-media-prof-${id_db}`);
+          const estrelasEl = document.getElementById(`estrelas-prof-${id_db}`);
+          
+          if (!totalAvaliacoesEl || !notaMediaEl || !estrelasEl) continue;
+
+          try {
+              const response = await fetch(`/backend/avaliacoes?id=${id_db}`);
+              if (!response.ok) throw new Error('Erro ao buscar estatísticas');
+
+              const comentarios = await response.json();
+              const total = comentarios.length;
+              
+              if (total === 0) {
+                  totalAvaliacoesEl.textContent = '0 Avaliações';
+                  notaMediaEl.textContent = (0.0).toFixed(1);
+                  estrelasEl.innerHTML = "☆☆☆☆☆";
+                  prof.avaliacoes = []; // Guarda a lista vazia para o modal
+                  continue;
+              }
+
+              // Calcular a média
+              const soma_notas = comentarios.reduce((acc, curr) => acc + parseFloat(curr.nota), 0);
+              const media = soma_notas / total;
+              const media_arredondada = Math.round(media);
+              
+              // Atualizar a UI
+              totalAvaliacoesEl.textContent = `${total} Avaliações`;
+              notaMediaEl.textContent = media.toFixed(1);
+              estrelasEl.innerHTML = `${"★".repeat(media_arredondada)}${"☆".repeat(5 - media_arredondada)}`;
+              
+              // Armazenar os comentários diretamente no objeto do profissional para uso no modal
+              prof.avaliacoes = comentarios;
+
+          } catch (error) {
+              console.error(`Erro ao carregar stats do Prof ID ${id_db}:`, error);
+              totalAvaliacoesEl.textContent = 'Erro'; // Feedback de erro
+          }
+      }
+  }
+
+  // Chama a função para carregar as estatísticas na inicialização
+  fetchAndRenderProfStats(profissionais);
+  
+  
+  // ==========================================================
+  // LÓGICA DO MODAL (REUTILIZANDO DADOS JÁ BUSCADOS)
+  // ==========================================================
+
+  // Função para renderizar o conteúdo do modal
+  function renderizarModal(comentarios, nomeProfissional) {
+    let soma_notas = 0;
+    const contagem = {1:0,2:0,3:0,4:0,5:0};
+    
+    comentarios.forEach(c => {
+      const n = Math.round(c.nota);
+      if (n >= 1 && n <= 5) contagem[n]++;
+      soma_notas += parseFloat(c.nota);
+    });
+
+    const total = comentarios.length;
+    const media = total > 0 ? (soma_notas / total).toFixed(1) : 0.0;
+    
+    // Estrutura base do modal
+    const modalConteudo = modal.querySelector('.modal-conteudo');
+    modalConteudo.innerHTML = `
+      <span class="fechar-modal" id="fechar-modal-api">&times;</span>
+      <h4>Avaliações de ${nomeProfissional} (${media} de 5.0 - ${total} Avaliações)</h4>
+      <div id="barras-container-api"></div>
+      <div id="comentarios-lista-api"></div>
+    `;
+    const barrasContainer = document.getElementById("barras-container-api");
+    const comentariosLista = document.getElementById("comentarios-lista-api");
+
+    // Reassocia o evento de fechar o modal
+    document.getElementById("fechar-modal-api").addEventListener("click", () => modal.style.display = "none");
+    
+    // Renderização das Barras
+    for (let nota = 5; nota >= 1; nota--) {
+      const linha = document.createElement("div");
+      linha.classList.add("linha-nota");
+
+      linha.innerHTML = `
+        <span class="numero-1">${nota}</span>
+        <div class="barra-1">
+          <div class="barra-2" style="width: ${total > 0 ? (contagem[nota] / total) * 100 : 0}%;"></div>
+        </div>
+        <span class="qtd-nota">${contagem[nota]} Avaliações</span>
+      `;
+      barrasContainer.appendChild(linha);
+    }
+
+    // Renderização dos Comentários
+    if (total === 0) {
+      comentariosLista.innerHTML = `<p style="text-align: center; margin-top: 30px;">Nenhuma avaliação encontrada para este profissional.</p>`;
+    } else {
+      comentarios.forEach(c => {
+        const comentarioEl = document.createElement("div");
+        comentarioEl.className = "comentario";
+        comentarioEl.innerHTML = `
+          <div class="comentario-estrelas">
+            ${"★".repeat(Math.round(c.nota))}${"☆".repeat(5 - Math.round(c.nota))}
+          </div>
+          <p>${c.comentario} - <span style="font-weight: bold;">${c.cliente || 'Anônimo'}</span></p>
+        `;
+        comentariosLista.appendChild(comentarioEl);
+      });
+    }
+  }
 
 
-
-  // Modal de avaliações
+  // Abrir modal ao clicar em avaliações (AGORA USANDO DADOS JÁ ARMAZENADOS)
   const modal = document.getElementById("modal-avaliacoes");
   const fechar = document.getElementById("fechar-modal");
-  const comentariosContainer = document.getElementById("comentarios-container");
 
-  // Abrir modal ao clicar em avaliações
   document.querySelectorAll(".avaliacoes-prof").forEach(el => {
-    el.addEventListener("click", e => {
+    el.addEventListener("click", async (e) => {
       const index = el.dataset.index;
-      const comentarios = profissionais[index].avaliacoes;
+      const profData = profissionais[index];
 
-
-
-    const avaliacoes_template = document.getElementById("avaliacoes-template");
-
-    // Conta quantidade por nota (1–5)
-const contagem = {1:0,2:0,3:0,4:0,5:0};
-comentarios.forEach(c => {
-  const n = Math.round(c.nota);
-  contagem[n]++;
-});
-
-const total = comentarios.length;
-
-// Limpa o container antes de preencher
-comentariosContainer.innerHTML = "";
-
-// Cria linhas de 5 até 1
-for (let nota = 5; nota >= 1; nota--) {
-  const linha = document.createElement("div");
-  linha.classList.add("linha-nota");
-
-  linha.innerHTML = `
-    <span class="numero-1">${nota}</span>
-    <div class="barra-1">
-      <div class="barra-2" style="width: ${total > 0 ? (contagem[nota] / total) * 100 : 0}%;"></div>
-    </div>
-    <span class="qtd-nota">${contagem[nota]} Avaliações</span>
-  `;
-
-  comentariosContainer.appendChild(linha);
-}
-
-// Depois adiciona os comentários
-comentarios.forEach(c => {
-  const comentarioEl = document.createElement("div");
-  comentarioEl.className = "comentario";
-  comentarioEl.innerHTML = `
-    <div class="comentario-estrelas">
-      ${"★".repeat(Math.round(c.nota))}${"☆".repeat(5 - Math.round(c.nota))}
-    </div>
-    <p>${c.comentario}</p>
-  `;
-  comentariosContainer.appendChild(comentarioEl);
-});
-
-modal.style.display = "flex";
-
-      // Preenche os comentários
-
-
-
+      const modalConteudo = modal.querySelector('.modal-conteudo');
+      
+      // Feedback de carregamento (apenas para o caso de um erro anterior)
+      modalConteudo.innerHTML = `
+        <span class="fechar-modal" id="fechar-modal-loading">&times;</span>
+        <h4>Carregando Avaliações...</h4>
+        <p style="text-align: center; margin-top: 20px; font-size: 1.2rem;">Aguarde. Carregando dados...</p>
+      `; 
+      document.getElementById("fechar-modal-loading").addEventListener("click", () => modal.style.display = "none");
       modal.style.display = "flex";
+
+      // ⚠️ Tenta usar os dados já armazenados durante o fetchAndRenderProfStats.
+      // Se não houver, faz o fetch de fallback (caso o usuário clique antes do fetch inicial terminar)
+      let comentarios = profData.avaliacoes;
+
+      if (!comentarios) {
+           try {
+                // Fetch de fallback: se os dados não foram carregados na inicialização
+                const response = await fetch(`/backend/avaliacoes?id=${profData.id_db}`);
+                if (!response.ok) throw new Error('Erro ao buscar avaliações no fallback.');
+                comentarios = await response.json();
+           } catch (error) {
+                console.error("Erro no fetch de fallback:", error);
+                modalConteudo.innerHTML = `<span class="fechar-modal" id="fechar-modal-api-erro">&times;</span><h4>Erro</h4><p style="color: red; text-align: center;">Não foi possível carregar os comentários.</p>`;
+                document.getElementById("fechar-modal-api-erro").addEventListener("click", () => modal.style.display = "none");
+                return;
+           }
+      }
+      
+      // Renderiza o modal com os dados
+      renderizarModal(comentarios, profData.nome);
+
     });
   });
 
  
+  // Lógica de fechar o modal
   fechar.addEventListener("click", () => modal.style.display = "none");
   window.addEventListener("click", e => {
     if (e.target === modal) modal.style.display = "none";
   });
 });
-
-

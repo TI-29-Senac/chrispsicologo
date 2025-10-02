@@ -64,4 +64,31 @@ class Avaliacao {
 
         return $stmt->execute();
     }
+
+    // ... (dentro da classe Avaliacao em chrispsicologo/backend/Models/Avaliacao.php)
+
+    /**
+     * Buscar avaliações por ID do Profissional, incluindo nome do cliente
+     */
+    public function buscarAvaliacoesPorProfissional(int $id_profissional): array {
+        $sql = "
+            SELECT 
+                a.descricao_avaliacao AS comentario,
+                a.nota_avaliacao AS nota,
+                u.nome_usuario AS cliente
+            FROM 
+                avaliacao a
+            INNER JOIN 
+                usuario u ON a.id_cliente = u.id_usuario
+            WHERE 
+                a.id_profissional = :id_profissional AND a.excluido_em IS NULL
+            ORDER BY 
+                a.criado_em DESC
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+// ...
 }

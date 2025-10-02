@@ -12,6 +12,7 @@ class Rotas {
                 "/backend/usuario/editar" => "UsuarioController@viewEditarUsuarios",
                 "/backend/usuario/excluir" => "UsuarioController@viewExcluirUsuarios",
                 "/backend/servico/excluir" => "ServicoController@viewExcluirServicos",
+                "/backend/avaliacoes" => "AvaliacaoController@buscarPorProfissional"
             ],
             "POST" => [
                 "/backend/usuario/salvar" => "UsuarioController@salvarUsuarios",
