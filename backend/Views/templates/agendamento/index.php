@@ -1,6 +1,6 @@
-<?php foreach($agendamentos as $agendameto): ?>
-    <p><?= $agendameto->id_paciente ?></p>
-    <p><?= $agendameto->id_profissional ?></p>
-    <p><?= $agendameto->data_agendameto ?></p>
-    <p><?= $agendameto->status_consulta ?></p>
-    <?php endforeach; ?>
+<?php foreach($agendamentos as $item): ?>
+    <td><?= $item['id_paciente'] ?></td>
+    <td><?= $item['id_profissional'] ?></td>
+    <td><?= $item['data_agendamento'] ?></td>
+    <td><?= $item['status_consulta'] ?></td>
+<?php endforeach; ?>

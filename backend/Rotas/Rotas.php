@@ -26,7 +26,6 @@ class Rotas {
                 "/backend/agendamentos/atualizar" => "AgendamentoController@atualizarAgendamentos",
                 "/backend/agendamentos/deletar" => "AgendamentoController@deletarAgendamentos",
                 "/backend/login" => "UsuarioController@login",
-
             ]
         ];
     }

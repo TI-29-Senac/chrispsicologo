@@ -20,7 +20,7 @@ class AgendamentoController {
         $agendamentos = $this->agendamento->buscarAgendamentos();
         var_dump($agendamentos);
     }
-    public function viewListarAgendamento() {
+    public function viewListarAgendamentos() {
         $dados = $this->agendamento->buscarAgendamentos();
         View::render("agendamento/index",["agendamentos"=>$dados]);
     }
@@ -39,15 +39,17 @@ class AgendamentoController {
         if(!empty($erros)){ 
             Redirect::redirecionarComMensagem("agendamento/criar","error",implode("<br>",$erros));
         }
-        if($this->agendamento->inserirAgendamento(
+        $id = $this->agendamento->inserirAgendamento(
             $_POST["id_paciente"],
             $_POST["id_profissional"],
             $_POST["data_agendamento"],
             "Pendente"
-        )){
-            Redirect::redirecionarComMensagem("agendamento/listar","sucess","Agendamento criado com sucesso!");
-        }else{
-            Redirect::redirecionarComMensagem("agendamento/criar","error","Erro ao criar agendamento!");
+        );
+
+        if ($id) {
+            echo "Agendamento feito com sucesso. ID: $id";
+        } else {
+            echo "Erro ao criar agendamento.";
         }
     }
     public function atualizarAgendamentos() {
