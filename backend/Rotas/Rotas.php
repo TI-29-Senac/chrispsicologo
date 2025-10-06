@@ -16,7 +16,12 @@ class Rotas {
                 "/backend/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
                 "/backend/agendamentos/editar" => "AgendamentoController@viewEditarAgendamentos",
                 "/backend/agendamentos/excluir" => "AgendamentoController@viewExcluirAgendamentos",
-                "/backend/avaliacoes" => "AvaliacaoController@buscarPorProfissional"
+                "/backend/avaliacoes" => "AvaliacaoController@buscarPorProfissional",
+                "/backend/profissionais" => "ProfissionalController@index",
+                "/backend/profissionais/criar" => "ProfissionalController@viewCriarProfissionais",
+                "/backend/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
+                "/backend/profissionais/editar" => "ProfissionalController@viewEditarProfissionais",
+                "/backend/profissionais/excluir" => "ProfissionalController@viewExcluirProfissionais",
             ],
             "POST" => [
                 "/backend/usuario/salvar" => "UsuarioController@salvarUsuarios",
@@ -25,8 +30,11 @@ class Rotas {
                 "/backend/agendamentos/salvar" => "AgendamentoController@salvarAgendamentos",
                 "/backend/agendamentos/atualizar" => "AgendamentoController@atualizarAgendamentos",
                 "/backend/agendamentos/deletar" => "AgendamentoController@deletarAgendamentos",
+                "/backend/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
+                "/backend/profissionais/atualizar" => "ProfissionalController@atualizarProfissionais",
+                "/backend/profissionais/deletar" => "ProfissionalController@deletarProfissionais",
                 "/backend/login" => "UsuarioController@login",
-            ]
+            ],
         ];
     }
 }
