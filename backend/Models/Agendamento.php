@@ -9,9 +9,9 @@ class Agendamento {
         $this->db = $db;
     }
 
-    /**
-     * Inserir novo agendamento
-     */
+    /*
+      Inserir novo agendamento
+    */
     public function inserirAgendamento(int $id_paciente, int $id_profissional, string $data_agendamento, string $status_consulta = 'pendente') {
         $sql = "INSERT INTO agendamento (id_paciente, id_profissional, data_agendamento, status_consulta)
                 VALUES (:id_paciente, :id_profissional, :data_agendamento, :status_consulta)";
@@ -24,9 +24,9 @@ class Agendamento {
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-    /**
-     * Buscar todos os agendamentos ativos
-     */
+    /*
+      Buscar todos os agendamentos ativos
+    */
     public function buscarAgendamentos(): array {
         $sql = "SELECT * FROM agendamento WHERE excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
@@ -34,9 +34,9 @@ class Agendamento {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Deletar agendamento
-     */
+    /*
+      Deletar agendamento
+    */
     public function deletarAgendamento(int $id_agendamento): int {
         $sql = "DELETE FROM agendamento WHERE id_agendamento = :id_agendamento";
         $stmt = $this->db->prepare($sql);
@@ -45,9 +45,9 @@ class Agendamento {
         return $stmt->rowCount();
     }
 
-    /**
-     * Atualizar agendamento
-     */
+    /*
+      Atualizar agendamento
+    */
     public function atualizarAgendamento(int $id_agendamento, string $data_agendamento, string $status_consulta): bool {
         $dataAtual = date('Y-m-d H:i:s');
         $sql = "UPDATE agendamento

@@ -1,7 +1,6 @@
-<?php foreach($usuarios as $usuario): ?>
-    <p><?= $usuario->id_usuario ?></p>
-    <p><?= $usuario->nome_usuario ?></p>
-    <p><?= $usuario->email_usuario ?></p>
-    <p><?= $usuario->tipo_usuario ?></p>
-    <p><?= $usuario->status_usuario ?></p>
+<?php foreach($agendamentos as $agendameto): ?>
+    <p><?= $agendameto->id_paciente ?></p>
+    <p><?= $agendameto->id_profissional ?></p>
+    <p><?= $agendameto->data_agendameto ?></p>
+    <p><?= $agendameto->status_consulta ?></p>
     <?php endforeach; ?>

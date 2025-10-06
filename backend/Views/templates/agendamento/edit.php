@@ -1,20 +1,14 @@
-<form action="/backend/usuario/atualizar" method="POST">
-    <input type="hidden" name="id_usuario" value="<?= $usuario->id_usuario ?>">
-    
-    <label>Nome:</label>
-    <input type="text" name="nome_usuario" value="<?= htmlspecialchars($usuario->nome_usuario) ?>" required>
+<form action="/backend/agendamento/atualizar" method="POST">
+    <input type="hidden" name="id" value="<?= $agendamento['id'] ?>">
 
-    <label>Email:</label>
-    <input type="email" name="email_usuario" value="<?= htmlspecialchars($usuario->email_usuario) ?>" required>
+    <label for="id_paciente">Paciente:</label>
+    <input type="text" id="id_paciente" name="id_paciente" value="<?= $agendamento['id_paciente'] ?>" required>
 
-    <label>Senha:</label>
-    <input type="password" name="senha_usuario" placeholder="Digite nova senha se quiser alterar">
+    <label for="id_profissional">Profissional:</label>
+    <input type="text" id="id_profissional" name="id_profissional" value="<?= $agendamento['id_profissional'] ?>" required>
 
-    <label>Tipo:</label>
-    <select name="tipo_usuario" required>
-        <option value="admin" <?= $usuario->tipo_usuario === 'admin' ? 'selected' : '' ?>>Admin</option>
-        <option value="user" <?= $usuario->tipo_usuario === 'user' ? 'selected' : '' ?>>User</option>
-    </select>
+    <label for="data_agendamento">Data do Agendamento:</label>
+    <input type="datetime-local" id="data_agendamento" name="data_agendamento" value="<?= $agendamento['data_agendamento'] ?>" required>
 
     <button type="submit">Atualizar</button>
 </form>
