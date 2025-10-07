@@ -74,7 +74,7 @@ class UsuarioController {
         $nome = $_POST['nome_usuario'] ?? '';
         $email = $_POST['email_usuario'] ?? '';
         $senha = $_POST['senha_usuario'] ?? '';
-        $tipo = $_POST['tipo_usuario'] ?? 'user';
+        $tipo = $_POST['tipo_usuario'] ?? 'cliente';
         $status = 1;
 
         $id = $this->usuario->inserirUsuario($nome, $email, $senha, $tipo, $status);
