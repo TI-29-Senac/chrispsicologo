@@ -5,14 +5,18 @@ use App\Psico\Models\Usuario;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
+use App\Psico\Core\FileManager;
+use App\Psico\Validadores\UsuarioValidador;
 
 class UsuarioController {
     public $usuario;   
     public $db;
+    public $gerenciarImagem;
 
     public function __construct(){
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
+        $this->gerenciarImagem = new FileManager('upload');
     }
 
     // Listar usuários
@@ -28,6 +32,7 @@ class UsuarioController {
 
     // Criar usuário
     public function viewCriarUsuarios() {
+
         View::render("usuario/create");
     }
 
@@ -70,21 +75,32 @@ class UsuarioController {
     }
 
     // Salvar usuário (POST)
-    public function salvarUsuarios() {
-        $nome = $_POST['nome_usuario'] ?? '';
-        $email = $_POST['email_usuario'] ?? '';
-        $senha = $_POST['senha_usuario'] ?? '';
-        $tipo = $_POST['tipo_usuario'] ?? 'cliente';
-        $status = 1;
-
-        $id = $this->usuario->inserirUsuario($nome, $email, $senha, $tipo, $status);
-
-        if ($id) {
-            echo "Usuário criado com sucesso. ID: $id";
-        } else {
-            echo "Erro ao criar usuário.";
-        }
+public function salvarUsuarios() {
+    $erros = UsuarioValidador::ValidarEntradas($_POST);
+    if(!empty($erros)){
+        Redirect::redirecionarComMensagem('/backend/usuario/criar', 'error', implode('<br>', $erros));
+        return;
     }
+ 
+    $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['imagem'], 'usuario');
+    if($this->usuario->inserirUsuario(
+        $_POST['nome_usuario'],
+        $_POST['email_usuario'],
+        $_POST['senha_usuario'],
+        $_POST['tipo_usuario'],
+        'Ativo',
+        $imagem
+    )){
+        Redirect::redirecionarComMensagem('/backend/usuario/listar', 'success', 'Usuário criado com sucesso!');
+    }else{
+        Redirect::redirecionarComMensagem('/backend/usuario/criar', 'error', 'Erro ao criar usuário. Tente novamente.');
+    }
+}
+
+    public function relatorioUsuarios($id, $data1, $data2) {
+        View::render("usuario/relatorio", ["id" => $id, "data1" => $data1, "data2" => $data2]);
+        }
+ 
 
     // Atualizar usuário (POST)
 public function atualizarUsuarios() {

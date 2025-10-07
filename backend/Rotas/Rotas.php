@@ -6,34 +6,55 @@ class Rotas {
     public static function get(){
         return [
             "GET" => [
-                "/backend/usuarios" => "UsuarioController@index",
-                "/backend/usuario/criar" => "UsuarioController@viewCriarUsuarios",
-                "/backend/usuario/listar" => "UsuarioController@viewListarUsuarios",
-                "/backend/usuario/editar" => "UsuarioController@viewEditarUsuarios",
-                "/backend/usuario/excluir" => "UsuarioController@viewExcluirUsuarios",
-                "/backend/agendamentos" => "AgendamentoController@index",
-                "/backend/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
-                "/backend/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
-                "/backend/agendamentos/editar" => "AgendamentoController@viewEditarAgendamentos",
-                "/backend/agendamentos/excluir" => "AgendamentoController@viewExcluirAgendamentos",
-                "/backend/avaliacoes" => "AvaliacaoController@buscarPorProfissional",
-                "/backend/profissionais" => "ProfissionalController@index",
-                "/backend/profissionais/criar" => "ProfissionalController@viewCriarProfissionais",
-                "/backend/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
-                "/backend/profissionais/editar" => "ProfissionalController@viewEditarProfissionais",
-                "/backend/profissionais/excluir" => "ProfissionalController@viewExcluirProfissionais",
+                "/usuarios" => "UsuarioController@index",
+                "/usuario/criar" => "UsuarioController@viewCriarUsuarios",
+                "/usuario/listar" => "UsuarioController@viewListarUsuarios",
+                "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
+                "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
+                "/agendamentos" => "AgendamentoController@index",
+                "/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
+                "/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
+                "/agendamentos/editar/{id}" => "AgendamentoController@viewEditarAgendamentos",
+                "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
+                "/avaliacoes" => "AvaliacaoController@buscarPorProfissional",
+                "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
+            
+                // NOVAS ROTAS GET PARA PAGAMENTO
+                "/pagamentos/criar" => "PagamentoController@viewCriarPagamentos",
+                "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
+                "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
+                "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
+
+                // NOVAS ROTAS GET PARA AVALIACAO (CRIAÇÃO/EDIÇÃO)
+                "/avaliacoes/criar" => "AvaliacaoController@viewCriarAvaliacoes",
+                "/avaliacoes/listar" => "AvaliacaoController@viewListarAvaliacoes",
+                "/avaliacoes/editar/{id}" => "AvaliacaoController@viewEditarAvaliacoes",
+                "/avaliacoes/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
+
+                "/profissionais" => "ProfissionalController@index",
+                "/profissionais/criar" => "ProfissionalController@viewCriarProfissionais",
+                "/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
+                "/profissionais/editar/{id}" => "ProfissionalController@viewEditarProfissionais",
+                "/profissionais/excluir/{id}" => "ProfissionalController@viewExcluirProfissionais",
             ],
             "POST" => [
-                "/backend/usuario/salvar" => "UsuarioController@salvarUsuarios",
-                "/backend/usuario/atualizar" => "UsuarioController@atualizarUsuarios",
-                "/backend/usuario/deletar" => "UsuarioController@deletarUsuarios",
-                "/backend/agendamentos/salvar" => "AgendamentoController@salvarAgendamentos",
-                "/backend/agendamentos/atualizar" => "AgendamentoController@atualizarAgendamentos",
-                "/backend/agendamentos/deletar" => "AgendamentoController@deletarAgendamentos",
-                "/backend/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
-                "/backend/profissionais/atualizar" => "ProfissionalController@atualizarProfissionais",
-                "/backend/profissionais/deletar" => "ProfissionalController@deletarProfissionais",
-                "/backend/login" => "UsuarioController@login",
+                "/usuario/salvar" => "UsuarioController@salvarUsuarios",
+                "/usuario/atualizar/{id}" => "UsuarioController@atualizarUsuarios",
+                "/usuario/deletar/{id}" => "UsuarioController@deletarUsuarios",
+                "/agendamentos/salvar" => "AgendamentoController@salvarAgendamentos",
+                "/agendamentos/atualizar/{id}" => "AgendamentoController@atualizarAgendamentos",
+                "/agendamentos/deletar/{id}" => "AgendamentoController@deletarAgendamentos",
+
+                // NOVAS ROTAS POST PARA PAGAMENTO
+                "/pagamentos/salvar" => "PagamentoController@salvarPagamentos",
+                
+                // NOVAS ROTAS POST PARA AVALIACAO
+                "/avaliacoes/salvar" => "AvaliacaoController@salvarAvaliacoes",
+
+                "/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
+                "/profissionais/atualizar/{id}" => "ProfissionalController@atualizarProfissionais",
+                "/profissionais/deletar/{id}" => "ProfissionalController@deletarProfissionais",
+                "/login" => "UsuarioController@login",
             ],
         ];
     }

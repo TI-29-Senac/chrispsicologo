@@ -34,6 +34,18 @@ class Pagamento {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    /**
+     * Buscar pagamento por ID
+     */
+    public function buscarPagamentoPorId(int $id): ?array {
+        $sql = "SELECT * FROM pagamento WHERE id_pagamento = :id AND excluido_em IS NULL";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC); 
+    }
+
 
     /**
      * Deletar pagamento

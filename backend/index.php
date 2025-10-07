@@ -3,30 +3,21 @@ namespace App\Psico;
 require __DIR__ . '/../vendor/autoload.php';
 use App\Psico\Rotas\Rotas;
  
-$rotas = Rotas::get();
+use Bramus\Router\Router;
+$router = new Router();
  
-$metodoHttp = $_SERVER["REQUEST_METHOD"];
-$rota = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+$rotas = Rotas::get();
+$router->setNamespace('\App\Psico\Controllers');
 
-if(!array_key_exists($rota, $rotas[$metodoHttp])) {
-    http_response_code(404);
-    echo "Página não encontrada";
-    exit;
+foreach ($rotas as $metodoHttp => $rota){
+    foreach ($rota as $uri => $acao){
+        $metodoBramus = strtolower($metodoHttp);
+        $router->{$metodoBramus}($uri, $acao); 
+    }
 }
-
-$partes = explode("@", $rotas[$metodoHttp][$rota]);
-$nomeController = $partes[0];
-$metodoController = $partes[1];
-$nomeCompletoController = "App\\Psico\\Controllers\\" . $nomeController;
-
-if(!class_exists($nomeCompletoController)) {
-    http_response_code(500);
-    echo "O controlador não foi encontrado";
-    exit;
-}
-
-$controller = new $nomeCompletoController();
-$controller->$metodoController();
-
-
-
+$router->set404(function() {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+    echo '404, rota não encontrada!';
+});
+ 
+$router->run();
