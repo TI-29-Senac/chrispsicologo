@@ -111,7 +111,7 @@ public function salvarPagamentos() {
 
     // Deletar Pagamento (POST)
     public function deletarPagamentos(){
-        // O ID pode vir do formulário manual ou da tela de confirmação
+
         $id = $_POST['id_pagamento_manual'] ?? $_POST['id_pagamento'] ?? null; 
 
         if (!$id) {
@@ -119,7 +119,7 @@ public function salvarPagamentos() {
             return;
         }
         
-        // Assumindo que $this->pagamento->deletarPagamento($id) existe e retorna o número de linhas afetadas.
+
         $rowCount = $this->pagamento->deletarPagamento((int)$id); 
 
         if ($rowCount > 0) {

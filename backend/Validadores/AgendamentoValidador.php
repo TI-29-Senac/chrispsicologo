@@ -13,7 +13,7 @@ class AgendamentoValidador {
             $erros[] = "O campo profissional é obrigatório.";
         }
         // Data do Agendamento
-        if (isset($dados['data_agendameto']) && empty($dados['data_agendameto'])){
+        if (isset($dados['data_agendamento']) && empty($dados['data_agendamento'])){
             $erros[] = "O campo data do agendamento é obrigatório.";
         }
         return $erros;
