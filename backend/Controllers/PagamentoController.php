@@ -5,7 +5,6 @@ use App\Psico\Models\Pagamento;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
-use App\Psico\Validadores\PagamentoValidador;
 
 class PagamentoController {
     public $pagamento;   
@@ -15,31 +14,29 @@ class PagamentoController {
         $this->pagamento = new Pagamento($this->db);
 
     }
-    // Listar Pagamentos (Index)
+
     public function index(){
         $this->viewListarPagamentos();
     }
     
     public function viewListarPagamentos(){
         $dados = $this->pagamento->buscarPagamentos();
-        var_dump($dados);
-        exit;
         View::render("pagamento/index",["pagamentos"=>$dados]);
     }
 
-    // Criar Pagamento
+
     public function viewCriarPagamentos(){
         View::render("pagamento/create");
     }
 
-    // Editar Pagamento
+
     public function viewEditarPagamentos(){
         $id = $_GET['id'] ?? null;
         if (!$id) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado.");
             return;
         }
-        // Nota: Assumindo que você criará um método buscarPagamentoPorId($id) no seu Model de Pagamento
+
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id); 
 
         if (!$pagamento) {
@@ -50,14 +47,13 @@ class PagamentoController {
         View::render("pagamento/edit", ["pagamento" => $pagamento]);
     }
 
-    // Excluir Pagamento
+
     public function viewExcluirPagamentos(){
         $id = $_GET['id'] ?? null;
         if (!$id) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado.");
             return;
         }
-        // Nota: Assumindo que você criará um método buscarPagamentoPorId($id) no seu Model de Pagamento
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id); 
 
         if (!$pagamento) {
@@ -68,32 +64,44 @@ class PagamentoController {
         View::render("pagamento/delete", ["pagamento" => $pagamento]);
     }
 
-    // Salvar Pagamento (POST)
-    public function salvarPagamentos(){
-        $erros = PagamentoValidador::ValidarEntradas($_POST);
-        if(!empty($erros)){ 
-            Redirect::redirecionarComMensagem("pagamentos/criar","error",implode("<br>",$erros));
-        $id_agendamento = $_POST['id_agendamento'] ?? null;
-        $valor_consulta = $_POST['valor_consulta'] ?? 0.0;
-        $sinal_consulta = $_POST['sinal_consulta'] ?? 0.0;
-        $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
+// NOVO MÉTODO PARA EXIBIR O FORMULÁRIO DE EXCLUSÃO MANUAL POR ID
+public function viewExcluirManual() {
+    View::render("pagamento/excluir_manual");
+}
 
-        // Aqui você adicionaria a validação
 
-        $id = $this->pagamento->inserirPagamento(
-            (int)$id_agendamento,
-            (float)$valor_consulta,
-            (float)$sinal_consulta,
-            $tipo_pagamento
-        );
+public function salvarPagamentos() {
+    $id_agendamento = $_POST['id_agendamento'] ?? null;
+    $valor_consulta = $_POST['valor_consulta'] ?? '0';
+    $sinal_consulta = $_POST['sinal_consulta'] ?? '0';
+    $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
 
-        if ($id) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento criado com sucesso! ID: $id");
-        } else {
-            Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
-        }
-        }
+
+    $valor_consulta = str_replace('.', '', $valor_consulta); 
+    $valor_consulta = str_replace(',', '.', $valor_consulta);
+    $valor_consulta = (float)$valor_consulta; 
+
+    // CORREÇÃO: Tratar vírgula como decimal e converter para float (DECIMAL)
+    $sinal_consulta = str_replace('.', '', $sinal_consulta); // Remove separador de milhar
+    $sinal_consulta = str_replace(',', '.', $sinal_consulta); // Converte vírgula decimal para ponto
+    $sinal_consulta = (float)$sinal_consulta; // Converte para float (DECIMAL)
+
+    $id = $this->pagamento->inserirPagamento(
+        (int)$id_agendamento,
+        $valor_consulta,
+        $sinal_consulta,
+        $tipo_pagamento
+    );
+
+    if ($id) {
+        Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento criado com sucesso! ID: $id");
+    } else {
+        Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
     }
+}
+
+
+
     // Atualizar Pagamento (POST)
     public function atualizarPagamentos(){
         // Implementação similar ao salvar, mas chamando Pagamento->atualizarPagamento()
@@ -103,8 +111,21 @@ class PagamentoController {
 
     // Deletar Pagamento (POST)
     public function deletarPagamentos(){
-        // Implementação similar ao salvar, mas chamando Pagamento->deletarPagamento()
-        // ...
-        echo "Deletar Pagamentos";
+        // O ID pode vir do formulário manual ou da tela de confirmação
+        $id = $_POST['id_pagamento_manual'] ?? $_POST['id_pagamento'] ?? null; 
+
+        if (!$id) {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado para exclusão.");
+            return;
+        }
+        
+        // Assumindo que $this->pagamento->deletarPagamento($id) existe e retorna o número de linhas afetadas.
+        $rowCount = $this->pagamento->deletarPagamento((int)$id); 
+
+        if ($rowCount > 0) {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento ID: $id excluído com sucesso.");
+        } else {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Erro ao excluir pagamento ID: $id. Ele pode não existir.");
+        }
     }
 }

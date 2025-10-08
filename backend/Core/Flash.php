@@ -17,7 +17,7 @@ class Flash {
 
     public static function get() {
         if (!isset($_SESSION)) {
-            session_start();
+            // session_start();
         }
         if (isset($_SESSION['flash'])) {
             $flash = $_SESSION['flash'];
