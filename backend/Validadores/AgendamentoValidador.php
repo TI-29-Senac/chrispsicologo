@@ -5,7 +5,7 @@ class AgendamentoValidador {
     public static function ValidarEntradas($dados){
         $erros = [];
         // Paciente
-        if (isset($dados['id_paciente']) && empty($dados['id_paciente'])){
+        if (isset($dados['id_usuario']) && empty($dados['id_usuario'])){
             $erros[] = "O campo paciente é obrigatório.";
         }
         // Profissional

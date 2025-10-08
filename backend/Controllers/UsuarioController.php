@@ -103,12 +103,12 @@ public function salvarUsuarios() {
  
 
     // Atualizar usuário (POST)
-public function atualizarUsuarios() {
-    $id = $_POST['id_usuario'] ?? null;
-    $nome = $_POST['nome_usuario'] ?? '';
-    $email = $_POST['email_usuario'] ?? '';
-    $senha = $_POST['senha_usuario'] ?? null; // senha opcional
-    $tipo = $_POST['tipo_usuario'] ?? 'user';
+    public function atualizarUsuarios() {
+        $id = $_POST['id_usuario'] ?? null;
+        $nome = $_POST['nome_usuario'] ?? '';
+        $email = $_POST['email_usuario'] ?? '';
+        $senha = $_POST['senha_usuario'] ?? null; // senha opcional
+        $tipo = $_POST['tipo_usuario'] ?? 'user';
 
     if (!$id) {
         echo "ID do usuário não informado.";

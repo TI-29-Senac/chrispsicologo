@@ -2,7 +2,6 @@
 namespace App\Psico\Controllers;
 
 use App\Psico\Models\Profissional;
-
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
