@@ -21,8 +21,6 @@ class PagamentoController {
     
     public function viewListarPagamentos(){
         $dados = $this->pagamento->buscarPagamentos();
-        var_dump($dados);
-        exit;
         View::render("pagamento/index",["pagamentos"=>$dados]);
     }
 
@@ -68,27 +66,37 @@ class PagamentoController {
     }
 
     // Salvar Pagamento (POST)
-    public function salvarPagamentos(){
-        $id_agendamento = $_POST['id_agendamento'] ?? null;
-        $valor_consulta = $_POST['valor_consulta'] ?? 0.0;
-        $sinal_consulta = $_POST['sinal_consulta'] ?? 0.0;
-        $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
+public function salvarPagamentos() {
+    $id_agendamento = $_POST['id_agendamento'] ?? null;
+    $valor_consulta = $_POST['valor_consulta'] ?? '0';
+    $sinal_consulta = $_POST['sinal_consulta'] ?? '0';
+    $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
 
-        // Aqui você adicionaria a validação
 
-        $id = $this->pagamento->inserirPagamento(
-            (int)$id_agendamento,
-            (float)$valor_consulta,
-            (float)$sinal_consulta,
-            $tipo_pagamento
-        );
+$valor_consulta = str_replace('.', '', $valor_consulta); 
+$valor_consulta = str_replace(',', '.', $valor_consulta);
+$valor_consulta = (float)$valor_consulta; 
 
-        if ($id) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento criado com sucesso! ID: $id");
-        } else {
-            Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
-        }
+
+$sinal_consulta = str_replace('.', '', $sinal_consulta);
+$sinal_consulta = str_replace(',', '', $sinal_consulta); 
+$sinal_consulta = (int)$sinal_consulta;
+
+    $id = $this->pagamento->inserirPagamento(
+        (int)$id_agendamento,
+        $valor_consulta,
+        $sinal_consulta,
+        $tipo_pagamento
+    );
+
+    if ($id) {
+        Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento criado com sucesso! ID: $id");
+    } else {
+        Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
     }
+}
+
+
 
     // Atualizar Pagamento (POST)
     public function atualizarPagamentos(){
