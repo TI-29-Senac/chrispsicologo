@@ -2,18 +2,24 @@
 namespace App\Psico\Controllers;
 
 use App\Psico\Models\Profissional;
+use App\Psico\Models\Usuario;
 
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
+use App\Psico\Core\Flash;
 use App\Psico\Validadores\ProfissionalValidador;
+use App\Psico\Validadores\UsuarioValidador;
+
 
 class ProfissionalController {
     public $profissional;   
     public $db;
+    public $usuario;
     public function __construct(){
         $this->db = Database::getInstance();
         $this->profissional = new Profissional($this->db);
+        $this->usuario = new Usuario($this->db);
 
     }
     // Index
@@ -22,15 +28,8 @@ class ProfissionalController {
         var_dump($profissionais);
     }
 
-    public function viewListarProfissionais(){
-        $dados = $this->profissional->buscarprofissionais();
-        View::render("profissional/index",["profissionais"=>$dados]);
-    }
     public function viewCriarProfissionais(){
         View::render("profissional/create");
-    }
-    public function viewEditarProfissionais(){
-        View::render("profissional/edit");
     }
     public function viewExcluirProfissionais(){
         View::render("profissional/delete");
@@ -57,11 +56,69 @@ class ProfissionalController {
             }
         }
     }
-    public function atualizarProfissionais(){
-        echo "Atualizar Profissionais";
+public function atualizarProfissionais($id_profissional) {
+        $dados = $_POST;
+        $id_usuario = $dados['id_usuario'] ?? null;
+
+        // 1. Validar os dados do formulário
+        $errosUsuario = UsuarioValidador::ValidarEntradas($dados, true); // Valida nome, email, etc.
+        $errosProfissional = ProfissionalValidador::ValidarEntradas($dados); // Valida especialidade
+
+        $erros = array_merge($errosUsuario, $errosProfissional);
+
+        if (!empty($erros)) {
+            Flash::set('validation_errors', $erros);
+            Flash::set('old_input', $dados);
+            Redirect::redirecionarComMensagem("profissionais/editar/{$id_profissional}", "error", "Erro de validação. Verifique os campos.");
+            return;
+        }
+
+        // 2. Atualizar dados na tabela de USUÁRIO
+        $this->usuario->atualizarUsuario(
+            (int)$id_usuario,
+            $dados['nome_usuario'],
+            $dados['email_usuario'],
+            $dados['senha_usuario'] ?? null, // Senha é opcional
+            $dados['tipo_usuario']
+        );
+
+        // 3. Atualizar dados na tabela de PROFISSIONAL
+        $this->profissional->atualizarProfissional(
+            (int)$id_usuario,
+            $dados['especialidade']
+        );
+
+        Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
     }
+
     public function deletarProfissionais(){
         echo "Deletar Profissionais";
     }
 
+
+      public function viewListarProfissionais()
+    {
+        // O Controller pede ao Model para buscar os profissionais
+        $profissionais = $this->profissional->listarProfissionais();
+        View::render('profissional/index', ['profissionais' => $profissionais]);
+    }
+
+    public function viewEditarProfissionais($id_profissional)
+    {
+        if (!$id_profissional) {
+            echo "ID do profissional não informado.";
+            return;
+        }
+
+        // O Controller pede ao Model para buscar um profissional específico
+        $profissional_data = $this->profissional->buscarProfissionalPorId((int)$id_profissional);
+
+        if (!$profissional_data) {
+            echo "Profissional não encontrado.";
+            return;
+        }
+
+        View::render('profissional/edit', ["usuario" => $profissional_data]);
+    }
 }
+

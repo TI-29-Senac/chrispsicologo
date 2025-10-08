@@ -3,26 +3,26 @@
 namespace App\Psico\Core;
 
 class Flash {
-    //      Static = Metodo da classe
-    //      Chamamos o método sem instanciar a classe // Sem criar o objeto
-    public static function set($type, $message) {
+    
+
+    public static function set(string $key, $value) {
         if (!isset($_SESSION)) {
             session_start();
         }
-        $_SESSION['flash'] = [
-            'type' => $type,
-            'message' => $message
-        ];
+
+        $_SESSION['_flash_data'][$key] = $value;
     }
 
-    public static function get() {
+
+    public static function get(string $key) {
         if (!isset($_SESSION)) {
-            // session_start();
+             // session_start(); 
         }
-        if (isset($_SESSION['flash'])) {
-            $flash = $_SESSION['flash'];
-            unset($_SESSION['flash']);
-            return $flash;
+        
+        if (isset($_SESSION['_flash_data'][$key])) {
+            $value = $_SESSION['_flash_data'][$key];
+            unset($_SESSION['_flash_data'][$key]);
+            return $value;
         }
         return null;
     }

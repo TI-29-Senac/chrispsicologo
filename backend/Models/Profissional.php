@@ -72,8 +72,65 @@ public function inserirProfissional(int $id_usuario, string $especialidade) {
     return false;
 }
 
+public function listarProfissionais(): array {
+    $sql = "
+        SELECT 
+            p.id_profissional,
+            p.id_usuario,
+            u.nome_usuario,
+            u.email_usuario,
+            u.tipo_usuario,
+            u.status_usuario,
+            p.especialidade,
+            p.criado_em,
+            p.atualizado_em
+        FROM 
+            profissional p
+        INNER JOIN 
+            usuario u ON p.id_usuario = u.id_usuario
+        WHERE 
+            p.excluido_em IS NULL
+        ORDER BY 
+            u.nome_usuario ASC
+    ";
 
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
+/**
+ * Buscar um profissional pelo ID
+ */
+ public function buscarProfissionalPorId(int $id_profissional) { // Removido o tipo de retorno :?array
+        $sql = "
+            SELECT 
+                p.id_profissional,
+                p.id_usuario,
+                p.especialidade,
+                u.nome_usuario,
+                u.email_usuario,
+                u.tipo_usuario,
+                u.status_usuario
+            FROM 
+                profissional p
+            INNER JOIN 
+                usuario u ON p.id_usuario = u.id_usuario
+            WHERE 
+                p.id_profissional = :id_profissional
+                AND p.excluido_em IS NULL
+            LIMIT 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // CORREÇÃO: Alterado de FETCH_ASSOC para FETCH_OBJ
+        $profissional = $stmt->fetch(PDO::FETCH_OBJ);
+
+        return $profissional ?: null;
+    }
 
     /**
      * Atualizar especialidade do profissional

@@ -7,6 +7,7 @@ use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Core\FileManager;
 use App\Psico\Validadores\UsuarioValidador;
+use App\Psico\Core\Flash;
 
 class UsuarioController {
     public $usuario;   
@@ -36,24 +37,6 @@ class UsuarioController {
         View::render("usuario/create");
     }
 
-    // Editar usuário
-    public function viewEditarUsuarios() {
-        $id = $_GET['id'] ?? null;
-
-        if (!$id) {
-            echo "ID do usuário não informado.";
-            return;
-        }
-
-        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
-
-        if (!$usuario) {
-            echo "Usuário não encontrado.";
-            return;
-        }
-
-        View::render("usuario/edit", ["usuario" => $usuario]);
-    }
 
     // Excluir usuário
     public function viewExcluirUsuarios() {
@@ -102,64 +85,95 @@ public function salvarUsuarios() {
         }
  
 
-    // Atualizar usuário (POST)
-public function atualizarUsuarios() {
-    $id = $_POST['id_usuario'] ?? null;
-    $nome = $_POST['nome_usuario'] ?? '';
-    $email = $_POST['email_usuario'] ?? '';
-    $senha = $_POST['senha_usuario'] ?? null; // senha opcional
-    $tipo = $_POST['tipo_usuario'] ?? 'user';
-
-    if (!$id) {
-        echo "ID do usuário não informado.";
-        return;
-    }
-
-    // Atualiza todos os campos do usuário
-    $resultado = $this->usuario->atualizarUsuario((int)$id, $nome, $email, $senha, $tipo);
-
-    if ($resultado) {
-        echo "Usuário atualizado com sucesso.";
-    } else {
-        echo "Erro ao atualizar usuário ou nenhum campo alterado.";
-    }
-}
-
-
-    // Deletar usuário (POST)
-    public function deletarUsuarios() {
-        $id = $_POST['id_usuario'] ?? null;
-
+public function viewEditarUsuarios($id) {
         if (!$id) {
             echo "ID do usuário não informado.";
             return;
         }
 
-        $resultado = $this->usuario->deletarUsuario((int)$id);
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+
+        if (!$usuario) {
+            echo "Usuário não encontrado.";
+            return;
+        }
+
+        View::render("usuario/edit", ["usuario" => $usuario]);
+    }
+    
+    // ... (outros métodos)
+
+    // CORREÇÃO: Receber $id como argumento e remover a busca pelo ID no $_POST
+    public function atualizarUsuarios($id) {
+        $dados = $_POST;
+
+        if (!$id) {
+            die('ID do usuário não informado.');
+        }
+
+        $nome = $dados['nome_usuario'] ?? '';
+        $email = $dados['email_usuario'] ?? '';
+        $senha = $dados['senha_usuario'] ?? null;
+        $tipo = $dados['tipo_usuario'] ?? 'cliente';
+
+        $erros = UsuarioValidador::ValidarEntradas($dados, true);
+
+        if (!empty($erros)) {
+            Flash::set('validation_errors', $erros);
+            Flash::set('old_input', $dados);
+            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro de validação. Verifique os campos.");
+            return;
+        }
+
+        // O hash da senha já estava correto
+        $senha_hash = empty($senha) ? null : password_hash($senha, PASSWORD_DEFAULT);
+
+        $resultado = $this->usuario->atualizarUsuario(
+            (int)$id, // Usar o $id vindo da URL
+            $nome,
+            $email,
+            $senha_hash,
+            $tipo
+        );
 
         if ($resultado) {
-            echo "Usuário deletado com sucesso.";
+            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário ID: $id atualizado com sucesso.");
         } else {
-            echo "Erro ao deletar usuário.";
+            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro ao atualizar usuário ou nenhum campo alterado.");
         }
     }
 
-        public function login() {
-        // Assume que o frontend enviará 'email' e 'senha'
+    public function deletarUsuario($id_usuario)
+    {
+        if (!$id_usuario) {
+            Redirect::redirecionarComMensagem('usuarios/listar', 'error', 'ID do usuário não fornecido.');
+            return;
+        }
+
+        $sucesso = $this->usuario->excluirUsuario((int)$id_usuario);
+
+        if ($sucesso) {
+            Redirect::redirecionarComMensagem('usuarios/listar', 'success', 'Usuário excluído com sucesso!');
+        } else {
+            Redirect::redirecionarComMensagem('usuarios/listar', 'error', 'Ocorreu um erro ao excluir o usuário.');
+        }
+    }
+
+        public function login() {   
         $email = $_POST['email'] ?? '';
         $senha = $_POST['senha'] ?? '';
         
-        header('Content-Type: application/json'); // Garante que a resposta é JSON
+        header('Content-Type: application/json'); 
 
         $usuarioAutenticado = $this->usuario->autenticarUsuario($email, $senha);
 
         if ($usuarioAutenticado) {
-            // Se o login for bem-sucedido
+ 
             http_response_code(200);
             echo json_encode(["success" => true, "message" => "Login realizado com sucesso!", "user" => $usuarioAutenticado]);
         } else {
-            // Se o login falhar
-            http_response_code(401); // Unauthorized
+
+            http_response_code(401); 
             echo json_encode(["success" => false, "message" => "Email ou senha inválidos."]);
         }
     }
