@@ -1,8 +1,8 @@
 <form action="/backend/agendamento/atualizar" method="POST">
     <input type="hidden" name="id" value="<?= $agendamento['id'] ?>">
 
-    <label for="id_paciente">Paciente:</label>
-    <input type="text" id="id_paciente" name="id_paciente" value="<?= $agendamento['id_paciente'] ?>" required>
+    <label for="id_usuario">usuario:</label>
+    <input type="text" id="id_usuario" name="id_usuario" value="<?= $agendamento['id_usuario'] ?>" required>
 
     <label for="id_profissional">Profissional:</label>
     <input type="text" id="id_profissional" name="id_profissional" value="<?= $agendamento['id_profissional'] ?>" required>

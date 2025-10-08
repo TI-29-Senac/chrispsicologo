@@ -12,11 +12,11 @@ class Agendamento {
     /*
       Inserir novo agendamento
     */
-    public function inserirAgendamento(int $id_paciente, int $id_profissional, string $data_agendamento, string $status_consulta = 'pendente') {
-        $sql = "INSERT INTO agendamento (id_paciente, id_profissional, data_agendamento, status_consulta)
-                VALUES (:id_paciente, :id_profissional, :data_agendamento, :status_consulta)";
+    public function inserirAgendamento(int $id_usuario, int $id_profissional, string $data_agendamento, string $status_consulta = 'pendente') {
+        $sql = "INSERT INTO agendamento (id_usuario, id_profissional, data_agendamento, status_consulta)
+                VALUES (:id_usuario, :id_profissional, :data_agendamento, :status_consulta)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id_paciente', $id_paciente, PDO::PARAM_INT);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
         $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
         $stmt->bindParam(':data_agendamento', $data_agendamento);
         $stmt->bindParam(':status_consulta', $status_consulta);

@@ -40,7 +40,7 @@ class AgendamentoController {
             Redirect::redirecionarComMensagem("agendamento/criar","error",implode("<br>",$erros));
         }
         $id = $this->agendamento->inserirAgendamento(
-            $_POST["id_paciente"],
+            $_POST["id_usuario"],
             $_POST["id_profissional"],
             $_POST["data_agendamento"],
             "Pendente"

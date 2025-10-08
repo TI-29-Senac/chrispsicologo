@@ -6,6 +6,7 @@ use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\AvaliacaoValidador;
+use App\Psico\Core\Flash;
 
 class AvaliacaoController {
     public $avaliacao;   
@@ -13,119 +14,84 @@ class AvaliacaoController {
     public function __construct(){
         $this->db = Database::getInstance();
         $this->avaliacao = new Avaliacao($this->db);
-
-    }
-
-    // Listar Avaliações (Index)
-    public function index(){
-        $this->viewListarAvaliacoes();
     }
     
+    public function viewCriarAvaliacoes(){
+        View::render("avaliacao/create");
+    }
+
     public function viewListarAvaliacoes(){
         $dados = $this->avaliacao->buscarAvaliacoes();
         View::render("avaliacao/index",["avaliacoes"=>$dados]);
     }
     
-    // Criar Avaliação
-    public function viewCriarAvaliacoes(){
-        View::render("avaliacao/create");
-    }
-
-    // Editar Avaliação
-    public function viewEditarAvaliacoes(){
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
-            return;
-        }
-        // Nota: Assumindo que você criará um método buscarAvaliacaoPorId($id) no seu Model de Avaliacao
+    // GET: Exibir formulário de edição
+    public function viewEditarAvaliacoes($id){
         $avaliacao = $this->avaliacao->buscarAvaliacaoPorId((int)$id); 
-
         if (!$avaliacao) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Avaliação não encontrada.");
             return;
         }
-
         View::render("avaliacao/edit", ["avaliacao" => $avaliacao]);
     }
 
-    // Excluir Avaliação
-    public function viewExcluirAvaliacoes(){
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
-            return;
-        }
-        // Nota: Assumindo que você criará um método buscarAvaliacaoPorId($id) no seu Model de Avaliacao
+    // GET: Exibir formulário de confirmação de exclusão
+    public function viewExcluirAvaliacoes($id){
         $avaliacao = $this->avaliacao->buscarAvaliacaoPorId((int)$id); 
-
         if (!$avaliacao) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Avaliação não encontrada.");
             return;
         }
-
         View::render("avaliacao/delete", ["avaliacao" => $avaliacao]);
     }
-
-    // Salvar Avaliação (POST)
-    public function salvarAvaliacoes(){
-        $erros = AvaliacaoValidador::ValidarEntradas($_POST);
-        if(!empty($erros)){ 
-            Redirect::redirecionarComMensagem("avaliacoes/criar","error",implode("<br>",$erros));
-        $id_cliente = $_POST['id_cliente'] ?? null;
-        $id_profissional = $_POST['id_profissional'] ?? null;
-        $nota_avaliacao = $_POST['nota_avaliacao'] ?? 1;
-        $descricao_avaliacao = $_POST['descricao_avaliacao'] ?? '';
-
-        // Aqui você adicionaria a validação
-
+    
+    // POST: Salvar nova avaliação
+    public function salvarAvaliacoes() {
+        $dados = $_POST;
+        // Assume-se que existe um AvaliacaoValidador::ValidarEntradas($dados)
+        
         $id = $this->avaliacao->inserirAvaliacao(
-            (int)$id_cliente,
-            (int)$id_profissional,
-            $descricao_avaliacao,
-            (int)$nota_avaliacao
+            (int)$dados['id_usuario'],
+            (int)$dados['id_profissional'],
+            (int)$dados['estrelas'],
+            $dados['comentario']
         );
 
         if ($id) {
-            Redirect::redirecionarComMensagem("avaliacoes/listar", "success", "Avaliação registrada com sucesso! ID: $id");
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "success", "Avaliação criada com sucesso! ID: $id");
         } else {
-            Redirect::redirecionarComMensagem("avaliacoes/criar", "error", "Erro ao registrar avaliação.");
+            Redirect::redirecionarComMensagem("avaliacoes/criar", "error", "Erro ao criar avaliação.");
         }
-        }   
-    }
-    // Atualizar Avaliação (POST)
-    public function atualizarAvaliacoes(){
-        // Implementação similar ao salvar, mas chamando Avaliacao->atualizarAvaliacao()
-        // ...
-        echo "Atualizar Avaliações";
     }
 
-    // Deletar Avaliação (POST)
-    public function deletarAvaliacoes(){
-        // Implementação similar ao salvar, mas chamando Avaliacao->deletarAvaliacao()
-        // ...
-        echo "Deletar Avaliações";
-    }
-    
-    /**
-     * API para buscar avaliações por ID de profissional via GET /backend/avaliacoes?id=X
-     */
-    public function buscarPorProfissional() {
-        $id = $_GET['id'] ?? null;
-        
-        header('Content-Type: application/json');
-        
-        if (!$id || !is_numeric($id)) {
-            http_response_code(400);
-            echo json_encode(["error" => "ID do profissional inválido ou não fornecido."]);
-            return;
-        }
+    // POST: Atualizar avaliação
+    public function atualizarAvaliacoes($id){
+        $dados = $_POST;
+        // Assume-se que existe um AvaliacaoValidador::ValidarEntradas($dados)
 
-        // Chama o método do Model para buscar as avaliações
-        $avaliacoes = $this->avaliacao->buscarAvaliacoesPorProfissional((int)$id);
-        
-        http_response_code(200);
-        echo json_encode($avaliacoes);
-        return;
+        $sucesso = $this->avaliacao->atualizarAvaliacao(
+            (int)$id,
+            (int)$dados['id_usuario'],
+            (int)$dados['id_profissional'],
+            (int)$dados['estrelas'],
+            $dados['comentario']
+        );
+
+        if ($sucesso) {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "success", "Avaliação ID: $id atualizada com sucesso.");
+        } else {
+            Redirect::redirecionarComMensagem("avaliacoes/editar/{$id}", "error", "Erro ao atualizar avaliação.");
+        }
+    }
+
+    // POST: Deletar avaliação
+    public function deletarAvaliacoes($id){
+        $rowCount = $this->avaliacao->deletarAvaliacao((int)$id); 
+
+        if ($rowCount > 0) {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "success", "Avaliação ID: $id excluída com sucesso.");
+        } else {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Erro ao excluir avaliação ID: $id. Ela pode não existir.");
+        }
     }
 }
