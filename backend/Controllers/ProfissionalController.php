@@ -6,6 +6,7 @@ use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
+use App\Psico\Validadores\ProfissionalValidador;
 
 class ProfissionalController {
     public $profissional;   
@@ -35,24 +36,27 @@ class ProfissionalController {
         View::render("profissional/delete");
     }
     public function salvarProfissionais(){
+        $erros = ProfissionalValidador::ValidarEntradas($_POST);
+        if(!empty($erros)){ 
+            Redirect::redirecionarComMensagem("profissionais/criar","error",implode("<br>",$erros));
         // Captura as variáveis do POST
         $id_usuario = $_POST["id_usuario"] ?? null;
         $especialidade = $_POST["especialidade"] ?? '';
            if (empty($id_usuario) || empty($especialidade)) {
             Redirect::redirecionarComMensagem("profissionais/criar", "error", "O ID do Usuário e a Especialidade são obrigatórios.");
             return;
-        }
-                $id = $this->profissional->inserirProfissional(
+            }
+            $id = $this->profissional->inserirProfissional(
             (int)$id_usuario,
             $especialidade
-        );
-  if($id){
+            );
+            if($id){
             Redirect::redirecionarComMensagem("profissionais/listar","success","Profissional criado com sucesso! ID: $id");
-        }else{
+            }else{
             Redirect::redirecionarComMensagem("profissionais/criar","error","Erro ao criar profissional!");
+            }
         }
     }
-
     public function atualizarProfissionais(){
         echo "Atualizar Profissionais";
     }

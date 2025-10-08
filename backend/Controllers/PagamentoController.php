@@ -5,6 +5,7 @@ use App\Psico\Models\Pagamento;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
+use App\Psico\Validadores\PagamentoValidador;
 
 class PagamentoController {
     public $pagamento;   
@@ -69,6 +70,9 @@ class PagamentoController {
 
     // Salvar Pagamento (POST)
     public function salvarPagamentos(){
+        $erros = PagamentoValidador::ValidarEntradas($_POST);
+        if(!empty($erros)){ 
+            Redirect::redirecionarComMensagem("pagamentos/criar","error",implode("<br>",$erros));
         $id_agendamento = $_POST['id_agendamento'] ?? null;
         $valor_consulta = $_POST['valor_consulta'] ?? 0.0;
         $sinal_consulta = $_POST['sinal_consulta'] ?? 0.0;
@@ -88,8 +92,8 @@ class PagamentoController {
         } else {
             Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
         }
+        }
     }
-
     // Atualizar Pagamento (POST)
     public function atualizarPagamentos(){
         // Implementação similar ao salvar, mas chamando Pagamento->atualizarPagamento()

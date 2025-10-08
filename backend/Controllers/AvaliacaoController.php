@@ -5,6 +5,7 @@ use App\Psico\Models\Avaliacao;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
+use App\Psico\Validadores\AvaliacaoValidador;
 
 class AvaliacaoController {
     public $avaliacao;   
@@ -68,6 +69,9 @@ class AvaliacaoController {
 
     // Salvar Avaliação (POST)
     public function salvarAvaliacoes(){
+        $erros = AvaliacaoValidador::ValidarEntradas($_POST);
+        if(!empty($erros)){ 
+            Redirect::redirecionarComMensagem("avaliacoes/criar","error",implode("<br>",$erros));
         $id_cliente = $_POST['id_cliente'] ?? null;
         $id_profissional = $_POST['id_profissional'] ?? null;
         $nota_avaliacao = $_POST['nota_avaliacao'] ?? 1;
@@ -87,8 +91,8 @@ class AvaliacaoController {
         } else {
             Redirect::redirecionarComMensagem("avaliacoes/criar", "error", "Erro ao registrar avaliação.");
         }
+        }   
     }
-
     // Atualizar Avaliação (POST)
     public function atualizarAvaliacoes(){
         // Implementação similar ao salvar, mas chamando Avaliacao->atualizarAvaliacao()
