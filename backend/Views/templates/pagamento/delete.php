@@ -1,12 +1,18 @@
-<div>Excluir Pagamento #<?= $pagamento['id_pagamento'] ?></div>
-<p>Tem certeza que deseja excluir o pagamento abaixo? Esta ação não pode ser desfeita.</p>
+<?php 
+// chrispsicologo/backend/Views/templates/pagamento/excluir_manual.php
+?>
+<div>Excluir Pagamento por ID</div>
 
-<ul>
-    <li><strong>ID Pagamento:</strong> <?= $pagamento['id_pagamento'] ?></li>
-    <li><strong>ID Agendamento:</strong> <?= $pagamento['id_agendamento'] ?></li>
-    <li><strong>Valor Total:</strong> R$<?= number_format($pagamento['valor_consulta'], 2, ',', '.') ?></li>
-    <li><strong>Tipo:</strong> <?= ucfirst($pagamento['tipo_pagamento']) ?></li>
-</ul>
+<p>Insira o ID do pagamento que deseja excluir.</p>
+
+<form action="/backend/pagamentos/deletar" method="POST">
+    <label for="id_pagamento_manual">ID do Pagamento a Excluir:</label>
+    <input type="number" id="id_pagamento_manual" name="id_pagamento_manual" required min="1"><br><br>
+    
+    <button type="submit" style="background-color: #dc3545; color: white;">Excluir Pagamento</button>
+</form>
+
+<p style="margin-top: 20px;">Você pode ver os IDs disponíveis na seção <a href="/backend/pagamentos/listar">Pagamentos/Listar</a>.</p>
 
 <form action="/backend/pagamentos/deletar" method="POST">
     <input type="hidden" name="id_pagamento" value="<?= $pagamento['id_pagamento'] ?>">

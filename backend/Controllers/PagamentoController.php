@@ -14,7 +14,7 @@ class PagamentoController {
         $this->pagamento = new Pagamento($this->db);
 
     }
-    // Listar Pagamentos (Index)
+
     public function index(){
         $this->viewListarPagamentos();
     }
@@ -24,19 +24,19 @@ class PagamentoController {
         View::render("pagamento/index",["pagamentos"=>$dados]);
     }
 
-    // Criar Pagamento
+
     public function viewCriarPagamentos(){
         View::render("pagamento/create");
     }
 
-    // Editar Pagamento
+
     public function viewEditarPagamentos(){
         $id = $_GET['id'] ?? null;
         if (!$id) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado.");
             return;
         }
-        // Nota: Assumindo que você criará um método buscarPagamentoPorId($id) no seu Model de Pagamento
+
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id); 
 
         if (!$pagamento) {
@@ -47,14 +47,13 @@ class PagamentoController {
         View::render("pagamento/edit", ["pagamento" => $pagamento]);
     }
 
-    // Excluir Pagamento
+
     public function viewExcluirPagamentos(){
         $id = $_GET['id'] ?? null;
         if (!$id) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado.");
             return;
         }
-        // Nota: Assumindo que você criará um método buscarPagamentoPorId($id) no seu Model de Pagamento
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id); 
 
         if (!$pagamento) {
@@ -65,7 +64,12 @@ class PagamentoController {
         View::render("pagamento/delete", ["pagamento" => $pagamento]);
     }
 
-    // Salvar Pagamento (POST)
+// NOVO MÉTODO PARA EXIBIR O FORMULÁRIO DE EXCLUSÃO MANUAL POR ID
+public function viewExcluirManual() {
+    View::render("pagamento/excluir_manual");
+}
+
+
 public function salvarPagamentos() {
     $id_agendamento = $_POST['id_agendamento'] ?? null;
     $valor_consulta = $_POST['valor_consulta'] ?? '0';
@@ -73,14 +77,14 @@ public function salvarPagamentos() {
     $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
 
 
-$valor_consulta = str_replace('.', '', $valor_consulta); 
-$valor_consulta = str_replace(',', '.', $valor_consulta);
-$valor_consulta = (float)$valor_consulta; 
+    $valor_consulta = str_replace('.', '', $valor_consulta); 
+    $valor_consulta = str_replace(',', '.', $valor_consulta);
+    $valor_consulta = (float)$valor_consulta; 
 
-
-$sinal_consulta = str_replace('.', '', $sinal_consulta);
-$sinal_consulta = str_replace(',', '', $sinal_consulta); 
-$sinal_consulta = (int)$sinal_consulta;
+    // CORREÇÃO: Tratar vírgula como decimal e converter para float (DECIMAL)
+    $sinal_consulta = str_replace('.', '', $sinal_consulta); // Remove separador de milhar
+    $sinal_consulta = str_replace(',', '.', $sinal_consulta); // Converte vírgula decimal para ponto
+    $sinal_consulta = (float)$sinal_consulta; // Converte para float (DECIMAL)
 
     $id = $this->pagamento->inserirPagamento(
         (int)$id_agendamento,
@@ -107,8 +111,21 @@ $sinal_consulta = (int)$sinal_consulta;
 
     // Deletar Pagamento (POST)
     public function deletarPagamentos(){
-        // Implementação similar ao salvar, mas chamando Pagamento->deletarPagamento()
-        // ...
-        echo "Deletar Pagamentos";
+        // O ID pode vir do formulário manual ou da tela de confirmação
+        $id = $_POST['id_pagamento_manual'] ?? $_POST['id_pagamento'] ?? null; 
+
+        if (!$id) {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado para exclusão.");
+            return;
+        }
+        
+        // Assumindo que $this->pagamento->deletarPagamento($id) existe e retorna o número de linhas afetadas.
+        $rowCount = $this->pagamento->deletarPagamento((int)$id); 
+
+        if ($rowCount > 0) {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento ID: $id excluído com sucesso.");
+        } else {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Erro ao excluir pagamento ID: $id. Ele pode não existir.");
+        }
     }
 }
