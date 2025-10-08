@@ -53,8 +53,8 @@
                 <td><?= htmlspecialchars($avaliacao['nota_avaliacao']) ?>/5</td>
                 <td><?= htmlspecialchars($avaliacao['descricao_avaliacao']) ?></td>
                 <td>
-                    <a href="/backend/avaliacoes/editar?id=<?= $avaliacao['id_avaliacao'] ?>">Editar</a> |
-                    <a href="/backend/avaliacoes/excluir?id=<?= $avaliacao['id_avaliacao'] ?>">Excluir</a>
+                    <a href="/backend/avaliacoes/editar/<?= $avaliacao['id_avaliacao'] ?>">Editar</a> |
+                    <a href="/backend/avaliacoes/excluir/<?= $avaliacao['id_avaliacao'] ?>">Excluir</a>
                 </td>
             </tr>
         <?php endforeach; ?>
