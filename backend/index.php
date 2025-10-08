@@ -27,6 +27,3 @@ if(!class_exists($nomeCompletoController)) {
 
 $controller = new $nomeCompletoController();
 $controller->$metodoController();
-
-
-
