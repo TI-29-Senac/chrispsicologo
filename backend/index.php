@@ -3,6 +3,9 @@ namespace App\Psico;
 require __DIR__ . '/../vendor/autoload.php';
 use App\Psico\Rotas\Rotas;
  
+use Bramus\Router\Router;
+$router = new Router();
+ 
 $rotas = Rotas::get();
  
 $metodoHttp = $_SERVER["REQUEST_METHOD"];
@@ -27,3 +30,6 @@ if(!class_exists($nomeCompletoController)) {
 
 $controller = new $nomeCompletoController();
 $controller->$metodoController();
+
+
+

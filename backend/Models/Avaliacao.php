@@ -24,6 +24,17 @@ class Avaliacao {
 
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
+    
+    /**
+     * Buscar avaliação por ID
+     */
+    public function buscarAvaliacaoPorId(int $id): ?array {
+        $sql = "SELECT * FROM avaliacao WHERE id_avaliacao = :id AND excluido_em IS NULL";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     /**
      * Buscar todas as avaliações ativas
@@ -65,8 +76,6 @@ class Avaliacao {
         return $stmt->execute();
     }
 
-    // ... (dentro da classe Avaliacao em chrispsicologo/backend/Models/Avaliacao.php)
-
     /**
      * Buscar avaliações por ID do Profissional, incluindo nome do cliente
      */
@@ -90,5 +99,4 @@ class Avaliacao {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-// ...
 }

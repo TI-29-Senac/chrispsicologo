@@ -60,18 +60,20 @@ class Profissional {
     /**
      * Inserir novo profissional
      */
-    public function inserirProfissional(int $id_usuario, string $especialidade) {
-        $sql = "INSERT INTO profissional (id_usuario, especialidade) VALUES (:id_usuario, :especialidade)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-        $stmt->bindParam(':especialidade', $especialidade);
+public function inserirProfissional(int $id_usuario, string $especialidade) {
+    $sql = "INSERT INTO profissional (id_usuario, especialidade) VALUES (:id_usuario, :especialidade)";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->bindParam(':especialidade', $especialidade);
 
-        if ($stmt->execute()) {
-            return $this->db->lastInsertId();
-        }
-
-        return false;
+    if ($stmt->execute()) {
+        return $this->db->lastInsertId();
     }
+    return false;
+}
+
+
+
 
     /**
      * Atualizar especialidade do profissional
