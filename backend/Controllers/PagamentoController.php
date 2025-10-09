@@ -2,6 +2,7 @@
 namespace App\Psico\Controllers;
 
 use App\Psico\Models\Pagamento;
+use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
@@ -9,10 +10,11 @@ use App\Psico\Core\Redirect;
 class PagamentoController {
     public $pagamento;   
     public $db;
+    public $profissional;
     public function __construct(){
         $this->db = Database::getInstance();
         $this->pagamento = new Pagamento($this->db);
-
+        $this->profissional = new Profissional($this->db);
     }
 
     public function index(){
@@ -20,10 +22,9 @@ class PagamentoController {
     }
     
     public function viewListarPagamentos(){
-        $dados = $this->pagamento->buscarPagamentos();
+        $dados = $this->pagamento->buscarTodosPagamentos();
         View::render("pagamento/index",["pagamentos"=>$dados]);
     }
-
 
     public function viewCriarPagamentos(){
         View::render("pagamento/create");

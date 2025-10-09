@@ -1,44 +1,43 @@
-<style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        font-family: Arial, sans-serif;
-    }
-    th, td {
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
-    th {
-        background-color: #4CAF50;
-        color: white;
-    }
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+  <div class="w3-content" style="max-width:1400px;">
+    <div class="w3-container w3-padding-32">
+      <h2 style="color: #5D6D68;">📅 Lista de Agendamentos</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>ID Usuário</th>
-            <th>ID Profissional</th>
-            <th>Data do Agendamento</th>
-            <th>Status da Consulta</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach($agendamentos as $item): ?>
-        <tr>
-            <td><?= htmlspecialchars($item['id_usuario']) ?></td>
-            <td><?= htmlspecialchars($item['id_profissional']) ?></td>
-            <td><?= htmlspecialchars($item['data_agendamento']) ?></td>
-            <td><?= htmlspecialchars($item['status_consulta']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+      <?php if (!empty($agendamentos)): ?>
+        <div class="w3-responsive">
+          <table class="w3-table-all w3-card-4 w3-hoverable w3-white" style="border-radius: 8px; overflow: hidden;">
+            <thead style="background-color: #5D6D68; color: white;">
+              <tr>
+                <th>ID Usuário</th>
+                <th>ID Profissional</th>
+                <th>Data do Agendamento</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach($agendamentos as $item): ?>
+              <tr>
+                <td><?= htmlspecialchars($item['id_usuario']) ?></td>
+                <td><?= htmlspecialchars($item['id_profissional']) ?></td>
+                <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($item['data_agendamento']))) ?></td>
+                <td>
+                  <span class="w3-tag w3-round <?= $item['status_consulta'] === 'confirmada' ? 'w3-green' : ($item['status_consulta'] === 'cancelada' ? 'w3-red' : 'w3-blue-grey') ?>">
+                    <?= htmlspecialchars(ucfirst($item['status_consulta'])) ?>
+                  </span>
+                </td>
+                <td>
+                  <a href="/backend/agendamentos/editar/<?= $item['id_agendamento'] ?>" class="w3-button w3-tiny w3-round" style="background-color: #5D6D68; color: white;"><i class="fa fa-pencil"></i> Editar</a>
+                  <a href="/backend/agendamentos/excluir/<?= $item['id_agendamento'] ?>" class="w3-button w3-tiny w3-red w3-round"><i class="fa fa-trash"></i> Excluir</a>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php else: ?>
+        <p class="w3-text-grey">Nenhum agendamento encontrado.</p>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>

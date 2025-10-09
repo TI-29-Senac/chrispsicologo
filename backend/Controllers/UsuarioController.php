@@ -2,6 +2,7 @@
 namespace App\Psico\Controllers;
 
 use App\Psico\Models\Usuario;
+use App\Psico\Models\Avaliacao;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
@@ -12,11 +13,13 @@ use App\Psico\Core\Flash;
 class UsuarioController {
     public $usuario;   
     public $db;
+    public $avaliacao;
     public $gerenciarImagem;
 
     public function __construct(){
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
+        $this->avaliacao = new Avaliacao($this->db);
         $this->gerenciarImagem = new FileManager('upload');
     }
 
@@ -26,9 +29,31 @@ class UsuarioController {
         var_dump($resultado);
     }
 
-    public function viewListarUsuarios() {
-        $dados = $this->usuario->buscarUsuarios();
-        View::render("usuario/index", ["usuarios" => $dados]);
+public function viewListarUsuarios() {
+        $usuarios = $this->usuario->buscarUsuarios();
+        $avaliacoes = $this->avaliacao->buscarAvaliacoes();
+
+        $totalUsuarios = count($usuarios);
+        $usuariosAtivos = 0;
+        foreach ($usuarios as $usuario) {
+            if ($usuario->status_usuario === 'ativo') {
+                $usuariosAtivos++;
+            }
+        }
+        $usuariosInativos = $totalUsuarios - $usuariosAtivos;
+        $totalAvaliacoes = count($avaliacoes);
+
+        $stats = [
+            'total_avaliacoes' => $totalAvaliacoes,
+            'usuarios_ativos' => $usuariosAtivos,
+            'usuarios_inativos' => $usuariosInativos,
+            'total_usuarios' => $totalUsuarios
+        ];
+
+        View::render("usuario/index", [
+            "usuarios" => $usuarios,
+            "stats" => $stats
+        ]);
     }
 
     // Criar usuário

@@ -93,6 +93,13 @@ class Usuario {
         }
     }
 
+        public function totalDeUsuarios(){
+        $sql = "SELECT count(*) as total FROM tbl_usuario";
+        $stmt = $this->db->query($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
 
     /**
      * Buscar todos os usuários
