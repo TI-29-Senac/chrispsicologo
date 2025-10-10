@@ -72,31 +72,17 @@ public function inserirProfissional(int $id_usuario, string $especialidade) {
     return false;
 }
 
-public function listarProfissionais(): array {
-    $sql = "
-        SELECT 
-            p.id_profissional,
-            p.id_usuario,
-            u.nome_usuario,
-            u.email_usuario,
-            u.tipo_usuario,
-            u.status_usuario,
-            p.especialidade,
-            p.criado_em,
-            p.atualizado_em
-        FROM 
-            profissional p
-        INNER JOIN 
-            usuario u ON p.id_usuario = u.id_usuario
-        WHERE 
-            p.excluido_em IS NULL
-        ORDER BY 
-            u.nome_usuario ASC
-    ";
+// Em backend/Models/Profissional.php
 
+public function listarProfissionaisComStatus(): array
+{
+    $sql = "SELECT p.*, u.status_usuario 
+            FROM profissional p
+            JOIN usuario u ON p.id_usuario = u.id_usuario
+            WHERE u.excluido_em IS NULL";
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
 /**

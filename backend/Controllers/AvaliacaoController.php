@@ -20,51 +20,44 @@ class AvaliacaoController {
         $this->viewListarAvaliacoes();
     }
    
-    public function viewListarAvaliacoes()
-    {
-        $avaliacoes = $this->avaliacao->buscarAvaliacoes();
-        $totalAvaliacoes = 0;
-        $somaNotas = 0;
-        $avaliacoes5Estrelas = 0;
+    // Em backend/Controllers/AvaliacaoController.php
 
-        foreach ($avaliacoes as $avaliacao) {
-            $totalAvaliacoes++;
-            $somaNotas += $avaliacao['nota_avaliacao']; 
-            if ($avaliacao['nota_avaliacao'] == 5) {
-                $avaliacoes5Estrelas++;
-            }
+// Em backend/Controllers/AvaliacaoController.php
+
+public function viewListarAvaliacoes(){
+    $avaliacoes = $this->avaliacao->buscarAvaliacoes();
+    
+    // Calcula as estatísticas
+    $total = count($avaliacoes);
+    $somaNotas = 0;
+    $notas5 = 0;
+    $notasBaixas = 0; // Notas 1 ou 2
+
+    foreach ($avaliacoes as $avaliacao) {
+        $nota = (int)$avaliacao['nota_avaliacao'];
+        $somaNotas += $nota;
+        if ($nota === 5) {
+            $notas5++;
         }
-        
-        $notaMedia = ($totalAvaliacoes > 0) ? round($somaNotas / $totalAvaliacoes, 1) : 0;
-
-        $stats = [
-            [
-                'label' => 'Total de Avaliações',
-                'value' => $totalAvaliacoes,
-                'icon' => 'fa-comments-o'
-            ],
-            [
-                'label' => 'Nota Média',
-                'value' => $notaMedia . ' / 5',
-                'icon' => 'fa-star-half-o'
-            ],
-            [
-                'label' => 'Avaliações 5 Estrelas',
-                'value' => $avaliacoes5Estrelas,
-                'icon' => 'fa-star'
-            ],
-            [
-                'label' => 'Avaliações a Melhorar',
-                'value' => $totalAvaliacoes - $avaliacoes5Estrelas,
-                'icon' => 'fa-thumbs-o-down'
-            ]
-        ];
-
-        View::render("avaliacao/index", [
-            "avaliacoes" => $avaliacoes,
-            "stats" => $stats 
-        ]);
+        if ($nota <= 2) {
+            $notasBaixas++;
+        }
     }
+    $mediaNotas = ($total > 0) ? number_format($somaNotas / $total, 1) : 0;
+
+    // Define as 4 estatísticas para a página de avaliações
+    $stats = [
+        ['titulo' => 'Total de Avaliações', 'valor' => $total, 'icone' => 'fa-star', 'cor' => '#5D6D68'],
+        ['titulo' => 'Média Geral', 'valor' => $mediaNotas . ' / 5.0', 'icone' => 'fa-star-half-o', 'cor' => '#7C8F88'],
+        ['titulo' => 'Avaliações 5 Estrelas', 'valor' => $notas5, 'icone' => 'fa-thumbs-up', 'cor' => '#A3B8A1'],
+        ['titulo' => 'Avaliações Baixas', 'valor' => $notasBaixas, 'icone' => 'fa-thumbs-down', 'cor' => '#C5A8A8'],
+    ];
+
+    View::render("avaliacao/index", [
+        "avaliacoes" => $avaliacoes,
+        "stats" => $stats // Envia as estatísticas para a view
+    ]);
+}
    
     // ... (restante dos métodos create, store, edit, update, delete, buscarPorProfissional)
     // Criar Avaliação

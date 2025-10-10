@@ -96,12 +96,41 @@ public function atualizarProfissionais($id_profissional) {
     }
 
 
-      public function viewListarProfissionais()
-    {
-        // O Controller pede ao Model para buscar os profissionais
-        $profissionais = $this->profissional->listarProfissionais();
-        View::render('profissional/index', ['profissionais' => $profissionais]);
+    // Em backend/Controllers/ProfissionalController.php
+
+public function viewListarProfissionais()
+{
+    $profissionais = $this->profissional->listarProfissionaisComStatus();
+
+    // Calcula as estatísticas
+    $totalProfissionais = count($profissionais);
+    $especialidades = [];
+    $ativos = 0;
+
+    foreach ($profissionais as $profissional) {
+        if (!empty($profissional['especialidade'])) {
+            $especialidades[] = $profissional['especialidade'];
+        }
+        if ($profissional['status_usuario'] === 'ativo') {
+            $ativos++;
+        }
     }
+    $inativos = $totalProfissionais - $ativos;
+    $totalEspecialidades = count(array_unique($especialidades));
+
+    // Define as 4 estatísticas para a página de profissionais
+    $stats = [
+        ['titulo' => 'Total de Profissionais', 'valor' => $totalProfissionais, 'icone' => 'fa-user-md', 'cor' => '#5D6D68'],
+        ['titulo' => 'Profissionais Ativos', 'valor' => $ativos, 'icone' => 'fa-check-circle', 'cor' => '#7C8F88'],
+        ['titulo' => 'Profissionais Inativos', 'valor' => $inativos, 'icone' => 'fa-times-circle', 'cor' => '#A3B8A1'],
+        ['titulo' => 'Especialidades Únicas', 'valor' => $totalEspecialidades, 'icone' => 'fa-stethoscope', 'cor' => '#C5A8A8'],
+    ];
+
+    View::render("profissional/index", [
+        "profissionais" => $profissionais,
+        "stats" => $stats // Envia as estatísticas para a view
+    ]);
+}
 
     public function viewEditarProfissionais($id_profissional)
     {
