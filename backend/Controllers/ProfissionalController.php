@@ -20,66 +20,47 @@ class ProfissionalController {
 
     public function viewListarProfissionais()
     {
-        $profissionais = $this->profissional->listarProfissionais();
-
-        // --- LÓGICA DE STATS COMPLETA ---
-        $totalProfissionais = count($profissionais);
+        $pagina = $_GET['pagina'] ?? 1;
+        $dadosPaginados = $this->profissional->paginacao((int)$pagina, 10);
+        
+        $todosProfissionais = $this->profissional->listarProfissionais();
+        $totalProfissionais = count($todosProfissionais);
         $profissionaisAtivos = 0;
-        $especialidades = []; // Array para guardar as especialidades
+        $especialidades = [];
 
-        foreach ($profissionais as $profissional) {
-            // Conta profissionais ativos
-            if (isset($profissional['status_usuario']) && $profissional['status_usuario'] === 'ativo') {
+        // --- CORREÇÃO ESTÁ AQUI ---
+        // Trocamos a sintaxe de array '[]' para a sintaxe de objeto '->'
+        foreach ($todosProfissionais as $profissional) {
+            if (isset($profissional->status_usuario) && $profissional->status_usuario === 'ativo') {
                 $profissionaisAtivos++;
             }
-            // Coleta todas as especialidades
-            if (!empty($profissional['especialidade'])) {
-                $especialidades[] = $profissional['especialidade'];
+            if (!empty($profissional->especialidade)) {
+                $especialidades[] = $profissional->especialidade;
             }
         }
 
         $profissionaisInativos = $totalProfissionais - $profissionaisAtivos;
-        
-        // --- CÁLCULO DAS ESPECIALIDADES ÚNICAS ---
         $especialidadesUnicas = count(array_unique($especialidades));
 
-        // --- ARRAY DE STATS ATUALIZADO ---
         $stats = [
-            [
-                'label' => 'Total de Profissionais',
-                'value' => $totalProfissionais,
-                'icon' => 'fa-user-md'
-            ],
-            [
-                'label' => 'Profissionais Ativos',
-                'value' => $profissionaisAtivos,
-                'icon' => 'fa-check-circle'
-            ],
-            [
-                'label' => 'Profissionais Inativos',
-                'value' => $profissionaisInativos,
-                'icon' => 'fa-times-circle'
-            ],
-            [
-                'label' => 'Especialidades Únicas',
-                'value' => $especialidadesUnicas,
-                'icon' => 'fa-briefcase' // Ícone mais apropriado
-            ]
+            ['label' => 'Total de Profissionais', 'value' => $totalProfissionais, 'icon' => 'fa-user-md'],
+            ['label' => 'Profissionais Ativos', 'value' => $profissionaisAtivos, 'icon' => 'fa-check-circle'],
+            ['label' => 'Profissionais Inativos', 'value' => $profissionaisInativos, 'icon' => 'fa-times-circle'],
+            ['label' => 'Especialidades Únicas', 'value' => $especialidadesUnicas, 'icon' => 'fa-briefcase']
         ];
 
         View::render('profissional/index', [
-            'profissionais' => $profissionais,
+            'profissionais' => $dadosPaginados['data'],
+            'paginacao' => $dadosPaginados,
             'stats' => $stats
         ]);
     }
-    
-    // Demais métodos do controller...
+
     public function viewCriarProfissionais(){
         View::render("profissional/create");
     }
 
     public function salvarProfissionais(){
-        // Validação dos dados de entrada...
         
         $this->profissional->inserirProfissional(
             (int)$_POST["id_usuario"],
@@ -89,7 +70,7 @@ class ProfissionalController {
             (float)($_POST["sinal_consulta"] ?? 0)
         );
 
-        Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
+        Redirect::redirecionarComMensagem("profissionais/listar","success","Profissional criado com sucesso!");
     }
 
     public function deletarProfissionais(){

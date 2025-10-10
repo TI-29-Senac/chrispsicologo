@@ -19,15 +19,26 @@ class AgendamentoController {
         $agendamentos = $this->agendamento->buscarAgendamentos();
         var_dump($agendamentos);
     }
- public function viewListarAgendamentos() {
-        $agendamentos = $this->agendamento->buscarAgendamentos();
-        $totalAgendamentos = 0;
+
+        public function viewListarAgendamentos() {
+        // --- LÓGICA DE PAGINAÇÃO ---
+        $pagina = $_GET['pagina'] ?? 1;
+        $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10); // Limite de 5 por página
+
+        // --- LÓGICA PARA OS CARDS DE STATS ---
+        // Para os cards, precisamos contar todos os registros. 
+        // A informação do total já vem da paginação, então vamos reutilizá-la.
+        $totalAgendamentos = $dadosPaginados['total'];
+        
+        // Para os status (pendente, confirmado, etc.), precisamos de uma busca que retorne todos os agendamentos.
+        // O ideal é ter métodos específicos no Model para isso, mas por enquanto faremos a contagem aqui.
+        $todosAgendamentos = $this->agendamento->buscarAgendamentos(); // Este método já existe no seu Model
+        
         $pendentes = 0;
         $confirmados = 0;
         $cancelados = 0;
 
-        foreach ($agendamentos as $ag) {
-            $totalAgendamentos++;
+        foreach ($todosAgendamentos as $ag) {
             if ($ag['status_consulta'] === 'pendente') {
                 $pendentes++;
             } elseif ($ag['status_consulta'] === 'confirmada') {
@@ -62,10 +73,14 @@ class AgendamentoController {
         ];
 
         View::render("agendamento/index", [
-            "agendamentos" => $agendamentos,
-            "stats" => $stats 
+            "agendamentos" => $dadosPaginados['data'], 
+            "paginacao" => $dadosPaginados,        
+            "stats" => $stats                 
         ]);
     }
+
+    
+    
 
     public function viewCriarAgendamentos() {
         View::render("agendamento/create");

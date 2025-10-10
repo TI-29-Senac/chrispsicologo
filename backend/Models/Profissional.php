@@ -28,33 +28,48 @@ class Profissional {
 
     }
 
-public function listarProfissionais(): array {
-    $sql = "
-        SELECT 
-            p.id_profissional,
-            p.id_usuario,
-            u.nome_usuario,
-            u.email_usuario,
-            u.tipo_usuario,
-            u.status_usuario,
-            p.especialidade,
-            p.criado_em,
-            p.atualizado_em
-        FROM 
-            profissional p
-        INNER JOIN 
-            usuario u ON p.id_usuario = u.id_usuario
-        WHERE 
-            p.excluido_em IS NULL
-        ORDER BY 
-            u.nome_usuario ASC
-    ";
+public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
+        $offset = ($pagina - 1) * $por_pagina;
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} p WHERE p.excluido_em IS NULL";
+        $totalStmt = $this->db->query($totalQuery);
+        $total_de_registros = $totalStmt->fetchColumn();
 
+        $dataQuery = "
+            SELECT p.*, u.nome_usuario, u.email_usuario, u.status_usuario, u.tipo_usuario
+            FROM {$this->table} p
+            JOIN usuario u ON p.id_usuario = u.id_usuario
+            WHERE p.excluido_em IS NULL
+            ORDER BY u.nome_usuario ASC
+            LIMIT :limit OFFSET :offset";
+        
+        $dataStmt = $this->db->prepare($dataQuery);
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+
+        $dados = $dataStmt->fetchAll(PDO::FETCH_OBJ); 
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
+
+ public function listarProfissionais(): array {
+        $sql = "
+            SELECT p.*, u.nome_usuario, u.email_usuario, u.status_usuario, u.tipo_usuario
+            FROM {$this->table} p
+            JOIN usuario u ON p.id_usuario = u.id_usuario
+            WHERE p.excluido_em IS NULL
+            ORDER BY u.nome_usuario ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 /**
  * Buscar um profissional pelo ID
  */

@@ -45,7 +45,6 @@
     <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>
     <a href="/backend/pagamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-credit-card fa-fw"></i>  Pagamentos</a>
     <a href="/backend/profissionais/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Profissionais</a>
-    <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Criar Usuário</a>
   </div>
 </nav>
 

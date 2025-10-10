@@ -80,4 +80,35 @@ class Usuario {
         }
         return false;
     }
+
+    public function paginacao(int $pagina = 1, int $por_pagina = 5): array{
+        $offset = ($pagina - 1) * $por_pagina;
+        
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} WHERE excluido_em IS NULL";
+        $totalStmt = $this->db->query($totalQuery);
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        $dataQuery = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL ORDER BY nome_usuario ASC LIMIT :limit OFFSET :offset";
+        $dataStmt = $this->db->prepare($dataQuery);
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_OBJ);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
+
+    public function buscarTodosUsuarios(): array {
+        $sql = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    
 }

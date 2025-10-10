@@ -23,36 +23,60 @@ class PagamentoController {
 
 // Em backend/Controllers/PagamentoController.php
 
-public function viewListarPagamentos()
-{
-    $pagamentos = $this->pagamento->buscarTodosPagamentos();
+public function viewListarPagamentos() {
+        // --- LÓGICA DE PAGINAÇÃO ---
+        $pagina = $_GET['pagina'] ?? 1;
+        $dadosPaginados = $this->pagamento->paginacao((int)$pagina, 10);
 
-    $faturamentoTotal = 0;
-    $pagos = 0;
-    $pendentes = 0;
+        // --- LÓGICA PARA OS CARDS (CORRIGIDA) ---
+        $todosPagamentos = $this->pagamento->buscarTodosPagamentos();
+        
+        $faturamentoTotal = 0;
+        $totalTransacoes = count($todosPagamentos);
+        $pagamentosPix = 0;
 
-    foreach ($pagamentos as $pagamento) {
-        if ($pagamento['status_pagamento'] === 'pago') {
-            $faturamentoTotal += (float)$pagamento['valor_pagamento'];
-            $pagos++;
-        } elseif ($pagamento['status_pagamento'] === 'pendente') {
-            $pendentes++;
+        foreach ($todosPagamentos as $pagamento) {
+            // O faturamento agora é baseado no valor da consulta do profissional
+            $faturamentoTotal += (float)($pagamento['valor_consulta'] ?? 0);
+            
+            if (isset($pagamento['tipo_pagamento']) && strtolower($pagamento['tipo_pagamento']) === 'pix') {
+                $pagamentosPix++;
+            }
         }
+        
+        $valorMedio = ($totalTransacoes > 0) ? $faturamentoTotal / $totalTransacoes : 0;
+
+        // --- ARRAY DE STATS ATUALIZADO ---
+        $stats = [
+            [
+                'label' => 'Faturamento Total',
+                'value' => 'R$ ' . number_format($faturamentoTotal, 2, ',', '.'),
+                'icon' => 'fa-money'
+            ],
+            [
+                'label' => 'Total de Transações',
+                'value' => $totalTransacoes,
+                'icon' => 'fa-credit-card'
+            ],
+            [
+                'label' => 'Pagamentos via Pix',
+                'value' => $pagamentosPix,
+                'icon' => 'fa-qrcode'
+            ],
+            [
+                'label' => 'Valor Médio',
+                'value' => 'R$ ' . number_format($valorMedio, 2, ',', '.'),
+                'icon' => 'fa-calculator'
+            ]
+        ];
+
+        // --- RENDERIZA A VIEW COM OS DADOS PAGINADOS ---
+        View::render("pagamento/index", [
+            "pagamentos" => $dadosPaginados['data'],
+            "paginacao" => $dadosPaginados,
+            "stats" => $stats
+        ]);
     }
-    $ticketMedio = $pagos > 0 ? $faturamentoTotal / $pagos : 0;
-
-    $stats = [
-        ['titulo' => 'Faturamento Total', 'valor' => 'R$ ' . number_format($faturamentoTotal, 2, ',', '.'), 'icone' => 'fa-money', 'cor' => '#5D6D68'],
-        ['titulo' => 'Ticket Médio', 'valor' => 'R$ ' . number_format($ticketMedio, 2, ',', '.'), 'icone' => 'fa-line-chart', 'cor' => '#7C8F88'],
-        ['titulo' => 'Pagamentos Concluídos', 'valor' => $pagos, 'icone' => 'fa-check-square-o', 'cor' => '#A3B8A1'],
-        ['titulo' => 'Pagamentos Pendentes', 'valor' => $pendentes, 'icone' => 'fa-hourglass-start', 'cor' => '#C5A8A8'],
-    ];
-
-    View::render("pagamento/index", [
-        "pagamentos" => $pagamentos,
-        "stats" => $stats
-    ]);
-}
 
     public function viewCriarPagamentos(){
 

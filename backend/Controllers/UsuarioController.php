@@ -31,18 +31,18 @@ class UsuarioController {
         $resultado = $this->usuario->buscarUsuarios();
         var_dump($resultado);
     }
-
- public function viewListarUsuarios() {
-        $usuarios = $this->usuario->buscarUsuarios();
-
-        // --- LÓGICA DE STATS ESPECÍFICA PARA USUÁRIOS ---
-        $totalUsuarios = 0;
+    public function viewListarUsuarios() {
+        $pagina = $_GET['pagina'] ?? 1;
+        $dadosPaginados = $this->usuario->paginacao((int)$pagina, 10);
+        
+        // --- LÓGICA PARA OS CARDS ---
+        $todosUsuarios = $this->usuario->buscarTodosUsuarios();
+        
+        $totalUsuarios = count($todosUsuarios);
         $usuariosAtivos = 0;
-        $usuariosInativos = 0;
-        $totalProfissionais = 0;
+        $totalProfissionais = 0; 
 
-        foreach ($usuarios as $usuario) {
-            $totalUsuarios++;
+        foreach ($todosUsuarios as $usuario) {
             if ($usuario->status_usuario === 'ativo') {
                 $usuariosAtivos++;
             }
@@ -52,7 +52,7 @@ class UsuarioController {
         }
         $usuariosInativos = $totalUsuarios - $usuariosAtivos;
 
-        // --- NOVO ARRAY DE STATS PADRONIZADO ---
+        // --- ARRAY DE STATS ATUALIZADO COM 4 ITENS ---
         $stats = [
             [
                 'label' => 'Total de Usuários',
@@ -72,33 +72,15 @@ class UsuarioController {
             [
                 'label' => 'Profissionais',
                 'value' => $totalProfissionais,
-                'icon' => 'fa-user-md'
+                'icon' => 'fa-user-md' // Ícone para profissionais
             ]
         ];
 
         View::render("usuario/index", [
-            "usuarios" => $usuarios,
-            "stats" => $stats 
+            "usuarios" => $dadosPaginados['data'],
+            "paginacao" => $dadosPaginados,
+            "stats" => $stats
         ]);
-    }
-
-    // Excluir usuário
-    public function viewExcluirUsuarios() {
-        $id = $_GET['id'] ?? null;
-
-        if (!$id) {
-            echo "ID do usuário não informado.";
-            return;
-        }
-
-        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
-
-        if (!$usuario) {
-            echo "Usuário não encontrado.";
-            return;
-        }
-
-        View::render("usuario/delete", ["usuario" => $usuario]);
     }
 
     // Salvar usuário (POST)
@@ -130,26 +112,20 @@ public function salvarUsuarios() {
  
 
 public function viewEditarUsuarios($id) {
-        if (!$id) {
-            echo "ID do usuário não informado.";
-            return;
-        }
-        
-        // Adicionada a captura do CPF
-        $id = $this->usuario->inserirUsuario(
-            $_POST["nome_usuario"],
-            $_POST["email_usuario"],
-            $_POST["senha_usuario"],
-            $_POST["tipo_usuario"],
-            $_POST["cpf"] 
-        );
-
-        if($id){
-            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
-        } else {
-            Redirect::redirecionarComMensagem("usuario/criar", "error", "Erro ao criar usuário!");
-        }
+    if (!$id) {
+        Redirect::redirecionarComMensagem("usuario/listar", "error", "ID do usuário não informado.");
+        return;
     }
+ 
+    $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+ 
+    if (!$usuario) {
+        Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
+        return;
+    }
+ 
+    View::render("usuario/edit", ["usuario" => $usuario]);
+}
 
     public function atualizarUsuarios($id) {
         $erros = UsuarioValidador::ValidarEntradas($_POST, true);
@@ -180,12 +156,19 @@ public function viewEditarUsuarios($id) {
         View::render("usuario/create");
     }
 
-    public function deletarUsuarios($id){
-        $sucesso = $this->usuario->excluirUsuario((int)$id);
-        if ($sucesso) {
-            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário excluído com sucesso!");
-        } else {
-            Redirect::redirecionarComMensagem("usuario/listar", "error", "Erro ao excluir usuário.");
-        }
+public function viewExcluirUsuarios($id) {
+    if (!$id) {
+        Redirect::redirecionarComMensagem("usuario/listar", "error", "ID do usuário não informado.");
+        return;
     }
+ 
+    $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+ 
+    if (!$usuario) {
+        Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
+        return;
+    }
+ 
+    View::render("usuario/delete", ["usuario" => $usuario]);
+}
 }

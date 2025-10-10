@@ -37,13 +37,6 @@ class Avaliacao {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-   
-    public function buscarAvaliacoes(): array {
-        $sql = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 
     public function deletarAvaliacao(int $id_avaliacao): bool {
 
@@ -115,4 +108,48 @@ public function atualizarAvaliacao(int $id_avaliacao, string $descricao, int $no
     $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
     return $stmt->execute();
 }
+
+public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
+        $offset = ($pagina - 1) * $por_pagina;
+
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} WHERE excluido_em IS NULL";
+        $totalStmt = $this->db->query($totalQuery);
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        // Query para buscar avaliações com nomes de cliente e profissional
+        $dataQuery = "
+            SELECT 
+                a.*, 
+                u_cliente.nome_usuario as nome_cliente,
+                u_prof.nome_usuario as nome_profissional
+            FROM {$this->table} a
+            JOIN usuario u_cliente ON a.id_cliente = u_cliente.id_usuario
+            JOIN profissional p ON a.id_profissional = p.id_profissional
+            JOIN usuario u_prof ON p.id_usuario = u_prof.id_usuario
+            WHERE a.excluido_em IS NULL
+            ORDER BY a.criado_em DESC
+            LIMIT :limit OFFSET :offset";
+
+        $dataStmt = $this->db->prepare($dataQuery);
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
+
+        public function buscarAvaliacoes(): array {
+        $sql = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

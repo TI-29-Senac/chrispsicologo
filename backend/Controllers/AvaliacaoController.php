@@ -18,51 +18,42 @@ class AvaliacaoController
         $this->avaliacao = new Avaliacao($this->db);
     }
  
-    public function viewListarAvaliacoes()
+public function viewListarAvaliacoes()
     {
-        $avaliacoes = $this->avaliacao->buscarAvaliacoes();
-        $totalAvaliacoes = 0;
+        // --- LÓGICA DE PAGINAÇÃO ---
+        $pagina = $_GET['pagina'] ?? 1;
+        $dadosPaginados = $this->avaliacao->paginacao((int)$pagina, 10);
+
+        // --- LÓGICA PARA OS CARDS DE STATS ---
+        $todasAvaliacoes = $this->avaliacao->buscarAvaliacoes(); // Busca todas para as estatísticas
+        $totalAvaliacoes = count($todasAvaliacoes);
         $somaNotas = 0;
         $avaliacoes5Estrelas = 0;
- 
-        foreach ($avaliacoes as $avaliacao) {
-            $totalAvaliacoes++;
+
+        foreach ($todasAvaliacoes as $avaliacao) {
             $somaNotas += $avaliacao['nota_avaliacao'];
             if ($avaliacao['nota_avaliacao'] == 5) {
                 $avaliacoes5Estrelas++;
             }
         }
-       
+        
         $notaMedia = ($totalAvaliacoes > 0) ? round($somaNotas / $totalAvaliacoes, 1) : 0;
- 
+
         $stats = [
-            [
-                'label' => 'Total de Avaliações',
-                'value' => $totalAvaliacoes,
-                'icon' => 'fa-comments-o'
-            ],
-            [
-                'label' => 'Nota Média',
-                'value' => $notaMedia . ' / 5',
-                'icon' => 'fa-star-half-o'
-            ],
-            [
-                'label' => 'Avaliações 5 Estrelas',
-                'value' => $avaliacoes5Estrelas,
-                'icon' => 'fa-star'
-            ],
-            [
-                'label' => 'Avaliações a Melhorar',
-                'value' => $totalAvaliacoes - $avaliacoes5Estrelas,
-                'icon' => 'fa-thumbs-o-down'
-            ]
+            ['label' => 'Total de Avaliações', 'value' => $totalAvaliacoes, 'icon' => 'fa-comments-o'],
+            ['label' => 'Nota Média', 'value' => $notaMedia . ' / 5', 'icon' => 'fa-star-half-o'],
+            ['label' => 'Avaliações 5 Estrelas', 'value' => $avaliacoes5Estrelas, 'icon' => 'fa-star'],
+            ['label' => 'A Melhorar', 'value' => $totalAvaliacoes - $avaliacoes5Estrelas, 'icon' => 'fa-thumbs-o-down']
         ];
- 
+
+        // --- RENDERIZA A VIEW COM OS DADOS PAGINADOS ---
         View::render("avaliacao/index", [
-            "avaliacoes" => $avaliacoes,
+            "avaliacoes" => $dadosPaginados['data'],
+            "paginacao" => $dadosPaginados,
             "stats" => $stats
         ]);
     }
+
 
    
     // ... (restante dos métodos create, store, edit, update, delete, buscarPorProfissional)
