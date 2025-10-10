@@ -5,6 +5,7 @@
 <html lang="pt-BR">
 <head>
     <title>Dashboard - Chris Psicologia</title>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -16,7 +17,7 @@
         .w3-bar { background-color: #5D6D68; }
         .w3-sidebar { background-color: #fff; }
         .w3-button { color: #ffffffff; }
-        .w3-button:hover { background-color: #e0e0e0 !important; }
+        .w3-button:hover { background-color: white !important; }
         .w3-card-4 { border-radius: 12px; }
         .header-logo { max-width: 250px; margin: 20px auto;}
         .w3-bar .w3-bar-item { color: white; }
@@ -44,31 +45,41 @@
     <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>
     <a href="/backend/pagamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-credit-card fa-fw"></i>  Pagamentos</a>
     <a href="/backend/profissionais/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Profissionais</a>
-    <a href="/backend/usuario/criar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-plus-circle fa-fw"></i>  Criar Usuário</a>
+    <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Criar Usuário</a>
   </div>
 </nav>
 
 <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
-<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+<div class="w3-main" style="margin-left:300px; margin-top:43px; padding: 0 24px 24px 24px;">
 
   <header class="w3-container" style="padding-top:22px">
     <h5><b><i class="fa fa-dashboard"></i> Meu Dashboard</b></h5>
   </header>
 
-  <div class="w3-row-padding w3-margin-bottom">
-    <?php if (isset($stats) && !empty($stats)): ?>
-        <?php foreach ($stats as $stat): ?>
-            <div class="w3-quarter">
-              <div class="w3-container w3-card-4 w3-padding-16" style="background-color: <?= htmlspecialchars($stat['cor']) ?>; color: white;">
-                <div class="w3-left"><i class="fa <?= htmlspecialchars($stat['icone']) ?> w3-xxxlarge"></i></div>
-                <div class="w3-right">
-                  <h3><?= htmlspecialchars($stat['valor']) ?></h3>
-                </div>
-                <div class="w3-clear"></div>
-                <h4><?= htmlspecialchars($stat['titulo']) ?></h4>
-              </div>
-            </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
+    <div class="w3-row-padding w3-margin-bottom">
+    <?php 
+      // Define um array de cores para variar os cards
+      $colors = ['#5D6D68', '#7C8F88', '#A3B8A1', '#8F9E8B'];
+      $colorIndex = 0;
+
+      if (isset($stats) && is_array($stats)): 
+        foreach ($stats as $stat): 
+          $color = $colors[$colorIndex % count($colors)]; 
+    ?>
+    <div class="w3-quarter">
+      <div class="w3-container w3-card-4 w3-padding-16" style="background-color: <?= $color; ?>; color: white; border-radius: 12px;">
+        <div class="w3-left"><i class="fa <?= htmlspecialchars($stat['icon']) ?> w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3><?= htmlspecialchars($stat['value']) ?></h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4><?= htmlspecialchars($stat['label']) ?></h4>
+      </div>
+    </div>
+    <?php 
+          $colorIndex++;
+        endforeach; 
+      endif; 
+    ?>
   </div>

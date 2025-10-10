@@ -5,6 +5,7 @@ use App\Psico\Models\Pagamento;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
+use App\Psico\Validadores\PagamentoValidador;
 
 class PagamentoController {
     public $pagamento;   
@@ -24,7 +25,7 @@ class PagamentoController {
 
 public function viewListarPagamentos()
 {
-    $pagamentos = $this->pagamento->buscarPagamentos();
+    $pagamentos = $this->pagamento->buscarTodosPagamentos();
 
     $faturamentoTotal = 0;
     $pagos = 0;

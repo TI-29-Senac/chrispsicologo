@@ -1,18 +1,18 @@
 <?php
 namespace App\Psico\Controllers;
 
+use App\Psico\Core\View;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Avaliacao;
 use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
-use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
-use App\Psico\Core\FileManager;
-use App\Psico\Validadores\UsuarioValidador;
 use App\Psico\Core\Flash;
+use App\Psico\Validadores\UsuarioValidador;
+use App\Psico\Core\FileManager;
 
 class UsuarioController {
-    public $usuario;   
+    public $usuario;
     public $db;
     public $avaliacao;
     public $gerenciarImagem;
@@ -33,70 +33,74 @@ class UsuarioController {
     }
 
  public function viewListarUsuarios() {
-    $usuarios = $this->usuario->buscarUsuarios();
-    
-    // Calcula as estatísticas
-    $totalUsuarios = count($usuarios);
-    $tipos = array_count_values(array_column($usuarios, 'tipo_usuario'));
-    $totalClientes = $tipos['cliente'] ?? 0;
-    $totalProfissionais = $tipos['profissional'] ?? 0;
-    $totalAdmins = $tipos['admin'] ?? 0;
+        $usuarios = $this->usuario->buscarUsuarios();
 
-    // Define as 4 estatísticas para a página de usuários
-    $stats = [
-        ['titulo' => 'Total de Usuários', 'valor' => $totalUsuarios, 'icone' => 'fa-users', 'cor' => '#5D6D68'],
-        ['titulo' => 'Clientes Cadastrados', 'valor' => $totalClientes, 'icone' => 'fa-user-circle', 'cor' => '#7C8F88'],
-        ['titulo' => 'Profissionais', 'valor' => $totalProfissionais, 'icone' => 'fa-user-md', 'cor' => '#A3B8A1'],
-        ['titulo' => 'Administradores', 'valor' => $totalAdmins, 'icone' => 'fa-user-secret', 'cor' => '#C5A8A8'],
-    ];
+        // --- LÓGICA DE STATS ESPECÍFICA PARA USUÁRIOS ---
+        $totalUsuarios = 0;
+        $usuariosAtivos = 0;
+        $usuariosInativos = 0;
+        $totalProfissionais = 0;
 
-    View::render("usuario/index", [
-        "usuarios" => $usuarios,
-        "stats" => $stats // Envia as estatísticas para a view
-    ]);
-}
+        foreach ($usuarios as $usuario) {
+            $totalUsuarios++;
+            if ($usuario->status_usuario === 'ativo') {
+                $usuariosAtivos++;
+            }
+            if ($usuario->tipo_usuario === 'profissional') {
+                $totalProfissionais++;
+            }
+        }
+        $usuariosInativos = $totalUsuarios - $usuariosAtivos;
 
-    // Criar usuário
-    public function viewCriarUsuarios() {
+        // --- NOVO ARRAY DE STATS PADRONIZADO ---
+        $stats = [
+            [
+                'label' => 'Total de Usuários',
+                'value' => $totalUsuarios,
+                'icon' => 'fa-users'
+            ],
+            [
+                'label' => 'Usuários Ativos',
+                'value' => $usuariosAtivos,
+                'icon' => 'fa-check-circle'
+            ],
+            [
+                'label' => 'Usuários Inativos',
+                'value' => $usuariosInativos,
+                'icon' => 'fa-times-circle'
+            ],
+            [
+                'label' => 'Profissionais',
+                'value' => $totalProfissionais,
+                'icon' => 'fa-user-md'
+            ]
+        ];
 
-        View::render("usuario/create");
+        View::render("usuario/index", [
+            "usuarios" => $usuarios,
+            "stats" => $stats 
+        ]);
     }
 
+    // Excluir usuário
+    public function viewExcluirUsuarios() {
+        $id = $_GET['id'] ?? null;
 
-    // Exibir página de confirmação de exclusão
-public function viewExcluirUsuarios($id) 
-{
-    if (!$id || !is_numeric($id)) {
-        Redirect::redirecionarComMensagem('usuario/listar', 'error', 'ID do usuário inválido.');
-        return;
+        if (!$id) {
+            echo "ID do usuário não informado.";
+            return;
+        }
+
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+
+        if (!$usuario) {
+            echo "Usuário não encontrado.";
+            return;
+        }
+
+        View::render("usuario/delete", ["usuario" => $usuario]);
     }
 
-    $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
-
-    if (!$usuario) {
-        Redirect::redirecionarComMensagem('usuario/listar', 'error', "Usuário com ID {$id} não encontrado.");
-        return;
-    }
-
-    View::render("usuario/delete", ["usuario" => $usuario]);
-}
-
-// Ação de deletar o usuário (POST)
-public function deletarUsuarios($id)
-{
-    if (!$id || !is_numeric($id)) {
-        Redirect::redirecionarComMensagem('usuario/listar', 'error', 'ID do usuário não fornecido para exclusão.');
-        return;
-    }
-
-    $sucesso = $this->usuario->excluirUsuario((int)$id);
-
-    if ($sucesso) {
-        Redirect::redirecionarComMensagem('usuario/listar', 'success', 'Usuário excluído com sucesso!');
-    } else {
-        Redirect::redirecionarComMensagem('usuario/listar', 'error', 'Ocorreu um erro ao excluir o usuário.');
-    }
-}
     // Salvar usuário (POST)
 public function salvarUsuarios() {
     $erros = UsuarioValidador::ValidarEntradas($_POST);
@@ -130,93 +134,58 @@ public function viewEditarUsuarios($id) {
             echo "ID do usuário não informado.";
             return;
         }
-
-        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
-
-        if (!$usuario) {
-            echo "Usuário não encontrado.";
-            return;
-        }
-
-        View::render("usuario/edit", ["usuario" => $usuario]);
-    }
-    
-    // ... (outros métodos)
-
-    // CORREÇÃO: Receber $id como argumento e remover a busca pelo ID no $_POST
-    public function atualizarUsuarios($id) {
-        $dados = $_POST;
-
-        if (!$id) {
-            die('ID do usuário não informado.');
-        }
-
-        $nome = $dados['nome_usuario'] ?? '';
-        $email = $dados['email_usuario'] ?? '';
-        $senha = $dados['senha_usuario'] ?? null;
-        $tipo = $dados['tipo_usuario'] ?? 'cliente';
-
-        $erros = UsuarioValidador::ValidarEntradas($dados, true);
-
-        if (!empty($erros)) {
-            Flash::set('validation_errors', $erros);
-            Flash::set('old_input', $dados);
-            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro de validação. Verifique os campos.");
-            return;
-        }
-
-        // O hash da senha já estava correto
-        $senha_hash = empty($senha) ? null : password_hash($senha, PASSWORD_DEFAULT);
-
-        $resultado = $this->usuario->atualizarUsuario(
-            (int)$id, // Usar o $id vindo da URL
-            $nome,
-            $email,
-            $senha_hash,
-            $tipo
+        
+        // Adicionada a captura do CPF
+        $id = $this->usuario->inserirUsuario(
+            $_POST["nome_usuario"],
+            $_POST["email_usuario"],
+            $_POST["senha_usuario"],
+            $_POST["tipo_usuario"],
+            $_POST["cpf"] 
         );
 
-        if ($resultado) {
-            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário ID: $id atualizado com sucesso.");
+        if($id){
+            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro ao atualizar usuário ou nenhum campo alterado.");
+            Redirect::redirecionarComMensagem("usuario/criar", "error", "Erro ao criar usuário!");
         }
     }
 
-    public function deletarUsuario($id_usuario)
-    {
-        if (!$id_usuario) {
-            Redirect::redirecionarComMensagem('usuarios/listar', 'error', 'ID do usuário não fornecido.');
+    public function atualizarUsuarios($id) {
+        $erros = UsuarioValidador::ValidarEntradas($_POST, true);
+        if(!empty($erros)){
+            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", implode("<br>", $erros));
             return;
         }
 
-        $sucesso = $this->usuario->excluirUsuario((int)$id_usuario);
+        // Adicionada a passagem do CPF
+        $sucesso = $this->usuario->atualizarUsuario(
+            (int)$id,
+            $_POST['nome_usuario'],
+            $_POST['email_usuario'],
+            $_POST['senha_usuario'] ?? null,
+            $_POST['tipo_usuario'],
+            $_POST['cpf']
+        );
 
         if ($sucesso) {
-            Redirect::redirecionarComMensagem('usuarios/listar', 'success', 'Usuário excluído com sucesso!');
+            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário atualizado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem('usuarios/listar', 'error', 'Ocorreu um erro ao excluir o usuário.');
+            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro ao atualizar usuário.");
         }
     }
-
-        public function login() {   
-        $email = $_POST['email'] ?? '';
-        $senha = $_POST['senha'] ?? '';
-        
-        header('Content-Type: application/json'); 
-
-        $usuarioAutenticado = $this->usuario->autenticarUsuario($email, $senha);
-
-        if ($usuarioAutenticado) {
- 
-            http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Login realizado com sucesso!", "user" => $usuarioAutenticado]);
-        } else {
-
-            http_response_code(401); 
-            echo json_encode(["success" => false, "message" => "Email ou senha inválidos."]);
-        }
+    
+    // Demais métodos (create, edit, delete, etc.)
+    public function viewCriarUsuarios(){
+        View::render("usuario/create");
     }
 
-
+    public function deletarUsuarios($id){
+        $sucesso = $this->usuario->excluirUsuario((int)$id);
+        if ($sucesso) {
+            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário excluído com sucesso!");
+        } else {
+            Redirect::redirecionarComMensagem("usuario/listar", "error", "Erro ao excluir usuário.");
+        }
+    }
 }
