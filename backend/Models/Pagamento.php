@@ -2,7 +2,6 @@
 namespace App\Psico\Models;
 use PDO;
 
-
 class Pagamento {
     private PDO $db;
 
@@ -14,39 +13,40 @@ class Pagamento {
      * Inserir novo pagamento
      */
     public function inserirPagamento(int $id_agendamento, float $valor_consulta, float $sinal_consulta, string $tipo_pagamento) {
-        $sql = "INSERT INTO pagamento (id_agendamento, valor_consulta, sinal_consulta, tipo_pagamento)
-                VALUES (:id_agendamento, :valor_consulta, :sinal_consulta, :tipo_pagamento)";
+        // CORREÇÃO: Usando a tabela 'pagamento' (singular)
+        $sql = "INSERT INTO pagamento (id_agendamento, tipo_pagamento)
+                VALUES (:id_agendamento, :tipo_pagamento)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_consulta', $valor_consulta);
-        $stmt->bindParam(':sinal_consulta', $sinal_consulta);
         $stmt->bindParam(':tipo_pagamento', $tipo_pagamento);
 
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
+    /**
+     * CORREÇÃO PRINCIPAL: Busca todos os pagamentos com os dados relacionados
+     */
     public function buscarTodosPagamentos(): array
     {
-        // Query corrigida para buscar os valores da tabela de profissionais
+        // CORREÇÃO: Usando 'pagamento' (singular) em todos os JOINS
         $sql = "
             SELECT
                 p.id_pagamento,
-                p.id_agendamento,
+                p.tipo_pagamento,
                 u_cliente.nome_usuario AS nome_cliente,
-                u_prof.nome_usuario AS nome_profissional,
-                prof.valor_consulta,  -- Busca da tabela 'profissionais'
-                prof.sinal_consulta,    -- Busca da tabela 'profissionais'
-                p.tipo_pagamento
+                u_profissional.nome_usuario AS nome_profissional,
+                pr.valor_consulta,
+                pr.sinal_consulta
             FROM
-                pagamento p
+                pagamento p -- Corrigido
             LEFT JOIN
                 agendamento a ON p.id_agendamento = a.id_agendamento
             LEFT JOIN
-                profissional prof ON a.id_profissional = prof.id_profissional
+                profissional pr ON a.id_profissional = pr.id_profissional
             LEFT JOIN
                 usuario u_cliente ON a.id_usuario = u_cliente.id_usuario
             LEFT JOIN
-                usuario u_prof ON prof.id_usuario = u_prof.id_usuario
+                usuario u_profissional ON pr.id_usuario = u_profissional.id_usuario
             WHERE
                 p.excluido_em IS NULL
         ";
@@ -57,9 +57,10 @@ class Pagamento {
     }
 
     /**
-     * Buscar todos os pagamentos ativos
+     * Buscar todos os pagamentos (versão simples, sem JOINS)
      */
     public function buscarPagamentos(): array {
+        // CORREÇÃO: Usando a tabela 'pagamento' (singular)
         $sql = "SELECT * FROM pagamento WHERE excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -70,18 +71,20 @@ class Pagamento {
      * Buscar pagamento por ID
      */
     public function buscarPagamentoPorId(int $id): ?array {
+        // CORREÇÃO: Usando a tabela 'pagamento' (singular)
         $sql = "SELECT * FROM pagamento WHERE id_pagamento = :id AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC); 
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
-
 
     /**
      * Deletar pagamento
      */
     public function deletarPagamento(int $id_pagamento): int {
+
         $sql = "DELETE FROM pagamento WHERE id_pagamento = :id_pagamento";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_pagamento', $id_pagamento, PDO::PARAM_INT);
@@ -92,18 +95,14 @@ class Pagamento {
     /**
      * Atualizar pagamento
      */
-    public function atualizarPagamento(int $id_pagamento, float $valor_consulta, float $sinal_consulta, string $tipo_pagamento): bool {
+    public function atualizarPagamento(int $id_pagamento, string $tipo_pagamento): bool {
         $dataAtual = date('Y-m-d H:i:s');
         $sql = "UPDATE pagamento 
-                SET valor_consulta = :valor_consulta,
-                    sinal_consulta = :sinal_consulta,
-                    tipo_pagamento = :tipo_pagamento,
+                SET tipo_pagamento = :tipo_pagamento,
                     atualizado_em = :atual
                 WHERE id_pagamento = :id_pagamento";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_pagamento', $id_pagamento, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_consulta', $valor_consulta);
-        $stmt->bindParam(':sinal_consulta', $sinal_consulta);
         $stmt->bindParam(':tipo_pagamento', $tipo_pagamento);
         $stmt->bindParam(':atual', $dataAtual);
 

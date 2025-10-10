@@ -3,6 +3,7 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Avaliacao;
+use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
@@ -15,12 +16,14 @@ class UsuarioController {
     public $db;
     public $avaliacao;
     public $gerenciarImagem;
+    public $profissional;
 
     public function __construct(){
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
         $this->avaliacao = new Avaliacao($this->db);
         $this->gerenciarImagem = new FileManager('upload');
+        $this->profissional = new Profissional($this->db);
     }
 
     // Listar usuários
@@ -29,30 +32,53 @@ class UsuarioController {
         var_dump($resultado);
     }
 
-public function viewListarUsuarios() {
+ public function viewListarUsuarios() {
         $usuarios = $this->usuario->buscarUsuarios();
-        $avaliacoes = $this->avaliacao->buscarAvaliacoes();
 
-        $totalUsuarios = count($usuarios);
+        // --- LÓGICA DE STATS ESPECÍFICA PARA USUÁRIOS ---
+        $totalUsuarios = 0;
         $usuariosAtivos = 0;
+        $usuariosInativos = 0;
+        $totalProfissionais = 0;
+
         foreach ($usuarios as $usuario) {
+            $totalUsuarios++;
             if ($usuario->status_usuario === 'ativo') {
                 $usuariosAtivos++;
             }
+            if ($usuario->tipo_usuario === 'profissional') {
+                $totalProfissionais++;
+            }
         }
         $usuariosInativos = $totalUsuarios - $usuariosAtivos;
-        $totalAvaliacoes = count($avaliacoes);
 
+        // --- NOVO ARRAY DE STATS PADRONIZADO ---
         $stats = [
-            'total_avaliacoes' => $totalAvaliacoes,
-            'usuarios_ativos' => $usuariosAtivos,
-            'usuarios_inativos' => $usuariosInativos,
-            'total_usuarios' => $totalUsuarios
+            [
+                'label' => 'Total de Usuários',
+                'value' => $totalUsuarios,
+                'icon' => 'fa-users'
+            ],
+            [
+                'label' => 'Usuários Ativos',
+                'value' => $usuariosAtivos,
+                'icon' => 'fa-check-circle'
+            ],
+            [
+                'label' => 'Usuários Inativos',
+                'value' => $usuariosInativos,
+                'icon' => 'fa-times-circle'
+            ],
+            [
+                'label' => 'Profissionais',
+                'value' => $totalProfissionais,
+                'icon' => 'fa-user-md'
+            ]
         ];
 
         View::render("usuario/index", [
             "usuarios" => $usuarios,
-            "stats" => $stats
+            "stats" => $stats 
         ]);
     }
 

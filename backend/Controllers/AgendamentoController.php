@@ -20,10 +20,54 @@ class AgendamentoController {
         $agendamentos = $this->agendamento->buscarAgendamentos();
         var_dump($agendamentos);
     }
-    public function viewListarAgendamentos() {
-        $dados = $this->agendamento->buscarAgendamentos();
-        View::render("agendamento/index",["agendamentos"=>$dados]);
+ public function viewListarAgendamentos() {
+        $agendamentos = $this->agendamento->buscarAgendamentos();
+        $totalAgendamentos = 0;
+        $pendentes = 0;
+        $confirmados = 0;
+        $cancelados = 0;
+
+        foreach ($agendamentos as $ag) {
+            $totalAgendamentos++;
+            if ($ag['status_consulta'] === 'pendente') {
+                $pendentes++;
+            } elseif ($ag['status_consulta'] === 'confirmada') {
+                $confirmados++;
+            } elseif ($ag['status_consulta'] === 'cancelada') {
+                $cancelados++;
+            }
+        }
+
+        // --- ARRAY DE STATS PADRONIZADO ---
+        $stats = [
+            [
+                'label' => 'Total de Agendamentos',
+                'value' => $totalAgendamentos,
+                'icon' => 'fa-calendar'
+            ],
+            [
+                'label' => 'Confirmados',
+                'value' => $confirmados,
+                'icon' => 'fa-calendar-check-o'
+            ],
+            [
+                'label' => 'Pendentes',
+                'value' => $pendentes,
+                'icon' => 'fa-clock-o'
+            ],
+            [
+                'label' => 'Cancelados',
+                'value' => $cancelados,
+                'icon' => 'fa-calendar-times-o'
+            ]
+        ];
+
+        View::render("agendamento/index", [
+            "agendamentos" => $agendamentos,
+            "stats" => $stats 
+        ]);
     }
+
     public function viewCriarAgendamentos() {
         View::render("agendamento/create");
     }
