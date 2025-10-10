@@ -46,27 +46,33 @@ class Usuario {
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    public function atualizarUsuario(int $id, string $nome, string $email, ?string $senha, string $tipo, string $cpf) {
-        $set = "nome_usuario = :nome, email_usuario = :email, tipo_usuario = :tipo, cpf = :cpf, atualizado_em = NOW()";
-        if ($senha) {
+public function atualizarUsuario(int $id, string $nome, string $email, ?string $senha, string $tipo, string $cpf, string $status) {
+        $set = "nome_usuario = :nome, email_usuario = :email, tipo_usuario = :tipo, cpf = :cpf, status_usuario = :status, atualizado_em = NOW()";
+        if (!empty($senha)) {
             $set .= ", senha_usuario = :senha";
         }
         $sql = "UPDATE {$this->table} SET {$set} WHERE id_usuario = :id";
+        
         $stmt = $this->db->prepare($sql);
+        
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':nome', $nome);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':tipo', $tipo);
         $stmt->bindParam(':cpf', $cpf);
-        if ($senha) {
+        $stmt->bindParam(':status', $status);
+        
+        if (!empty($senha)) {
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
             $stmt->bindParam(':senha', $senhaHash);
         }
+        
         return $stmt->execute();
     }
 
     public function excluirUsuario(int $id_usuario): bool {
-        $sql = "UPDATE {$this->table} SET excluido_em = NOW() WHERE id_usuario = :id_usuario";
+        $sql = "UPDATE {$this->table} SET status_usuario = 'inativo', atualizado_em = NOW() WHERE id_usuario = :id_usuario";
+        
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
         return $stmt->execute();

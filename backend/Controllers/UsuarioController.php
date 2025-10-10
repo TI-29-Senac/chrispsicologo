@@ -111,37 +111,25 @@ public function salvarUsuarios() {
         }
  
 
-public function viewEditarUsuarios($id) {
-    if (!$id) {
-        Redirect::redirecionarComMensagem("usuario/listar", "error", "ID do usuário não informado.");
-        return;
+    public function viewEditarUsuarios($id) {
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+        if ($usuario) {
+            View::render("usuario/edit", ["usuario" => $usuario]);
+        } else {
+            Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
+        }
     }
- 
-    $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
- 
-    if (!$usuario) {
-        Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
-        return;
-    }
- 
-    View::render("usuario/edit", ["usuario" => $usuario]);
-}
 
     public function atualizarUsuarios($id) {
-        $erros = UsuarioValidador::ValidarEntradas($_POST, true);
-        if(!empty($erros)){
-            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", implode("<br>", $erros));
-            return;
-        }
-
-        // Adicionada a passagem do CPF
+        $status = $_POST['status_usuario'] ?? 'ativo';
         $sucesso = $this->usuario->atualizarUsuario(
             (int)$id,
             $_POST['nome_usuario'],
             $_POST['email_usuario'],
             $_POST['senha_usuario'] ?? null,
             $_POST['tipo_usuario'],
-            $_POST['cpf']
+            $_POST['cpf'],
+            $status // Passa a variável corrigida
         );
 
         if ($sucesso) {
@@ -156,19 +144,21 @@ public function viewEditarUsuarios($id) {
         View::render("usuario/create");
     }
 
-public function viewExcluirUsuarios($id) {
-    if (!$id) {
-        Redirect::redirecionarComMensagem("usuario/listar", "error", "ID do usuário não informado.");
-        return;
+    public function viewExcluirUsuarios($id) {
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
+        if ($usuario) {
+            View::render("usuario/delete", ["usuario" => $usuario]);
+        } else {
+            Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
+        }
     }
- 
-    $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
- 
-    if (!$usuario) {
-        Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
-        return;
+        // --- NOVO MÉTODO PARA DELETAR ---
+    public function deletarUsuarios($id) {
+        $sucesso = $this->usuario->excluirUsuario((int)$id);
+        if ($sucesso) {
+            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário excluído com sucesso!");
+        } else {
+            Redirect::redirecionarComMensagem("usuario/listar", "error", "Erro ao excluir usuário.");
+        }
     }
- 
-    View::render("usuario/delete", ["usuario" => $usuario]);
-}
 }
