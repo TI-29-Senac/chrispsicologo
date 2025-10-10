@@ -14,14 +14,15 @@ class AgendamentoController {
         $this->db = Database::getInstance();
         $this->agendamento = new Agendamento($this->db);
     }
-
-    // LISTAR AGENDAMENTOS
+    // Index
+    public function index() {
+        $agendamentos = $this->agendamento->buscarAgendamentos();
+        var_dump($agendamentos);
+    }
     public function viewListarAgendamentos() {
         $dados = $this->agendamento->buscarAgendamentos();
-        View::render("agendamento/index",["agendamentos" => $dados]);
+        View::render("agendamento/index",["agendamentos"=>$dados]);
     }
-    
-    // CRIAR AGENDAMENTOS (VIEW)
     public function viewCriarAgendamentos() {
         View::render("agendamento/create");
     }

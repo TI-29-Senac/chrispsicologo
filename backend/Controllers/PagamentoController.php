@@ -2,7 +2,6 @@
 namespace App\Psico\Controllers;
 
 use App\Psico\Models\Pagamento;
-use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
@@ -10,123 +9,97 @@ use App\Psico\Core\Redirect;
 class PagamentoController {
     public $pagamento;   
     public $db;
-    public $profissional;
     public function __construct(){
         $this->db = Database::getInstance();
         $this->pagamento = new Pagamento($this->db);
-        $this->profissional = new Profissional($this->db);
     }
 
     public function index(){
         $this->viewListarPagamentos();
     }
     
-    public function viewListarPagamentos(){
-        $dados = $this->pagamento->buscarTodosPagamentos();
-        View::render("pagamento/index",["pagamentos"=>$dados]);
+    public function viewListarPagamentos()
+    {
+
+        $pagamentos = $this->pagamento->buscarTodosPagamentos();
+
+
+        $faturamentoTotal = 0;
+        $totalPagamentos = count($pagamentos);
+        $pagamentosPix = 0;
+
+        foreach ($pagamentos as $pagamento) {
+
+            if (isset($pagamento['valor_consulta'])) {
+                $faturamentoTotal += (float)$pagamento['valor_consulta']; 
+            }
+            
+            if (isset($pagamento['tipo_pagamento']) && $pagamento['tipo_pagamento'] === 'pix') {
+                $pagamentosPix++;
+            }
+        }
+        
+        $valorMedio = ($totalPagamentos > 0) ? $faturamentoTotal / $totalPagamentos : 0;
+
+        // --- ARRAY DE STATS ---
+        $stats = [
+            [
+                'label' => 'Faturamento Total',
+                'value' => 'R$ ' . number_format($faturamentoTotal, 2, ',', '.'),
+                'icon' => 'fa-money'
+            ],
+            [
+                'label' => 'Total de Transações',
+                'value' => $totalPagamentos,
+                'icon' => 'fa-credit-card'
+            ],
+            [
+                'label' => 'Valor Médio',
+                'value' => 'R$ ' . number_format($valorMedio, 2, ',', '.'),
+                'icon' => 'fa-calculator'
+            ],
+            [
+                'label' => 'Pagamentos via Pix',
+                'value' => $pagamentosPix,
+                'icon' => 'fa-qrcode'
+            ]
+        ];
+
+        View::render("pagamento/index", [
+            "pagamentos" => $pagamentos,
+            "stats" => $stats
+        ]);
     }
 
     public function viewCriarPagamentos(){
+
         View::render("pagamento/create");
     }
 
+    public function salvarPagamentos() {
+        $id_agendamento = $_POST['id_agendamento'] ?? null;
+        $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
 
-    public function viewEditarPagamentos(){
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado.");
-            return;
-        }
+        $id = $this->pagamento->inserirPagamento(
+            (int)$id_agendamento,
+            0,
+            0, 
+            $tipo_pagamento
+        );
 
-        $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id); 
-
-        if (!$pagamento) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
-            return;
-        }
-
-        View::render("pagamento/edit", ["pagamento" => $pagamento]);
-    }
-
-
-    public function viewExcluirPagamentos(){
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado.");
-            return;
-        }
-        $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id); 
-
-        if (!$pagamento) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
-            return;
-        }
-
-        View::render("pagamento/delete", ["pagamento" => $pagamento]);
-    }
-
-// NOVO MÉTODO PARA EXIBIR O FORMULÁRIO DE EXCLUSÃO MANUAL POR ID
-public function viewExcluirManual() {
-    View::render("pagamento/excluir_manual");
-}
-
-
-public function salvarPagamentos() {
-    $id_agendamento = $_POST['id_agendamento'] ?? null;
-    $valor_consulta = $_POST['valor_consulta'] ?? '0';
-    $sinal_consulta = $_POST['sinal_consulta'] ?? '0';
-    $tipo_pagamento = $_POST['tipo_pagamento'] ?? 'pix';
-
-
-    $valor_consulta = str_replace('.', '', $valor_consulta); 
-    $valor_consulta = str_replace(',', '.', $valor_consulta);
-    $valor_consulta = (float)$valor_consulta; 
-
-    // CORREÇÃO: Tratar vírgula como decimal e converter para float (DECIMAL)
-    $sinal_consulta = str_replace('.', '', $sinal_consulta); // Remove separador de milhar
-    $sinal_consulta = str_replace(',', '.', $sinal_consulta); // Converte vírgula decimal para ponto
-    $sinal_consulta = (float)$sinal_consulta; // Converte para float (DECIMAL)
-
-    $id = $this->pagamento->inserirPagamento(
-        (int)$id_agendamento,
-        $valor_consulta,
-        $sinal_consulta,
-        $tipo_pagamento
-    );
-
-    if ($id) {
-        Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento criado com sucesso! ID: $id");
-    } else {
-        Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
-    }
-}
-
-
-
-    // Atualizar Pagamento (POST)
-    public function atualizarPagamentos(){
-        // Implementação similar ao salvar, mas chamando Pagamento->atualizarPagamento()
-        // ...
-        echo "Atualizar Pagamentos";
-    }
-
-    // Deletar Pagamento (POST)
-    public function deletarPagamentos(){
-
-        $id = $_POST['id_pagamento_manual'] ?? $_POST['id_pagamento'] ?? null; 
-
-        if (!$id) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "ID do pagamento não informado para exclusão.");
-            return;
-        }
-        
-
-        $rowCount = $this->pagamento->deletarPagamento((int)$id); 
-
-        if ($rowCount > 0) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento ID: $id excluído com sucesso.");
+        if ($id) {
+            Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento criado com sucesso! ID: $id");
         } else {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Erro ao excluir pagamento ID: $id. Ele pode não existir.");
+            Redirect::redirecionarComMensagem("pagamentos/criar", "error", "Erro ao criar pagamento.");
         }
     }
-}
+    
+
+    public function viewEditarPagamentos($id){
+        echo "Funcionalidade de Editar Pagamento a ser implementada.";
+    }
+
+    public function viewExcluirPagamentos($id){
+        echo "Funcionalidade de Excluir Pagamento a ser implementada.";
+    }
+}   

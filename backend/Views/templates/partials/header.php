@@ -53,45 +53,29 @@
     <h5><b><i class="fa fa-dashboard"></i> Meu Dashboard</b></h5>
   </header>
 
-  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-row-padding w3-margin-bottom">
+    <?php 
+      // Define um array de cores para variar os cards
+      $colors = ['#5D6D68', '#7C8F88', '#A3B8A1', '#8F9E8B'];
+      $colorIndex = 0;
+
+      if (isset($stats) && is_array($stats)): 
+        foreach ($stats as $stat): 
+          $color = $colors[$colorIndex % count($colors)]; 
+    ?>
     <div class="w3-quarter">
-      <div class="w3-container w3-card-4 w3-padding-16" style="background-color: #5D6D68; color: white;">
-        <div class="w3-left"><i class="fa fa-star w3-xxxlarge"></i></div>
+      <div class="w3-container w3-card-4 w3-padding-16" style="background-color: <?= $color; ?>; color: white; border-radius: 12px;">
+        <div class="w3-left"><i class="fa <?= htmlspecialchars($stat['icon']) ?> w3-xxxlarge"></i></div>
         <div class="w3-right">
-          <h3><?= $stats['total_avaliacoes'] ?? '0' ?></h3>
+          <h3><?= htmlspecialchars($stat['value']) ?></h3>
         </div>
         <div class="w3-clear"></div>
-        <h4>Avaliações</h4>
+        <h4><?= htmlspecialchars($stat['label']) ?></h4>
       </div>
     </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-card-4 w3-padding-16" style="background-color: #7C8F88; color: white;">
-        <div class="w3-left"><i class="fa fa-check-circle w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><?= $stats['usuarios_ativos'] ?? '0' ?></h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Usuários Ativos</h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-card-4 w3-padding-16" style="background-color: #A3B8A1; color: white;">
-        <div class="w3-left"><i class="fa fa-times-circle w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><?= $stats['usuarios_inativos'] ?? '0' ?></h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Usuários Inativos</h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-card-4 w3-padding-16" style="background-color: #E0E0E0; color: #5D6D68;">
-        <div class="w3-left"><i class="fa fa-users w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><?= $stats['total_usuarios'] ?? '0' ?></h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Usuários</h4>
-      </div>
-    </div>
+    <?php 
+          $colorIndex++;
+        endforeach; 
+      endif; 
+    ?>
   </div>

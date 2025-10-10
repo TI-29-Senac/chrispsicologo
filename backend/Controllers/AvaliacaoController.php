@@ -15,63 +15,98 @@ class AvaliacaoController {
         $this->avaliacao = new Avaliacao($this->db);
  
     }
- 
-    // Listar Avaliações (Index)
+
     public function index(){
         $this->viewListarAvaliacoes();
     }
    
-    public function viewListarAvaliacoes(){
-        $dados = $this->avaliacao->buscarAvaliacoes();
-        View::render("avaliacao/index",["avaliacoes"=>$dados]);
+    public function viewListarAvaliacoes()
+    {
+        $avaliacoes = $this->avaliacao->buscarAvaliacoes();
+        $totalAvaliacoes = 0;
+        $somaNotas = 0;
+        $avaliacoes5Estrelas = 0;
+
+        foreach ($avaliacoes as $avaliacao) {
+            $totalAvaliacoes++;
+            $somaNotas += $avaliacao['nota_avaliacao']; 
+            if ($avaliacao['nota_avaliacao'] == 5) {
+                $avaliacoes5Estrelas++;
+            }
+        }
+        
+        $notaMedia = ($totalAvaliacoes > 0) ? round($somaNotas / $totalAvaliacoes, 1) : 0;
+
+        $stats = [
+            [
+                'label' => 'Total de Avaliações',
+                'value' => $totalAvaliacoes,
+                'icon' => 'fa-comments-o'
+            ],
+            [
+                'label' => 'Nota Média',
+                'value' => $notaMedia . ' / 5',
+                'icon' => 'fa-star-half-o'
+            ],
+            [
+                'label' => 'Avaliações 5 Estrelas',
+                'value' => $avaliacoes5Estrelas,
+                'icon' => 'fa-star'
+            ],
+            [
+                'label' => 'Avaliações a Melhorar',
+                'value' => $totalAvaliacoes - $avaliacoes5Estrelas,
+                'icon' => 'fa-thumbs-o-down'
+            ]
+        ];
+
+        View::render("avaliacao/index", [
+            "avaliacoes" => $avaliacoes,
+            "stats" => $stats 
+        ]);
     }
    
+    // ... (restante dos métodos create, store, edit, update, delete, buscarPorProfissional)
     // Criar Avaliação
     public function viewCriarAvaliacoes(){
         View::render("avaliacao/create");
     }
  
-    public function viewEditarAvaliacoes($id) // <-- CORREÇÃO: Recebe o $id da rota
-{
-    // Não precisamos mais do $_GET
-    
-    // Validação para garantir que o ID é válido
-    if (!$id || !is_numeric($id)) {
-        Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação inválido.");
-        return;
+    // Editar Avaliação
+    public function viewEditarAvaliacoes(){
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
+            return;
+        }
+        // Nota: Assumindo que você criará um método buscarAvaliacaoPorId($id) no seu Model de Avaliacao
+        $avaliacao = $this->avaliacao->buscarAvaliacaoPorId((int)$id);
+ 
+        if (!$avaliacao) {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Avaliação não encontrada.");
+            return;
+        }
+ 
+        View::render("avaliacao/edit", ["avaliacao" => $avaliacao]);
     }
-
-    // Busca a avaliação no banco de dados
-    $avaliacao = $this->avaliacao->buscarAvaliacaoPorId((int)$id); 
-
-    if (!$avaliacao) {
-        Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Avaliação com ID {$id} não encontrada.");
-        return;
+ 
+    // Excluir Avaliação
+    public function viewExcluirAvaliacoes(){
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
+            return;
+        }
+        // Nota: Assumindo que você criará um método buscarAvaliacaoPorId($id) no seu Model de Avaliacao
+        $avaliacao = $this->avaliacao->buscarAvaliacaoPorId((int)$id);
+ 
+        if (!$avaliacao) {
+            Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Avaliação não encontrada.");
+            return;
+        }
+ 
+        View::render("avaliacao/delete", ["avaliacao" => $avaliacao]);
     }
-
-    // Se tudo estiver certo, renderiza a view de edição
-    View::render("avaliacao/edit", ["avaliacao" => $avaliacao]);
-}
-
-// Excluir Avaliação (carrega a página de confirmação de exclusão)
-public function viewExcluirAvaliacoes($id) // <-- CORREÇÃO: Recebe o $id da rota
-{
-    // Não precisamos mais do $_GET
-
-    if (!$id || !is_numeric($id)) {
-        Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação inválido.");
-        return;
-    }
-
-    $avaliacao = $this->avaliacao->buscarAvaliacaoPorId((int)$id); 
-
-    if (!$avaliacao) {
-        Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "Avaliação com ID {$id} não encontrada.");
-        return;
-    }
-
-    View::render("avaliacao/delete", ["avaliacao" => $avaliacao]);
-}
  
     // Salvar Avaliação (POST)
 public function salvarAvaliacoes()
@@ -102,41 +137,41 @@ public function salvarAvaliacoes()
     }
 }
     // ... outros métodos ...
-
-    // Em App/Psico/Controllers/AvaliacaoController.php
-
-// AvaliacaoController.php
-
-public function atualizarAvaliacoes($id)
+ 
+public function atualizarAvaliacoes()
 {
+    $id = $_POST['id'] ?? null;
+   
     if (!$id) {
-        Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não foi recebido pela rota.");
+        Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
         return;
     }
-
+ 
     $erros = AvaliacaoValidador::ValidarEntradas($_POST);
     if (!empty($erros)) {
-        // CORREÇÃO na URL de redirecionamento de erro
-        Redirect::redirecionarComMensagem("avaliacoes/editar/{$id}", "error", implode("<br>", $erros));
+        Redirect::redirecionarComMensagem("avaliacoes/editar?id={$id}", "error", implode("<br>", $erros));
         return;
     }
-
-    // Pega apenas os dados necessários
-    $descricao_avaliacao = $_POST['descricao_avaliacao'] ?? '';
-    $nota_avaliacao = (int)($_POST['nota_avaliacao'] ?? 1);
-
-    // CORREÇÃO AQUI: Chame o método com os 3 parâmetros corretos que o Model espera
+ 
+    $dados = [
+        'id_cliente' => (int)($_POST['id_cliente'] ?? null),
+        'id_profissional' => (int)($_POST['id_profissional'] ?? null),
+        'descricao_avaliacao' => $_POST['descricao_avaliacao'] ?? '',
+        'nota_avaliacao' => (int)($_POST['nota_avaliacao'] ?? 1)
+    ];
+ 
     $sucesso = $this->avaliacao->atualizarAvaliacao(
         (int)$id,
-        $descricao_avaliacao,
-        $nota_avaliacao
+        $dados['id_cliente'],
+        $dados['id_profissional'],
+        $dados['descricao_avaliacao'],
+        $dados['nota_avaliacao']
     );
-
+ 
     if ($sucesso) {
         Redirect::redirecionarComMensagem("avaliacoes/listar", "success", "Avaliação atualizada com sucesso!");
     } else {
-        // CORREÇÃO na URL de redirecionamento de erro
-        Redirect::redirecionarComMensagem("avaliacoes/editar/{$id}", "error", "Erro ao atualizar a avaliação no banco de dados.");
+        Redirect::redirecionarComMensagem("avaliacoes/editar?id={$id}", "error", "Erro ao atualizar a avaliação.");
     }
 }
  
@@ -172,7 +207,6 @@ public function deletarAvaliacoes()
             return;
         }
  
-        // Chama o método do Model para buscar as avaliações
         $avaliacoes = $this->avaliacao->buscarAvaliacoesPorProfissional((int)$id);
        
         http_response_code(200);
