@@ -4,6 +4,7 @@ namespace App\Psico\Controllers;
 use App\Psico\Core\View;
 use App\Psico\Models\Avaliacao;
 use App\Psico\Database\Database;
+use App\Psico\Core\Redirect;
 
 class AvaliacaoController
 {

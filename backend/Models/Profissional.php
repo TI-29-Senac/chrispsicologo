@@ -4,7 +4,7 @@ use PDO;
 
 class Profissional {
     private $db;
-    private $table = 'profissional'; // CORREÇÃO: Nome da tabela em minúsculas
+    private $table = 'profissional';
 
     public function __construct(PDO $db) {
         $this->db = $db;

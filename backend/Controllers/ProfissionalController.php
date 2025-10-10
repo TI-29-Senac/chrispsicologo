@@ -63,7 +63,7 @@ class ProfissionalController {
             [
                 'label' => 'Especialidades Únicas',
                 'value' => $especialidadesUnicas,
-                'icon' => 'fa-briefcase' // Ícone mais apropriado
+                'icon' => 'fa-briefcase'
             ]
         ];
 
@@ -73,7 +73,7 @@ class ProfissionalController {
         ]);
     }
     
-    // Demais métodos do controller...
+  
     public function viewCriarProfissionais(){
         View::render("profissional/create");
     }
