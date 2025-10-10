@@ -1,4 +1,4 @@
-<?php
+ <?php
 use App\Psico\Core\Flash;
 
 if ($message = Flash::get('success')) {
