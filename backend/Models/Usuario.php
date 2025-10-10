@@ -14,13 +14,23 @@ class Usuario {
     private $atualizado_em;
     private $excluido_em;
     private $db;
+    private $table = 'usuarios';
+
 
     public function __construct(PDO $db) {
         $this->db = $db;
     }
 
-
-
+    public function listarTodosUsuarios()
+    {
+        
+        $sql = "SELECT u.*, p.id_profissional 
+                FROM {$this->table} u
+                LEFT JOIN profissionais p ON u.id_usuario = p.id_usuario";
+        
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
     /**
      * Inserir um novo usuário
      */
@@ -65,23 +75,30 @@ class Usuario {
     /**
      * Deletar usuário
      */
-public function deletarUsuario(int $id) {
-    $dataExclusao = date('Y-m-d H:i:s'); 
+    public function excluirUsuario(int $id_usuario): bool
+    {
+        $sql = "
+            UPDATE usuario 
+            SET excluido_em = NOW() 
+            WHERE id_usuario = :id_usuario AND excluido_em IS NULL
+        ";
 
-    $sql = "UPDATE usuario 
-            SET excluido_em = :excluido
-            WHERE id_usuario = :id";
-
-    $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(':excluido', $dataExclusao);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        return $stmt->rowCount(); 
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (\Exception $e) {
+            // Opcional: Logar o erro
+            return false;
+        }
     }
 
-    return false;
-}
+        public function totalDeUsuarios(){
+        $sql = "SELECT count(*) as total FROM tbl_usuario";
+        $stmt = $this->db->query($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 
 
     /**
@@ -92,6 +109,14 @@ public function deletarUsuario(int $id) {
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+// Buscar usuario por tipo
+    public function listarUsuariosPorTipo(string $tipo): array
+{
+    $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE tipo_usuario = :tipo");
+    $stmt->bindValue(':tipo', $tipo);
+    $stmt->execute();
+    return $stmt->fetchAll(\PDO::FETCH_OBJ);
+}
 
     /**
      * Buscar usuário por ID

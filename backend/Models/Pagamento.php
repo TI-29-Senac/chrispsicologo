@@ -25,6 +25,37 @@ class Pagamento {
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
+    public function buscarTodosPagamentos(): array
+    {
+        // Query corrigida para buscar os valores da tabela de profissionais
+        $sql = "
+            SELECT
+                p.id_pagamento,
+                p.id_agendamento,
+                u_cliente.nome_usuario AS nome_cliente,
+                u_prof.nome_usuario AS nome_profissional,
+                prof.valor_consulta,  -- Busca da tabela 'profissionais'
+                prof.sinal_consulta,    -- Busca da tabela 'profissionais'
+                p.tipo_pagamento
+            FROM
+                pagamento p
+            LEFT JOIN
+                agendamento a ON p.id_agendamento = a.id_agendamento
+            LEFT JOIN
+                profissional prof ON a.id_profissional = prof.id_profissional
+            LEFT JOIN
+                usuario u_cliente ON a.id_usuario = u_cliente.id_usuario
+            LEFT JOIN
+                usuario u_prof ON prof.id_usuario = u_prof.id_usuario
+            WHERE
+                p.excluido_em IS NULL
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     /**
      * Buscar todos os pagamentos ativos
      */

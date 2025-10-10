@@ -1,65 +1,41 @@
-<style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    th, td {
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
-    th {
-        background-color: #3f51b5;
-        color: white;
-    }
-    tr:nth-child(even) {
-        background-color: #f5f5f5;
-    }
-    tr:hover {
-        background-color: #e0e0ff;
-    }
-    a {
-        text-decoration: none;
-        color: #3f51b5;
-        font-weight: bold;
-        margin: 0 5px;
-    }
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+  <div class="w3-content" style="max-width:1400px;">
+    <div class="w3-container w3-padding-32">
+      <h2 style="color: #5D6D68;">⭐ Lista de Avaliações</h2>
 
-<?php if (!empty($avaliacoes)): ?>
-    <table>
-        <thead>
-            <tr>
+      <?php if (!empty($avaliacoes)): ?>
+        <div class="w3-responsive">
+          <table class="w3-table-all w3-card-4 w3-hoverable w3-white" style="border-radius: 8px; overflow: hidden;">
+            <thead style="background-color: #5D6D68; color: white;">
+              <tr>
                 <th>ID Avaliação</th>
                 <th>ID Cliente</th>
                 <th>ID Profissional</th>
                 <th>Nota</th>
                 <th>Comentário</th>
                 <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach($avaliacoes as $avaliacao): ?>
-            <tr>
+              </tr>
+            </thead>
+            <tbody>
+            <?php foreach($avaliacoes as $avaliacao): ?>
+              <tr>
                 <td><?= htmlspecialchars($avaliacao['id_avaliacao']) ?></td>
                 <td><?= htmlspecialchars($avaliacao['id_cliente']) ?></td>
                 <td><?= htmlspecialchars($avaliacao['id_profissional']) ?></td>
-                <td><?= htmlspecialchars($avaliacao['nota_avaliacao']) ?>/5</td>
-                <td><?= htmlspecialchars($avaliacao['descricao_avaliacao']) ?></td>
+                <td><?= str_repeat('⭐', (int)$avaliacao['nota_avaliacao']) . str_repeat('☆', 5 - (int)$avaliacao['nota_avaliacao']) ?> (<?= $avaliacao['nota_avaliacao'] ?>/5)</td>
+                <td style="max-width: 300px; word-wrap: break-word;"><?= htmlspecialchars($avaliacao['descricao_avaliacao']) ?></td>
                 <td>
-                    <a href="/backend/avaliacoes/editar/<?= $avaliacao['id_avaliacao'] ?>">Editar</a> |
-                    <a href="/backend/avaliacoes/excluir/<?= $avaliacao['id_avaliacao'] ?>">Excluir</a>
+                    <a href="/backend/avaliacoes/editar?id=<?= $avaliacao['id_avaliacao'] ?>">Editar</a> |
+                    <a href="/backend/avaliacoes/excluir?id=<?= $avaliacao['id_avaliacao'] ?>">Excluir</a>
                 </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php else: ?>
-    <p>Nenhuma avaliação encontrada.</p>
-<?php endif; ?>
+              </tr>
+            <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php else: ?>
+        <p class="w3-text-grey">Nenhuma avaliação encontrada.</p>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
