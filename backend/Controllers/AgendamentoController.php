@@ -78,42 +78,63 @@ class AgendamentoController {
             "stats" => $stats                 
         ]);
     }
-
     
-    
+    public function viewEditarAgendamentos($id) {
+        $agendamento = $this->agendamento->buscarAgendamentoPorId((int)$id);
+        if (!$agendamento) {
+            Redirect::redirecionarComMensagem("agendamentos/listar", "error", "Agendamento não encontrado.");
+            return;
+        }
+        View::render("agendamento/edit", ["agendamento" => $agendamento]);
+    } 
 
-    public function viewCriarAgendamentos() {
+        public function viewCriarAgendamentos() {
         View::render("agendamento/create");
     }
-    public function viewEditarAgendamentos() {
-        View::render("agendamento/edit");
-    } 
-    public function viewExcluirAgendamentos() {
-        View::render("agendamento/delete");
-    }
     
-    public function salvarAgendamentos() {
-        $erros = AgendamentoValidador::ValidarEntradas($_POST);
-        if(!empty($erros)){ 
-            Redirect::redirecionarComMensagem("agendamento/criar","error",implode("<br>",$erros));
+// Implemente viewExcluirAgendamentos (substitua o placeholder da linha 99)
+    public function viewExcluirAgendamentos($id) {
+        $agendamento = $this->agendamento->buscarAgendamentoPorId((int)$id);
+        if (!$agendamento) {
+            Redirect::redirecionarComMensagem("agendamentos/listar", "error", "Agendamento não encontrado.");
+            return;
         }
-        $id = $this->agendamento->inserirAgendamento(
-            $_POST["id_usuario"],
-            $_POST["id_profissional"],
-            $_POST["data_agendamento"],
-            "Pendente"
+        View::render("agendamento/delete", ["agendamento" => $agendamento]);
+    }
+
+// Implemente atualizarAgendamentos (substitua o placeholder da linha 113)
+    public function atualizarAgendamentos($id) {
+        // O validador existente verifica a data de agendamento.
+        $erros = AgendamentoValidador::ValidarEntradas($_POST);
+        if (!empty($erros)) {
+            Redirect::redirecionarComMensagem("agendamentos/editar/{$id}", "error", implode("<br>", $erros));
+            return;
+        }
+        
+        $data_agendamento = $_POST['data_agendamento'];
+        $status_consulta = $_POST['status_consulta'] ?? 'pendente';
+        
+        $sucesso = $this->agendamento->atualizarAgendamento(
+            (int)$id,
+            $data_agendamento,
+            $status_consulta
         );
 
-        if ($id) {
-            echo "Agendamento feito com sucesso. ID: $id";
+        if ($sucesso) {
+            Redirect::redirecionarComMensagem("agendamentos/listar", "success", "Agendamento atualizado com sucesso!");
         } else {
-            echo "Erro ao criar agendamento.";
+            Redirect::redirecionarComMensagem("agendamentos/editar/{$id}", "error", "Erro ao atualizar agendamento.");
         }
     }
-    public function atualizarAgendamentos() {
-        echo "Atualizar Agendamentos";
-    }
-    public function deletarAgendamentos() {
-        echo "Deletar Agendamentos";
+
+// Implemente deletarAgendamentos (substitua o placeholder da linha 116)
+    public function deletarAgendamentos($id) {
+        $sucesso = $this->agendamento->deletarAgendamento((int)$id);
+        
+        if ($sucesso) {
+            Redirect::redirecionarComMensagem("agendamentos/listar", "success", "Agendamento excluído/cancelado com sucesso!");
+        } else {
+            Redirect::redirecionarComMensagem("agendamentos/listar", "error", "Erro ao excluir agendamento. Ele pode já ter sido excluído.");
+        }
     }
 }

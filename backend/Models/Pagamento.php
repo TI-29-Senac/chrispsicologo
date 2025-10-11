@@ -4,7 +4,7 @@ use PDO;
 
 class Pagamento {
     private PDO $db;
-    private $table = 'pagamento'; // Nome da tabela atualizado
+    private $table = 'pagamento';
 
     public function __construct(PDO $db){
         $this->db = $db;
@@ -19,12 +19,10 @@ class Pagamento {
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-
-
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} WHERE excluido_em IS NULL";
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
@@ -41,10 +39,9 @@ class Pagamento {
             JOIN usuario cliente ON a.id_usuario = cliente.id_usuario
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
             JOIN usuario profissional_usuario ON prof.id_usuario = profissional_usuario.id_usuario
-            WHERE p.excluido_em IS NULL
             ORDER BY p.criado_em DESC
             LIMIT :limit OFFSET :offset
-        ";
+        "; // REMOVIDO: WHERE p.excluido_em IS NULL
         
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
@@ -67,8 +64,7 @@ class Pagamento {
             FROM {$this->table} p
             JOIN agendamento a ON p.id_agendamento = a.id_agendamento
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
-            WHERE p.excluido_em IS NULL
-        ";
+        "; // REMOVIDO: WHERE p.excluido_em IS NULL
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

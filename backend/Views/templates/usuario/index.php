@@ -8,8 +8,8 @@
         </div>
     </div>
     
-    <div class="w3-responsive">
-        <table class="w3-table-all w3-hoverable w3-card-4">
+<div class="w3-responsive">
+        <table class="w3-table-all w3-card-4 w3-hoverable w3-white">
             <thead style="background-color: #5D6D68; color: white;">
                 <tr class="w3-light-grey">
                     <th>ID</th>
@@ -30,8 +30,8 @@
                         <td><?= htmlspecialchars(ucfirst($usuario->tipo_usuario)); ?></td>
                         <td><span class="w3-tag <?= $usuario->status_usuario === 'ativo' ? 'w3-green' : 'w3-red'; ?>"><?= ucfirst($usuario->status_usuario); ?></span></td>
                         <td>
-                            <a href="/backend/usuario/editar/<?= $usuario->id_usuario; ?>" class="w3-button w3-tiny" style="background-color: #A3B8A1 !important; border-radius: 8px;">Editar</a>
-                            <a href="/backend/usuario/excluir/<?= $usuario->id_usuario; ?>" class="w3-button w3-red w3-tiny" style="border-radius: 8px;">Excluir</a>
+                            <a href="/backend/usuario/editar/<?= $usuario->id_usuario; ?>" class="w3-button w3-tiny w3-round" style="background-color: #5D6D68; color: white;"><i class="fa fa-pencil"></i> Editar</a>
+                            <a href="/backend/usuario/excluir/<?= $usuario->id_usuario; ?>" class="w3-button w3-tiny w3-red w3-round"><i class="fa fa-trash"></i> Excluir</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

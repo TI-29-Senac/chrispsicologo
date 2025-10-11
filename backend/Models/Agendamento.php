@@ -30,27 +30,12 @@ class Agendamento {
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario profissional ON p.id_usuario = profissional.id_usuario
-            WHERE a.excluido_em IS NULL
-        ";
+        "; // REMOVIDO: WHERE a.excluido_em IS NULL
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /*
-      Deletar agendamento
-    */
-    public function deletarAgendamento(int $id_agendamento): int {
-        $sql = "DELETE FROM agendamento WHERE id_agendamento = :id_agendamento";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->rowCount();
-    }
-
-    /*
-      Atualizar agendamento
-    */
     public function atualizarAgendamento(int $id_agendamento, string $data_agendamento, string $status_consulta): bool {
         $dataAtual = date('Y-m-d H:i:s');
         $sql = "UPDATE agendamento
@@ -70,7 +55,7 @@ class Agendamento {
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a WHERE a.excluido_em IS NULL";
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a"; // REMOVIDO: WHERE a.excluido_em IS NULL
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
@@ -80,9 +65,8 @@ class Agendamento {
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
-            WHERE a.excluido_em IS NULL
             ORDER BY a.data_agendamento DESC
-            LIMIT :limit OFFSET :offset";
+            LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE a.excluido_em IS NULL
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
@@ -97,5 +81,36 @@ class Agendamento {
             'pagina_atual' => (int) $pagina,
             'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
         ];
+    }
+
+    public function buscarAgendamentoPorId(int $id_agendamento): ?array {
+        $sql = "SELECT * FROM {$this->table} WHERE id_agendamento = :id_agendamento"; // REMOVIDO: AND excluido_em IS NULL
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
+        $stmt->execute();
+        $agendamento = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $agendamento ?: null;
+    }
+
+    public function deletarAgendamento(int $id_agendamento): bool {
+        $sql = "UPDATE {$this->table} SET excluido_em = NOW(), status_consulta = 'cancelada' WHERE id_agendamento = :id_agendamento"; // REMOVIDO: AND excluido_em IS NULL
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function buscarTodosAgendamentos(): array {
+        $sql = "SELECT 
+                    a.*, 
+                    u.nome_usuario AS nome_paciente, 
+                    p.id_profissional
+                FROM {$this->table} a
+                JOIN usuario u ON a.id_usuario = u.id_usuario
+                JOIN profissional p ON a.id_profissional = p.id_profissional 
+                ORDER BY a.data_agendamento DESC"; 
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

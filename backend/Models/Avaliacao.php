@@ -4,7 +4,7 @@ use PDO;
  
 class Avaliacao {
     private PDO $db;
-    private $table = 'avaliacao'; // Nome da tabela atualizado
+    private $table = 'avaliacao';
  
     public function __construct(PDO $db){
         $this->db = $db;
@@ -29,9 +29,9 @@ class Avaliacao {
                 u.nome_usuario AS cliente
             FROM {$this->table} a
             JOIN Usuario u ON a.id_cliente = u.id_usuario
-            WHERE a.id_profissional = :id_profissional AND a.excluido_em IS NULL
+            WHERE a.id_profissional = :id_profissional
             ORDER BY a.criado_em DESC
-        ";
+        "; // REMOVIDO: AND a.excluido_em IS NULL
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
         $stmt->execute();
@@ -39,84 +39,55 @@ class Avaliacao {
     }
 
     public function deletarAvaliacao(int $id_avaliacao): bool {
-
-    $sql = "UPDATE {$this->table}
-
-            SET excluido_em = NOW()
-
-            WHERE id_avaliacao = :id_avaliacao AND excluido_em IS NULL";
-
-    $stmt = $this->db->prepare($sql);
-
-    $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
-
-    return $stmt->execute();
-
-}
+        $sql = "UPDATE {$this->table} SET excluido_em = NOW() WHERE id_avaliacao = :id_avaliacao"; // REMOVIDO: AND excluido_em IS NULL
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
  
-public function buscarAvaliacaoPorId(int $id_avaliacao): ?array {
+    public function buscarAvaliacaoPorId(int $id_avaliacao): ?array {
+        $sql = "SELECT 
+                    a.id_avaliacao,
+                    a.id_cliente,
+                    a.id_profissional,
+                    a.descricao_avaliacao,
+                    a.nota_avaliacao,
+                    a.criado_em,
+                    u.nome_usuario AS cliente
+                FROM {$this->table} a
+                JOIN usuario u ON a.id_cliente = u.id_usuario
+                WHERE a.id_avaliacao = :id_avaliacao
+                LIMIT 1"; // REMOVIDO: AND a.excluido_em IS NULL
+     
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
+        $stmt->execute();
+        $avaliacao = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $avaliacao ?: null;
+    }
 
-    $sql = "SELECT 
+    public function atualizarAvaliacao(int $id_avaliacao, string $descricao, int $nota): bool {
+        $sql = "UPDATE {$this->table}
+                SET 
+                    descricao_avaliacao = :descricao,
+                    nota_avaliacao = :nota,
+                    atualizado_em = NOW()
+                WHERE id_avaliacao = :id_avaliacao"; // REMOVIDO: AND excluido_em IS NULL
+     
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':descricao', $descricao);
+        $stmt->bindParam(':nota', $nota, PDO::PARAM_INT);
+        $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 
-                a.id_avaliacao,
-
-                a.id_usuario,
-
-                a.id_profissional,
-
-                a.descricao_avaliacao AS comentario,
-
-                a.nota_avaliacao AS nota,
-
-                a.criado_em,
-
-                u.nome_usuario AS cliente
-
-            FROM {$this->table} a
-
-            JOIN usuario u ON a.id_cliente = u.id_usuario
-
-            WHERE a.id_avaliacao = :id_avaliacao
-
-              AND a.excluido_em IS NULL
-
-            LIMIT 1";
- 
-    $stmt = $this->db->prepare($sql);
-
-    $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
-
-    $stmt->execute();
-
-    $avaliacao = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    return $avaliacao ?: null;
-
-}
-public function atualizarAvaliacao(int $id_avaliacao, string $descricao, int $nota): bool {
-    $sql = "UPDATE {$this->table}
-            SET 
-                descricao_avaliacao = :descricao,
-                nota_avaliacao = :nota,
-                atualizado_em = NOW()
-            WHERE id_avaliacao = :id_avaliacao
-              AND excluido_em IS NULL";
- 
-    $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(':descricao', $descricao);
-    $stmt->bindParam(':nota', $nota, PDO::PARAM_INT);
-    $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
-    return $stmt->execute();
-}
-
-public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
+    public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} WHERE excluido_em IS NULL";
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
-        // Query para buscar avaliações com nomes de cliente e profissional
         $dataQuery = "
             SELECT 
                 a.*, 
@@ -126,9 +97,8 @@ public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
             JOIN usuario u_cliente ON a.id_cliente = u_cliente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario u_prof ON p.id_usuario = u_prof.id_usuario
-            WHERE a.excluido_em IS NULL
             ORDER BY a.criado_em DESC
-            LIMIT :limit OFFSET :offset";
+            LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE a.excluido_em IS NULL
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
@@ -145,11 +115,10 @@ public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         ];
     }
 
-        public function buscarAvaliacoes(): array {
-        $sql = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL";
+    public function buscarAvaliacoes(): array {
+        $sql = "SELECT * FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 }

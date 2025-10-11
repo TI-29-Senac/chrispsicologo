@@ -4,20 +4,19 @@ use PDO;
 
 class Profissional {
     private $db;
-    private $table = 'profissional'; // CORREÇÃO: Nome da tabela em minúsculas
+    private $table = 'profissional';
 
     public function __construct(PDO $db) {
         $this->db = $db;
     }
 
- public function inserirProfissional(int $id_usuario, string $especialidade, string $img, float $valor, float $sinal) {
-        $sql = "INSERT INTO {$this->table} (id_usuario, especialidade, img_profissional, valor_consulta, sinal_consulta) 
-                VALUES (:id_usuario, :especialidade, :img, :valor, :sinal)";
+public function inserirProfissional(int $id_usuario, string $especialidade, float $valor, float $sinal) {
+        $sql = "INSERT INTO {$this->table} (id_usuario, especialidade, valor_consulta, sinal_consulta) 
+                VALUES (:id_usuario, :especialidade, :valor, :sinal)";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
         $stmt->bindParam(':especialidade', $especialidade);
-        $stmt->bindParam(':img', $img);
         $stmt->bindParam(':valor', $valor);
         $stmt->bindParam(':sinal', $sinal);
 
@@ -25,13 +24,12 @@ class Profissional {
             return $this->db->lastInsertId();
         }
         return false;
-
     }
-
+    
 public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} p WHERE p.excluido_em IS NULL";
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} p"; // REMOVIDO: WHERE p.excluido_em IS NULL
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
@@ -39,9 +37,8 @@ public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
             SELECT p.*, u.nome_usuario, u.email_usuario, u.status_usuario, u.tipo_usuario
             FROM {$this->table} p
             JOIN usuario u ON p.id_usuario = u.id_usuario
-            WHERE p.excluido_em IS NULL
             ORDER BY u.nome_usuario ASC
-            LIMIT :limit OFFSET :offset";
+            LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE p.excluido_em IS NULL
         
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
@@ -64,16 +61,13 @@ public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
             SELECT p.*, u.nome_usuario, u.email_usuario, u.status_usuario, u.tipo_usuario
             FROM {$this->table} p
             JOIN usuario u ON p.id_usuario = u.id_usuario
-            WHERE p.excluido_em IS NULL
             ORDER BY u.nome_usuario ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
-/**
- * Buscar um profissional pelo ID
- */
- public function buscarProfissionalPorId(int $id_profissional) { // Removido o tipo de retorno :?array
+
+ public function buscarProfissionalPorId(int $id_profissional) {
         $sql = "
             SELECT 
                 p.*,
@@ -87,7 +81,6 @@ public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
                 usuario u ON p.id_usuario = u.id_usuario
             WHERE 
                 p.id_profissional = :id_profissional
-                AND p.excluido_em IS NULL
             LIMIT 1
         ";
 
@@ -95,5 +88,28 @@ public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
         $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+ public function atualizarProfissional(int $id_profissional, string $especialidade, float $valor, float $sinal): bool {
+        $sql = "UPDATE {$this->table}
+                SET especialidade = :especialidade,
+                    valor_consulta = :valor,
+                    sinal_consulta = :sinal,
+                    atualizado_em = NOW()
+                WHERE id_profissional = :id_profissional";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->bindParam(':especialidade', $especialidade);
+        $stmt->bindParam(':valor', $valor);
+        $stmt->bindParam(':sinal', $sinal);
+
+        return $stmt->execute();
+    }
+    public function deletarProfissional(int $id_profissional): bool {
+        $sql = "UPDATE {$this->table} SET excluido_em = NOW() WHERE id_profissional = :id_profissional";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }

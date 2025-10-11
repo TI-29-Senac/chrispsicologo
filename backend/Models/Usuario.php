@@ -5,7 +5,7 @@ use PDO;
 
 class Usuario {
     private $db;
-    private $table = 'usuario'; // CORREÇÃO: Nome da tabela em minúsculas
+    private $table = 'usuario';
 
     public function __construct(PDO $db) {
         $this->db = $db;
@@ -25,13 +25,13 @@ class Usuario {
     }
 
     public function buscarUsuarios(): array {
-        $sql = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL";
+        $sql = "SELECT * FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     
     public function buscarUsuarioPorId(int $id) {
-        $sql = "SELECT * FROM {$this->table} WHERE id_usuario = :id AND excluido_em IS NULL";
+        $sql = "SELECT * FROM {$this->table} WHERE id_usuario = :id"; // REMOVIDO: AND excluido_em IS NULL
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -39,7 +39,7 @@ class Usuario {
     }
 
     public function buscarUsuarioPorEmail(string $email) {
-        $sql = "SELECT * FROM {$this->table} WHERE email_usuario = :email AND excluido_em IS NULL";
+        $sql = "SELECT * FROM {$this->table} WHERE email_usuario = :email"; // REMOVIDO: AND excluido_em IS NULL
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -71,7 +71,7 @@ public function atualizarUsuario(int $id, string $nome, string $email, ?string $
     }
 
     public function excluirUsuario(int $id_usuario): bool {
-        $sql = "UPDATE {$this->table} SET status_usuario = 'inativo', atualizado_em = NOW() WHERE id_usuario = :id_usuario";
+        $sql = "UPDATE {$this->table} SET status_usuario = 'inativo', atualizado_em = NOW(), excluido_em = NOW() WHERE id_usuario = :id_usuario";
         
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
@@ -90,11 +90,11 @@ public function atualizarUsuario(int $id, string $nome, string $email, ?string $
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array{
         $offset = ($pagina - 1) * $por_pagina;
         
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} WHERE excluido_em IS NULL";
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
-        $dataQuery = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL ORDER BY nome_usuario ASC LIMIT :limit OFFSET :offset";
+        $dataQuery = "SELECT * FROM {$this->table} ORDER BY nome_usuario ASC LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE excluido_em IS NULL
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
         $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -111,7 +111,7 @@ public function atualizarUsuario(int $id, string $nome, string $email, ?string $
     }
 
     public function buscarTodosUsuarios(): array {
-        $sql = "SELECT * FROM {$this->table} WHERE excluido_em IS NULL";
+        $sql = "SELECT * FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
