@@ -18,14 +18,12 @@ class AvaliacaoController
         $this->avaliacao = new Avaliacao($this->db);
     }
  
-public function viewListarAvaliacoes()
+    public function viewListarAvaliacoes()
     {
-        // --- LÓGICA DE PAGINAÇÃO ---
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->avaliacao->paginacao((int)$pagina, 10);
 
-        // --- LÓGICA PARA OS CARDS DE STATS ---
-        $todasAvaliacoes = $this->avaliacao->buscarAvaliacoes(); // Busca todas para as estatísticas
+        $todasAvaliacoes = $this->avaliacao->buscarAvaliacoes();
         $totalAvaliacoes = count($todasAvaliacoes);
         $somaNotas = 0;
         $avaliacoes5Estrelas = 0;
@@ -46,7 +44,6 @@ public function viewListarAvaliacoes()
             ['label' => 'A Melhorar', 'value' => $totalAvaliacoes - $avaliacoes5Estrelas, 'icon' => 'fa-thumbs-o-down']
         ];
 
-        // --- RENDERIZA A VIEW COM OS DADOS PAGINADOS ---
         View::render("avaliacao/index", [
             "avaliacoes" => $dadosPaginados['data'],
             "paginacao" => $dadosPaginados,
@@ -54,17 +51,11 @@ public function viewListarAvaliacoes()
         ]);
     }
 
-
-   
-    // ... (restante dos métodos create, store, edit, update, delete, buscarPorProfissional)
-    // Criar Avaliação
     public function viewCriarAvaliacoes(){
         View::render("avaliacao/create");
     }
  
-    // Editar Avaliação
-    public function viewEditarAvaliacoes(){
-        $id = $_GET['id'] ?? null;
+    public function viewEditarAvaliacoes($id){
         if (!$id) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
             return;
@@ -79,9 +70,7 @@ public function viewListarAvaliacoes()
         View::render("avaliacao/edit", ["avaliacao" => $avaliacao]);
     }
  
-    // Excluir Avaliação
-    public function viewExcluirAvaliacoes(){
-        $id = $_GET['id'] ?? null;
+    public function viewExcluirAvaliacoes($id){
         if (!$id) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
             return;
@@ -96,7 +85,6 @@ public function viewListarAvaliacoes()
         View::render("avaliacao/delete", ["avaliacao" => $avaliacao]);
     }
  
-    // Salvar Avaliação (POST)
     public function salvarAvaliacoes()
     {
         $erros = AvaliacaoValidador::ValidarEntradas($_POST);
@@ -125,10 +113,8 @@ public function viewListarAvaliacoes()
         }
     }
     
-    public function atualizarAvaliacao()
+    public function atualizarAvaliacoes($id)
     {
-        $id = $_POST['id_avaliacao'] ?? null;
-    
         if (!$id) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
             return;
@@ -136,7 +122,7 @@ public function viewListarAvaliacoes()
     
         $erros = AvaliacaoValidador::ValidarEntradas($_POST);
         if (!empty($erros)) {
-            Redirect::redirecionarComMensagem("avaliacoes/editar?id={$id}", "error", implode("<br>", $erros));
+            Redirect::redirecionarComMensagem("avaliacoes/editar/{$id}", "error", implode("<br>", $erros));
             return;
         }
     
@@ -149,14 +135,12 @@ public function viewListarAvaliacoes()
         if ($sucesso) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "success", "Avaliação atualizada com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("avaliacoes/editar?id={$id}", "error", "Erro ao atualizar a avaliação.");
+            Redirect::redirecionarComMensagem("avaliacoes/editar/{$id}", "error", "Erro ao atualizar a avaliação.");
         }
     }
     
-    public function deletarAvaliacoes()
+    public function deletarAvaliacoes($id)
     {
-        $id = $_POST['id_avaliacao'] ?? null;
-    
         if (!$id) {
             Redirect::redirecionarComMensagem("avaliacoes/listar", "error", "ID da avaliação não informado.");
             return;
@@ -188,5 +172,4 @@ public function viewListarAvaliacoes()
         echo json_encode($avaliacoes);
         return;
     }
-    
 }

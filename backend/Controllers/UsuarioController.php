@@ -87,24 +87,23 @@ class UsuarioController {
 public function salvarUsuarios() {
     $erros = UsuarioValidador::ValidarEntradas($_POST);
     if(!empty($erros)){
-        Redirect::redirecionarComMensagem('/backend/usuario/criar', 'error', implode('<br>', $erros));
+        Redirect::redirecionarComMensagem("usuario/criar", "error", implode("<br>", $erros));
         return;
     }
  
-    $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['imagem'], 'usuario');
     if($this->usuario->inserirUsuario(
         $_POST['nome_usuario'],
         $_POST['email_usuario'],
         $_POST['senha_usuario'],
         $_POST['tipo_usuario'],
-        'Ativo',
-        $imagem
+        $_POST['cpf'] ?? '' 
     )){
-        Redirect::redirecionarComMensagem('/backend/usuario/listar', 'success', 'Usuário criado com sucesso!');
+        Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
     }else{
-        Redirect::redirecionarComMensagem('/backend/usuario/criar', 'error', 'Erro ao criar usuário. Tente novamente.');
+        Redirect::redirecionarComMensagem("usuario/criar", "error", "Erro ao criar usuário. Tente novamente.");
     }
 }
+ 
 
     public function relatorioUsuarios($id, $data1, $data2) {
         View::render("usuario/relatorio", ["id" => $id, "data1" => $data1, "data2" => $data2]);

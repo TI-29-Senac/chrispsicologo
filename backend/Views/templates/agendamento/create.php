@@ -11,16 +11,33 @@ use App\Psico\Core\Flash;
         <div class="w3-row">
             <form action="/backend/agendamentos/salvar" method="POST">
                 <div class="w3-row-padding">
-                    <div class="w3-half">
-                        <label for="id_usuario"><b>ID do Paciente</b></label>
-                        <input class="w3-input w3-border" type="text" id="id_usuario" name="id_usuario" required>
-                    </div>
-                    <div class="w3-half">
-                        <label for="id_profissional"><b>ID do Profissional</b></label>
-                        <input class="w3-input w3-border" type="text" id="id_profissional" name="id_profissional" required>
-                    </div>
-                </div>
-                
+    <div class="w3-half">
+        <label for="id_usuario"><b>Paciente</b></label>
+        <select class="w3-select w3-border" id="id_usuario" name="id_usuario" required>
+            <option value="" disabled selected>Selecione o paciente...</option>
+            <?php if (!empty($pacientes)): ?>
+                <?php foreach ($pacientes as $paciente): ?>
+                    <option value="<?= htmlspecialchars($paciente->id_usuario) ?>">
+                        <?= htmlspecialchars($paciente->nome_usuario) ?>
+                    </option>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    </div>
+    <div class="w3-half">
+        <label for="id_profissional"><b>Profissional</b></label>
+        <select class="w3-select w3-border" id="id_profissional" name="id_profissional" required>
+            <option value="" disabled selected>Selecione o profissional...</option>
+            <?php if (!empty($profissionais)): ?>
+                <?php foreach ($profissionais as $profissional): ?>
+                    <option value="<?= htmlspecialchars($profissional->id_profissional) ?>">
+                        <?= htmlspecialchars($profissional->nome_usuario) ?>
+                    </option>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    </div>
+</div>
                 <div class="w3-row-padding w3-section">
                     <div class="w3-half">
                         <label for="data_agendamento"><b>Data do Agendamento</b></label>

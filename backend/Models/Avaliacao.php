@@ -31,7 +31,7 @@ class Avaliacao {
             JOIN Usuario u ON a.id_cliente = u.id_usuario
             WHERE a.id_profissional = :id_profissional
             ORDER BY a.criado_em DESC
-        "; // REMOVIDO: AND a.excluido_em IS NULL
+        "; 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
         $stmt->execute();
@@ -39,7 +39,7 @@ class Avaliacao {
     }
 
     public function deletarAvaliacao(int $id_avaliacao): bool {
-        $sql = "UPDATE {$this->table} SET excluido_em = NOW() WHERE id_avaliacao = :id_avaliacao"; // REMOVIDO: AND excluido_em IS NULL
+        $sql = "UPDATE {$this->table} SET excluido_em = NOW() WHERE id_avaliacao = :id_avaliacao"; 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
         return $stmt->execute();
@@ -57,7 +57,7 @@ class Avaliacao {
                 FROM {$this->table} a
                 JOIN usuario u ON a.id_cliente = u.id_usuario
                 WHERE a.id_avaliacao = :id_avaliacao
-                LIMIT 1"; // REMOVIDO: AND a.excluido_em IS NULL
+                LIMIT 1"; 
      
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_avaliacao', $id_avaliacao, PDO::PARAM_INT);
@@ -72,7 +72,7 @@ class Avaliacao {
                     descricao_avaliacao = :descricao,
                     nota_avaliacao = :nota,
                     atualizado_em = NOW()
-                WHERE id_avaliacao = :id_avaliacao"; // REMOVIDO: AND excluido_em IS NULL
+                WHERE id_avaliacao = :id_avaliacao"; 
      
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':descricao', $descricao);
@@ -84,7 +84,7 @@ class Avaliacao {
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}";
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
@@ -97,8 +97,8 @@ class Avaliacao {
             JOIN usuario u_cliente ON a.id_cliente = u_cliente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario u_prof ON p.id_usuario = u_prof.id_usuario
-            ORDER BY a.criado_em DESC
-            LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE a.excluido_em IS NULL
+            ORDER BY a.id_avaliacao ASC
+            LIMIT :limit OFFSET :offset"; 
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);

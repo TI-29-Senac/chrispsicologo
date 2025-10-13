@@ -30,7 +30,7 @@ class Agendamento {
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario profissional ON p.id_usuario = profissional.id_usuario
-        "; // REMOVIDO: WHERE a.excluido_em IS NULL
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -55,7 +55,7 @@ class Agendamento {
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a"; // REMOVIDO: WHERE a.excluido_em IS NULL
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a"; 
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
@@ -65,8 +65,8 @@ class Agendamento {
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
-            ORDER BY a.data_agendamento DESC
-            LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE a.excluido_em IS NULL
+            ORDER BY a.id_agendamento ASC
+            LIMIT :limit OFFSET :offset"; 
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);

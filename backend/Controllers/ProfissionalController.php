@@ -19,9 +19,13 @@ class ProfissionalController {
         $this->usuario = new Usuario($this->db);
     }
 
-    public function viewCriarProfissionais()
+public function viewCriarProfissionais()
     {
-        View::render('profissional/create');
+        $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
+
+        View::render('profissional/create', [
+            'usuariosDisponiveis' => $usuariosDisponiveis
+        ]);
     }
 
     public function salvarProfissionais()
@@ -35,7 +39,7 @@ class ProfissionalController {
         $id_usuario = (int)$_POST['id_usuario'];
         $especialidade = $_POST['especialidade'];
         $valor_consulta = (float)($_POST['valor_consulta'] ?? 0.0);
-        $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0.0);
+        $sinal_consulta = $valor_consulta * 0.20; // Cálculo automático do sinal
 
         $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
         if (!$usuarioExistente) {
@@ -128,14 +132,15 @@ class ProfissionalController {
             $profissional->cpf ?? '',
             $_POST['status_usuario'] ?? 'ativo'
         );
+        
+        $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
+        $sinal_consulta = $valor_consulta * 0.20; // Cálculo automático do sinal
 
-        // --- CORREÇÃO APLICADA AQUI ---
-        // Converte os valores do formulário para float antes de passar para o Model.
         $sucesso_profissional = $this->profissional->atualizarProfissional(
             (int)$id,
             $_POST['especialidade'],
-            (float)($_POST['valor_consulta'] ?? 0), 
-            (float)($_POST['sinal_consulta'] ?? 0)
+            $valor_consulta, 
+            $sinal_consulta
         );
 
         if ($sucesso_usuario && $sucesso_profissional) {

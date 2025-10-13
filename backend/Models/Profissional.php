@@ -37,7 +37,8 @@ public function paginacao(int $pagina = 1, int $por_pagina = 10): array {
             SELECT p.*, u.nome_usuario, u.email_usuario, u.status_usuario, u.tipo_usuario
             FROM {$this->table} p
             JOIN usuario u ON p.id_usuario = u.id_usuario
-            ORDER BY u.nome_usuario ASC
+            ORDER BY 
+            id_profissional ASC
             LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE p.excluido_em IS NULL
         
         $dataStmt = $this->db->prepare($dataQuery);

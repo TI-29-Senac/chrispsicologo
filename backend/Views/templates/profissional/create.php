@@ -11,19 +11,16 @@ use App\Psico\Core\Flash;
         <div class="w3-row">
             <form action="/backend/profissionais/salvar" method="POST">
                 <div class="w3-row-padding">
-                    <div class="w3-half">
-                        <label for="id_usuario"><b>ID do Usuário a ser Profissional</b></label>
-                        <input class="w3-input w3-border" id="id_usuario" name="id_usuario" type="text" placeholder="Insira o ID de um usuário existente" required>
-                    </div>
-                    <div class="w3-half">
-                        <label for="especialidade"><b>Especialidade</b></label>
-                        <input class="w3-input w3-border" id="especialidade" name="especialidade" type="text" placeholder="Ex: Terapia Cognitivo-Comportamental" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="w3-button w3-right w3-padding w3-section" style="background-color: #A3B8A1 !important;">Salvar Profissional</button>
-                <a href="/backend/profissionais/listar" class="w3-button w3-right w3-padding w3-light-grey w3-margin-right w3-section">Cancelar</a>
-            </form>
-        </div>
-    </div>
+<div class="w3-half">
+    <label for="id_usuario"><b>Selecione o Usuário</b></label>
+    <select class="w3-select w3-border" id="id_usuario" name="id_usuario" required>
+        <option value="" disabled selected>Escolha um usuário...</option>
+        <?php if (!empty($usuariosDisponiveis)): ?>
+            <?php foreach ($usuariosDisponiveis as $usuario): ?>
+                <option value="<?= htmlspecialchars($usuario->id_usuario) ?>">
+                    <?= htmlspecialchars($usuario->nome_usuario) ?>
+                </option>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </select>
 </div>

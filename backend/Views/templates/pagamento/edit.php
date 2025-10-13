@@ -30,6 +30,13 @@ $pagamento = $dados['pagamento'];
                     </div>
                 </div>
 
+                <div class="w3-row-padding w3-section">
+                    <div class="w3-half">
+                        <label for="valor_consulta"><b>Valor da Consulta (R$)</b></label>
+                        <input class="w3-input w3-border" type="number" step="0.01" id="valor_consulta" name="valor_consulta" value="<?= htmlspecialchars($pagamento['valor_consulta'] ?? '0.00') ?>" required>
+                    </div>
+                </div>
+
                 <button type="submit" class="w3-button w3-right w3-padding w3-section" style="background-color: #A3B8A1 !important;">Atualizar Pagamento</button>
                 <a href="/backend/pagamentos/listar" class="w3-button w3-right w3-padding w3-light-grey w3-margin-right w3-section">Cancelar</a>
             </form>

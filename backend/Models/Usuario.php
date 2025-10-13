@@ -25,13 +25,13 @@ class Usuario {
     }
 
     public function buscarUsuarios(): array {
-        $sql = "SELECT * FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
+        $sql = "SELECT * FROM {$this->table}"; 
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     
     public function buscarUsuarioPorId(int $id) {
-        $sql = "SELECT * FROM {$this->table} WHERE id_usuario = :id"; // REMOVIDO: AND excluido_em IS NULL
+        $sql = "SELECT * FROM {$this->table} WHERE id_usuario = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -39,7 +39,7 @@ class Usuario {
     }
 
     public function buscarUsuarioPorEmail(string $email) {
-        $sql = "SELECT * FROM {$this->table} WHERE email_usuario = :email"; // REMOVIDO: AND excluido_em IS NULL
+        $sql = "SELECT * FROM {$this->table} WHERE email_usuario = :email"; 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -90,11 +90,11 @@ public function atualizarUsuario(int $id, string $nome, string $email, ?string $
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array{
         $offset = ($pagina - 1) * $por_pagina;
         
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}"; 
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
-        $dataQuery = "SELECT * FROM {$this->table} ORDER BY nome_usuario ASC LIMIT :limit OFFSET :offset"; // REMOVIDO: WHERE excluido_em IS NULL
+        $dataQuery = "SELECT * FROM {$this->table} ORDER BY id_usuario ASC LIMIT :limit OFFSET :offset"; 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
         $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -111,7 +111,15 @@ public function atualizarUsuario(int $id, string $nome, string $email, ?string $
     }
 
     public function buscarTodosUsuarios(): array {
-        $sql = "SELECT * FROM {$this->table}"; // REMOVIDO: WHERE excluido_em IS NULL
+        $sql = "SELECT * FROM {$this->table}";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function buscarUsuariosNaoProfissionais(): array {
+        $sql = "SELECT id_usuario, nome_usuario FROM {$this->table} 
+                WHERE tipo_usuario != 'profissional' 
+                AND id_usuario NOT IN (SELECT id_usuario FROM profissional)";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }

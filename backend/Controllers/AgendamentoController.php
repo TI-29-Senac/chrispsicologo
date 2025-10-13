@@ -2,6 +2,8 @@
 namespace App\Psico\Controllers;
 
 use App\Psico\Models\Agendamento;
+use App\Psico\Models\Usuario;
+use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
@@ -10,9 +12,13 @@ use App\Psico\Validadores\AgendamentoValidador;
 class AgendamentoController {
     public $agendamento;   
     public $db;
+    public $usuario;
+    public $profissional;
     public function __construct(){
         $this->db = Database::getInstance();
         $this->agendamento = new Agendamento($this->db);
+        $this->usuario = new Usuario($this->db);
+        $this->profissional = new Profissional($this->db); 
     }
     // Index
     public function index() {
@@ -21,18 +27,12 @@ class AgendamentoController {
     }
 
         public function viewListarAgendamentos() {
-        // --- LÓGICA DE PAGINAÇÃO ---
         $pagina = $_GET['pagina'] ?? 1;
-        $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10); // Limite de 5 por página
+        $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10);
 
-        // --- LÓGICA PARA OS CARDS DE STATS ---
-        // Para os cards, precisamos contar todos os registros. 
-        // A informação do total já vem da paginação, então vamos reutilizá-la.
         $totalAgendamentos = $dadosPaginados['total'];
-        
-        // Para os status (pendente, confirmado, etc.), precisamos de uma busca que retorne todos os agendamentos.
-        // O ideal é ter métodos específicos no Model para isso, mas por enquanto faremos a contagem aqui.
-        $todosAgendamentos = $this->agendamento->buscarAgendamentos(); // Este método já existe no seu Model
+
+        $todosAgendamentos = $this->agendamento->buscarAgendamentos(); 
         
         $pendentes = 0;
         $confirmados = 0;
@@ -48,7 +48,6 @@ class AgendamentoController {
             }
         }
 
-        // --- ARRAY DE STATS PADRONIZADO ---
         $stats = [
             [
                 'label' => 'Total de Agendamentos',
@@ -88,11 +87,35 @@ class AgendamentoController {
         View::render("agendamento/edit", ["agendamento" => $agendamento]);
     } 
 
-        public function viewCriarAgendamentos() {
-        View::render("agendamento/create");
+        public function viewCriarAgendamentos() {   
+        $pacientes = $this->usuario->buscarTodosUsuarios();
+        $profissionais = $this->profissional->listarProfissionais();
+
+        View::render("agendamento/create", [
+            "pacientes" => $pacientes,
+            "profissionais" => $profissionais
+        ]);
     }
     
-// Implemente viewExcluirAgendamentos (substitua o placeholder da linha 99)
+    public function salvarAgendamentos()
+    {
+        $erros = AgendamentoValidador::ValidarEntradas($_POST);
+        if (!empty($erros)) {
+            Redirect::redirecionarComMensagem("agendamentos/criar", "error", implode("<br>", $erros));
+            return;
+        }
+
+        $id_usuario = $_POST['id_usuario'];
+        $id_profissional = $_POST['id_profissional'];
+        $data_agendamento = $_POST['data_agendamento'];
+
+        if ($this->agendamento->inserirAgendamento((int)$id_usuario, (int)$id_profissional, $data_agendamento)) {
+            Redirect::redirecionarComMensagem("agendamentos/listar", "success", "Agendamento criado com sucesso!");
+        } else {
+            Redirect::redirecionarComMensagem("agendamentos/criar", "error", "Erro ao criar agendamento.");
+        }
+    }
+
     public function viewExcluirAgendamentos($id) {
         $agendamento = $this->agendamento->buscarAgendamentoPorId((int)$id);
         if (!$agendamento) {
@@ -102,9 +125,7 @@ class AgendamentoController {
         View::render("agendamento/delete", ["agendamento" => $agendamento]);
     }
 
-// Implemente atualizarAgendamentos (substitua o placeholder da linha 113)
     public function atualizarAgendamentos($id) {
-        // O validador existente verifica a data de agendamento.
         $erros = AgendamentoValidador::ValidarEntradas($_POST);
         if (!empty($erros)) {
             Redirect::redirecionarComMensagem("agendamentos/editar/{$id}", "error", implode("<br>", $erros));
@@ -127,7 +148,6 @@ class AgendamentoController {
         }
     }
 
-// Implemente deletarAgendamentos (substitua o placeholder da linha 116)
     public function deletarAgendamentos($id) {
         $sucesso = $this->agendamento->deletarAgendamento((int)$id);
         
