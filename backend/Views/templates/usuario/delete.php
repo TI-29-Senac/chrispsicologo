@@ -20,7 +20,7 @@ $usuario = $dados['usuario'];
        
         <p><strong>Atenção:</strong> Esta ação não pode ser desfeita!</p>
  
-        <form action="/backend/usuario/deletar/<?= htmlspecialchars($usuario->id_usuario) ?>" method="POST">
+        <form action="/backend/usuario/deletar/<?= htmlspecialchars($usuario->id_usuario) ?>" method="POST" onsubmit="return confirm('Você tem certeza que deseja excluir este usuário?');">
              <button type="submit" class="w3-button w3-red w3-padding">Sim, Excluir</button>
              <a href="/backend/usuario/listar" class="w3-button w3-light-grey w3-padding">Cancelar</a>
         </form>

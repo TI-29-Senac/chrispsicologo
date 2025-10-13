@@ -1,6 +1,8 @@
 <?php
 namespace App\Psico;
 
+session_start();
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Psico\Rotas\Rotas;
