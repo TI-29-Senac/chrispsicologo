@@ -26,16 +26,25 @@ class UsuarioController {
         $this->profissional = new Profissional($this->db);
     }
 
-    // Listar usuários
     public function index(){
         $resultado = $this->usuario->buscarUsuarios();
         var_dump($resultado);
     }
-    public function viewListarUsuarios() {
+
+     public function viewListarUsuarios() {
         $pagina = $_GET['pagina'] ?? 1;
-        $dadosPaginados = $this->usuario->paginacao((int)$pagina, 10);
+        $busca = trim($_GET['busca'] ?? '');
+        $coluna = $_GET['coluna'] ?? 'nome_usuario'; // Coluna padrão é 'nome_usuario'
+
+        if (!empty($busca)) {
+            // Se houver um termo de busca, usa o novo método de filtro
+            $dadosPaginados = $this->usuario->buscarComFiltro($coluna, $busca, (int)$pagina, 10);
+        } else {
+            // Caso contrário, usa a paginação normal
+            $dadosPaginados = $this->usuario->paginacao((int)$pagina, 10);
+        }
         
-        // --- LÓGICA PARA OS CARDS ---
+        // --- LÓGICA PARA OS CARDS (permanece a mesma) ---
         $todosUsuarios = $this->usuario->buscarTodosUsuarios();
         
         $totalUsuarios = count($todosUsuarios);
@@ -52,28 +61,11 @@ class UsuarioController {
         }
         $usuariosInativos = $totalUsuarios - $usuariosAtivos;
 
-        // --- ARRAY DE STATS ATUALIZADO COM 4 ITENS ---
         $stats = [
-            [
-                'label' => 'Total de Usuários',
-                'value' => $totalUsuarios,
-                'icon' => 'fa-users'
-            ],
-            [
-                'label' => 'Usuários Ativos',
-                'value' => $usuariosAtivos,
-                'icon' => 'fa-check-circle'
-            ],
-            [
-                'label' => 'Usuários Inativos',
-                'value' => $usuariosInativos,
-                'icon' => 'fa-times-circle'
-            ],
-            [
-                'label' => 'Profissionais',
-                'value' => $totalProfissionais,
-                'icon' => 'fa-user-md' // Ícone para profissionais
-            ]
+            ['label' => 'Total de Usuários', 'value' => $totalUsuarios, 'icon' => 'fa-users'],
+            ['label' => 'Usuários Ativos', 'value' => $usuariosAtivos, 'icon' => 'fa-check-circle'],
+            ['label' => 'Usuários Inativos', 'value' => $usuariosInativos, 'icon' => 'fa-times-circle'],
+            ['label' => 'Profissionais', 'value' => $totalProfissionais, 'icon' => 'fa-user-md']
         ];
 
         View::render("usuario/index", [
@@ -83,33 +75,30 @@ class UsuarioController {
         ]);
     }
 
-    // Salvar usuário (POST)
-public function salvarUsuarios() {
-    $erros = UsuarioValidador::ValidarEntradas($_POST);
-    if(!empty($erros)){
-        Redirect::redirecionarComMensagem("usuario/criar", "error", implode("<br>", $erros));
-        return;
+    public function salvarUsuarios() {
+        $erros = UsuarioValidador::ValidarEntradas($_POST);
+        if(!empty($erros)){
+            Redirect::redirecionarComMensagem("usuario/criar", "error", implode("<br>", $erros));
+            return;
+        }
+    
+        if($this->usuario->inserirUsuario(
+            $_POST['nome_usuario'],
+            $_POST['email_usuario'],
+            $_POST['senha_usuario'],
+            $_POST['tipo_usuario'],
+            $_POST['cpf'] ?? '' 
+        )){
+            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
+        }else{
+            Redirect::redirecionarComMensagem("usuario/criar", "error", "Erro ao criar usuário. Tente novamente.");
+        }
     }
  
-    if($this->usuario->inserirUsuario(
-        $_POST['nome_usuario'],
-        $_POST['email_usuario'],
-        $_POST['senha_usuario'],
-        $_POST['tipo_usuario'],
-        $_POST['cpf'] ?? '' 
-    )){
-        Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
-    }else{
-        Redirect::redirecionarComMensagem("usuario/criar", "error", "Erro ao criar usuário. Tente novamente.");
-    }
-}
- 
-
     public function relatorioUsuarios($id, $data1, $data2) {
         View::render("usuario/relatorio", ["id" => $id, "data1" => $data1, "data2" => $data2]);
-        }
+    }
  
-
     public function viewEditarUsuarios($id) {
         $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
         if ($usuario) {
@@ -119,45 +108,5 @@ public function salvarUsuarios() {
         }
     }
 
-    public function atualizarUsuarios($id) {
-        $status = $_POST['status_usuario'] ?? 'ativo';
-        $sucesso = $this->usuario->atualizarUsuario(
-            (int)$id,
-            $_POST['nome_usuario'],
-            $_POST['email_usuario'],
-            $_POST['senha_usuario'] ?? null,
-            $_POST['tipo_usuario'],
-            $_POST['cpf'],
-            $status // Passa a variável corrigida
-        );
-
-        if ($sucesso) {
-            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário atualizado com sucesso!");
-        } else {
-            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro ao atualizar usuário.");
-        }
-    }
     
-    // Demais métodos (create, edit, delete, etc.)
-    public function viewCriarUsuarios(){
-        View::render("usuario/create");
-    }
-
-    public function viewExcluirUsuarios($id) {
-        $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
-        if ($usuario) {
-            View::render("usuario/delete", ["usuario" => $usuario]);
-        } else {
-            Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
-        }
-    }
-        // --- NOVO MÉTODO PARA DELETAR ---
-    public function deletarUsuarios($id) {
-        $sucesso = $this->usuario->excluirUsuario((int)$id);
-        if ($sucesso) {
-            Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário excluído com sucesso!");
-        } else {
-            Redirect::redirecionarComMensagem("usuario/listar", "error", "Erro ao excluir usuário.");
-        }
-    }
 }
