@@ -128,7 +128,7 @@ public function salvarUsuarios() {
             $_POST['senha_usuario'] ?? null,
             $_POST['tipo_usuario'],
             $_POST['cpf'],
-            $status // Passa a variável corrigida
+            $status
         );
  
         if ($sucesso) {
