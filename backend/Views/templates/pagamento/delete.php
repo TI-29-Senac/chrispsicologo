@@ -20,7 +20,7 @@ $pagamento = $dados['pagamento'];
        
         <p><strong>Atenção:</strong> Esta ação não pode ser desfeita!</p>
  
-        <form action="/backend/pagamentos/deletar/<?= htmlspecialchars($pagamento['id_pagamento']) ?>" method="POST">
+        <form action="/backend/pagamentos/deletar/<?= htmlspecialchars($pagamento['id_pagamento']) ?>" method="POST" onsubmit="return confirm('Você tem certeza que deseja excluir este pagamento?');">
              <button type="submit" class="w3-button w3-red w3-padding">Sim, Excluir</button>
              <a href="/backend/pagamentos/listar" class="w3-button w3-light-grey w3-padding">Cancelar</a>
         </form>

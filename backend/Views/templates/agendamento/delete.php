@@ -21,7 +21,7 @@ $agendamento = $dados['agendamento'];
         
         <p><strong>Atenção:</strong> Esta ação irá marcar o agendamento como 'cancelado' (soft delete).</p>
  
-        <form action="/backend/agendamentos/deletar/<?= htmlspecialchars($agendamento['id_agendamento']) ?>" method="POST">
+        <form action="/backend/agendamentos/deletar/<?= htmlspecialchars($agendamento['id_agendamento']) ?>" method="POST" onsubmit="return confirm('Você tem certeza que deseja cancelar este agendamento?');">
              <button type="submit" class="w3-button w3-red w3-padding">Sim, Cancelar</button>
              <a href="/backend/agendamentos/listar" class="w3-button w3-light-grey w3-padding">Voltar</a>
         </form>

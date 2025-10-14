@@ -46,7 +46,7 @@ class Usuario {
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-public function atualizarUsuario(int $id, string $nome, string $email, ?string $senha, string $tipo, string $cpf, string $status) {
+    public function atualizarUsuario(int $id, string $nome, string $email, ?string $senha, string $tipo, string $cpf, string $status) {
         $set = "nome_usuario = :nome, email_usuario = :email, tipo_usuario = :tipo, cpf = :cpf, status_usuario = :status, atualizado_em = NOW()";
         if (!empty($senha)) {
             $set .= ", senha_usuario = :senha";
@@ -123,6 +123,45 @@ public function atualizarUsuario(int $id, string $nome, string $email, ?string $
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+    public function buscarComFiltro(string $coluna, string $termoBusca, int $pagina = 1, int $por_pagina = 10): array {
+        // Lista de colunas permitidas para evitar injeção de SQL
+        $allowedColumns = ['nome_usuario', 'email_usuario', 'tipo_usuario', 'status_usuario', 'cpf'];
+        if (!in_array($coluna, $allowedColumns)) {
+            // Se a coluna não for válida, retorna um resultado vazio
+            return [
+                'data' => [], 'total' => 0, 'por_pagina' => $por_pagina,
+                'pagina_atual' => 1, 'ultima_pagina' => 1
+            ];
+        }
 
-    
+        $offset = ($pagina - 1) * $por_pagina;
+        $termoLike = '%' . $termoBusca . '%';
+
+        // A coluna é inserida de forma segura após ser validada pela lista
+        $whereClause = "WHERE {$coluna} LIKE :termo";
+
+        // Query para contar o total de registros encontrados no filtro
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} {$whereClause}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        $totalStmt->bindParam(':termo', $termoLike);
+        $totalStmt->execute();
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        // Query para buscar os dados com paginação
+        $dataQuery = "SELECT * FROM {$this->table} {$whereClause} ORDER BY id_usuario ASC LIMIT :limit OFFSET :offset";
+        $dataStmt = $this->db->prepare($dataQuery);
+        $dataStmt->bindParam(':termo', $termoLike);
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_OBJ);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
 }

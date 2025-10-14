@@ -20,7 +20,7 @@ $profissional = $dados['usuario'];
        
         <p><strong>Atenção:</strong> Esta ação marcará o profissional como excluído (soft delete) e não poderá ser desfeita facilmente!</p>
  
-        <form action="/backend/profissionais/deletar/<?= htmlspecialchars($profissional->id_profissional) ?>" method="POST">
+        <form action="/backend/profissionais/deletar/<?= htmlspecialchars($profissional->id_profissional) ?>" method="POST" onsubmit="return confirm('Você tem certeza que deseja excluir este profissional?');">
              <button type="submit" class="w3-button w3-red w3-padding">Sim, Excluir Profissional</button>
              <a href="/backend/profissionais/listar" class="w3-button w3-light-grey w3-padding">Cancelar</a>
         </form>

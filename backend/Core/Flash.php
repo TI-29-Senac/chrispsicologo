@@ -1,59 +1,71 @@
 <?php
- 
 namespace App\Psico\Core;
- 
+
 class Flash {
-   
- 
-    public static function set(string $key, $value) {
-        if (!isset($_SESSION)) {
+
+    private static $sessionKey = 'flash_message';
+
+    /**
+     * Define uma nova mensagem flash.
+     */
+    public static function set(string $type, string $message) {
+        if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
- 
-        $_SESSION['_flash_data'][$key] = $value;
+        $_SESSION[self::$sessionKey] = [
+            'tipo' => $type,
+            'mensagem' => $message
+        ];
     }
- 
- 
-    public static function get(string $key) {
-        if (!isset($_SESSION)) {
-             // session_start();
+
+    /**
+     * Recupera a mensagem flash e a remove da sessão.
+     * @return array|null
+     */
+    public static function get() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
         }
-       
-        if (isset($_SESSION['_flash_data'][$key])) {
-            $value = $_SESSION['_flash_data'][$key];
-            unset($_SESSION['_flash_data'][$key]);
-            return $value;
+        
+        if (isset($_SESSION[self::$sessionKey])) {
+            $flash = $_SESSION[self::$sessionKey];
+            unset($_SESSION[self::$sessionKey]);
+            return $flash;
         }
         return null;
     }
+
+    /**
+     * Renderiza a mensagem flash no formato de painel do W3.CSS (se existir).
+     * @return string
+     */
     public static function getFlash()
-{
-    if (isset($_SESSION['flash'])) {
-        $flash = $_SESSION['flash'];
-        unset($_SESSION['flash']);
-       
-        $tipo = $flash['tipo'] ?? 'info';
-        $mensagem = $flash['mensagem'] ?? '';
-       
-        $alertClass = '';
-        switch ($tipo) {
-            case 'success':
-                $alertClass = 'w3-panel w3-green w3-display-container';
-                break;
-            case 'error':
-                $alertClass = 'w3-panel w3-red w3-display-container';
-                break;
-            default:
-                $alertClass = 'w3-panel w3-blue w3-display-container';
-                break;
-        }
+    {
+        $flash = self::get(); // Usa o método get() para pegar e limpar a mensagem
+
+        if ($flash) {
+            $tipo = $flash['tipo'] ?? 'info';
+            $mensagem = $flash['mensagem'] ?? '';
+           
+            $alertClass = '';
+            switch ($tipo) {
+                case 'success':
+                    $alertClass = 'w3-panel w3-green w3-display-container';
+                    break;
+                case 'error':
+                    $alertClass = 'w3-panel w3-red w3-display-container';
+                    break;
+                default:
+                    $alertClass = 'w3-panel w3-blue w3-display-container';
+                    break;
+            }
  
-        return "<div class=\"{$alertClass}\">
-                  <span onclick=\"this.parentElement.style.display='none'\"
-                  class=\"w3-button w3-large w3-display-topright\">&times;</span>
-                  <p>{$mensagem}</p>
-                </div>";
+            return "<div class=\"{$alertClass}\">
+                      <span onclick=\"this.parentElement.style.display='none'\"
+                      class=\"w3-button w3-large w3-display-topright\">&times;</span>
+                      <p>{$mensagem}</p>
+                    </div>";
+        }
+        return '';
     }
-    return '';
-}
 }

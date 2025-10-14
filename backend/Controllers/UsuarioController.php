@@ -1,6 +1,6 @@
 <?php
 namespace App\Psico\Controllers;
-
+ 
 use App\Psico\Core\View;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Avaliacao;
@@ -10,14 +10,14 @@ use App\Psico\Core\Redirect;
 use App\Psico\Core\Flash;
 use App\Psico\Validadores\UsuarioValidador;
 use App\Psico\Core\FileManager;
-
+ 
 class UsuarioController {
     public $usuario;
     public $db;
     public $avaliacao;
     public $gerenciarImagem;
     public $profissional;
-
+ 
     public function __construct(){
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
@@ -25,7 +25,7 @@ class UsuarioController {
         $this->gerenciarImagem = new FileManager('upload');
         $this->profissional = new Profissional($this->db);
     }
-
+ 
     // Listar usuários
     public function index(){
         $resultado = $this->usuario->buscarUsuarios();
@@ -34,14 +34,14 @@ class UsuarioController {
     public function viewListarUsuarios() {
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->usuario->paginacao((int)$pagina, 10);
-        
+       
         // --- LÓGICA PARA OS CARDS ---
         $todosUsuarios = $this->usuario->buscarTodosUsuarios();
-        
+       
         $totalUsuarios = count($todosUsuarios);
         $usuariosAtivos = 0;
-        $totalProfissionais = 0; 
-
+        $totalProfissionais = 0;
+ 
         foreach ($todosUsuarios as $usuario) {
             if ($usuario->status_usuario === 'ativo') {
                 $usuariosAtivos++;
@@ -51,7 +51,7 @@ class UsuarioController {
             }
         }
         $usuariosInativos = $totalUsuarios - $usuariosAtivos;
-
+ 
         // --- ARRAY DE STATS ATUALIZADO COM 4 ITENS ---
         $stats = [
             [
@@ -75,14 +75,14 @@ class UsuarioController {
                 'icon' => 'fa-user-md' // Ícone para profissionais
             ]
         ];
-
+ 
         View::render("usuario/index", [
             "usuarios" => $dadosPaginados['data'],
             "paginacao" => $dadosPaginados,
             "stats" => $stats
         ]);
     }
-
+ 
     // Salvar usuário (POST)
 public function salvarUsuarios() {
     $erros = UsuarioValidador::ValidarEntradas($_POST);
@@ -96,7 +96,7 @@ public function salvarUsuarios() {
         $_POST['email_usuario'],
         $_POST['senha_usuario'],
         $_POST['tipo_usuario'],
-        $_POST['cpf'] ?? '' 
+        $_POST['cpf'] ?? ''
     )){
         Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
     }else{
@@ -104,12 +104,12 @@ public function salvarUsuarios() {
     }
 }
  
-
+ 
     public function relatorioUsuarios($id, $data1, $data2) {
         View::render("usuario/relatorio", ["id" => $id, "data1" => $data1, "data2" => $data2]);
         }
  
-
+ 
     public function viewEditarUsuarios($id) {
         $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
         if ($usuario) {
@@ -118,7 +118,7 @@ public function salvarUsuarios() {
             Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
         }
     }
-
+ 
     public function atualizarUsuarios($id) {
         $status = $_POST['status_usuario'] ?? 'ativo';
         $sucesso = $this->usuario->atualizarUsuario(
@@ -130,19 +130,19 @@ public function salvarUsuarios() {
             $_POST['cpf'],
             $status // Passa a variável corrigida
         );
-
+ 
         if ($sucesso) {
             Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário atualizado com sucesso!");
         } else {
             Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro ao atualizar usuário.");
         }
     }
-    
+   
     // Demais métodos (create, edit, delete, etc.)
     public function viewCriarUsuarios(){
         View::render("usuario/create");
     }
-
+ 
     public function viewExcluirUsuarios($id) {
         $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
         if ($usuario) {
