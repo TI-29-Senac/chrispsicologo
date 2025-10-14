@@ -11,11 +11,19 @@ class Pagamento {
     }
 
     public function inserirPagamento(int $id_agendamento, string $tipo_pagamento) {
-        $sql = "INSERT INTO {$this->table} (id_agendamento, tipo_pagamento)
-                VALUES (:id_agendamento, :tipo_pagamento)";
+        $mapaFormaPagamento = [
+            'pix' => 1,
+            'credito' => 2,
+            'debito' => 3,
+            'dinheiro' => 4
+        ];
+        $id_forma_pagamento = $mapaFormaPagamento[$tipo_pagamento] ?? 1;
+
+        $sql = "INSERT INTO {$this->table} (id_agendamento, id_forma_pagamento)
+                VALUES (:id_agendamento, :id_forma_pagamento)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
-        $stmt->bindParam(':tipo_pagamento', $tipo_pagamento);
+        $stmt->bindParam(':id_forma_pagamento', $id_forma_pagamento, PDO::PARAM_INT);
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
@@ -26,10 +34,11 @@ class Pagamento {
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
+        // Query Final e Corrigida
         $dataQuery = "
             SELECT
                 p.id_pagamento,
-                p.tipo_pagamento,
+                fp.nome_forma_pagamento as tipo_pagamento, 
                 p.criado_em as data_pagamento,
                 cliente.nome_usuario AS nome_cliente,
                 profissional_usuario.nome_usuario AS nome_profissional,
@@ -39,6 +48,7 @@ class Pagamento {
             JOIN usuario cliente ON a.id_usuario = cliente.id_usuario
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
             JOIN usuario profissional_usuario ON prof.id_usuario = profissional_usuario.id_usuario
+            JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento 
             ORDER BY p.id_pagamento ASC
             LIMIT :limit OFFSET :offset
         ";
@@ -60,27 +70,29 @@ class Pagamento {
 
     public function buscarTodosPagamentos(): array {
         $sql = "
-            SELECT prof.valor_consulta, p.tipo_pagamento
+            SELECT prof.valor_consulta, fp.nome_forma_pagamento as tipo_pagamento 
             FROM {$this->table} p
             JOIN agendamento a ON p.id_agendamento = a.id_agendamento
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
+            JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento 
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-public function buscarPagamentoPorId(int $id_pagamento): ?array {
+    public function buscarPagamentoPorId(int $id_pagamento): ?array {
         $sql = "
             SELECT
                 p.id_pagamento,
-                p.tipo_pagamento,
+                fp.nome_forma_pagamento as tipo_pagamento, 
                 p.criado_em as data_pagamento,
                 a.id_agendamento,
                 prof.valor_consulta
             FROM {$this->table} p
             JOIN agendamento a ON p.id_agendamento = a.id_agendamento
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
+            JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento 
             WHERE p.id_pagamento = :id_pagamento
             LIMIT 1
         ";
@@ -92,13 +104,16 @@ public function buscarPagamentoPorId(int $id_pagamento): ?array {
     }
 
     public function atualizarPagamento(int $id_pagamento, string $tipo_pagamento, float $valor_consulta): bool {
+        $mapaFormaPagamento = ['pix' => 1, 'credito' => 2, 'debito' => 3, 'dinheiro' => 4];
+        $id_forma_pagamento = $mapaFormaPagamento[$tipo_pagamento] ?? 1;
+
         $sqlPagamento = "UPDATE {$this->table}
-                         SET tipo_pagamento = :tipo_pagamento,
+                         SET id_forma_pagamento = :id_forma_pagamento,
                              atualizado_em = NOW()
                          WHERE id_pagamento = :id_pagamento";
         $stmtPagamento = $this->db->prepare($sqlPagamento);
         $stmtPagamento->bindParam(':id_pagamento', $id_pagamento, PDO::PARAM_INT);
-        $stmtPagamento->bindParam(':tipo_pagamento', $tipo_pagamento);
+        $stmtPagamento->bindParam(':id_forma_pagamento', $id_forma_pagamento, PDO::PARAM_INT);
         $sucessoPagamento = $stmtPagamento->execute();
 
         $sqlProfissional = "UPDATE profissional prof

@@ -13,7 +13,18 @@ class ProfissionalValidador {
             $erros[] = "O campo especialidade é obrigatório.";
         }
         
-        // CORREÇÃO: Deve retornar o array de erros
+        // --- VALIDAÇÕES ADICIONADAS ---
+
+        // Valor da Consulta
+        if (!isset($dados['valor_consulta']) || !is_numeric($dados['valor_consulta']) || $dados['valor_consulta'] < 0) {
+            $erros[] = "O campo 'Valor da Consulta' é obrigatório e deve ser um número válido.";
+        }
+        
+        // Valor do Sinal
+        if (!isset($dados['sinal_consulta']) || !is_numeric($dados['sinal_consulta']) || $dados['sinal_consulta'] < 0) {
+            $erros[] = "O campo 'Valor do Sinal' é obrigatório e deve ser um número válido.";
+        }
+        
         return $erros;
     }
 }

@@ -28,48 +28,6 @@ public function viewCriarProfissionais()
         ]);
     }
 
-    public function salvarProfissionais()
-    {
-        $erros = ProfissionalValidador::ValidarEntradas($_POST);
-        if (!empty($erros)) {
-            Redirect::redirecionarComMensagem("profissionais/criar", "error", implode("<br>", $erros));
-            return;
-        }
-
-        $id_usuario = (int)$_POST['id_usuario'];
-        $especialidade = $_POST['especialidade'];
-        $valor_consulta = (float)($_POST['valor_consulta'] ?? 0.0);
-        $sinal_consulta = $valor_consulta * 0.20; // Cálculo automático do sinal
-
-        $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
-        if (!$usuarioExistente) {
-            Redirect::redirecionarComMensagem("profissionais/criar", "error", "O ID de usuário informado não existe.");
-            return;
-        }
-
-        $id_profissional = $this->profissional->inserirProfissional(
-            $id_usuario,
-            $especialidade,
-            $valor_consulta,
-            $sinal_consulta
-        );
-
-        if ($id_profissional) {
-            $this->usuario->atualizarUsuario(
-                $id_usuario,
-                $usuarioExistente->nome_usuario,
-                $usuarioExistente->email_usuario,
-                null,
-                'profissional',
-                $usuarioExistente->cpf ?? '',
-                'ativo'
-            );
-            Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional criado com sucesso!");
-        } else {
-            Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro ao criar o registro profissional.");
-        }
-    }
-
     public function viewListarProfissionais()
     {
         $pagina = $_GET['pagina'] ?? 1;
@@ -115,40 +73,7 @@ public function viewCriarProfissionais()
         View::render("profissional/edit", ["usuario" => $profissional]);
     }
 
-    public function atualizarProfissionais($id) {
-        $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
-        
-        if (!$profissional) {
-            Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado para atualização.");
-            return;
-        }
 
-        $sucesso_usuario = $this->usuario->atualizarUsuario(
-            (int)$_POST['id_usuario'],
-            $_POST['nome_usuario'],
-            $_POST['email_usuario'],
-            $_POST['senha_usuario'] ?? null,
-            'profissional',
-            $profissional->cpf ?? '',
-            $_POST['status_usuario'] ?? 'ativo'
-        );
-        
-        $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
-        $sinal_consulta = $valor_consulta * 0.20; // Cálculo automático do sinal
-
-        $sucesso_profissional = $this->profissional->atualizarProfissional(
-            (int)$id,
-            $_POST['especialidade'],
-            $valor_consulta, 
-            $sinal_consulta
-        );
-
-        if ($sucesso_usuario && $sucesso_profissional) {
-            Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
-        } else {
-            Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", "Erro ao atualizar profissional.");
-        }
-    }
 
     public function viewExcluirProfissionais($id) {
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
@@ -177,4 +102,81 @@ public function viewCriarProfissionais()
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Erro ao excluir o registro do profissional.");
         }
     }
+
+    public function salvarProfissionais()
+{
+    $erros = ProfissionalValidador::ValidarEntradas($_POST);
+    if (!empty($erros)) {
+        Redirect::redirecionarComMensagem("profissionais/criar", "error", implode("<br>", $erros));
+        return;
+    }
+
+    $id_usuario = (int)$_POST['id_usuario'];
+    $especialidade = $_POST['especialidade'];
+    $valor_consulta = (float)($_POST['valor_consulta'] ?? 0.0);
+    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0.0); // Modificado
+
+    $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
+    if (!$usuarioExistente) {
+        Redirect::redirecionarComMensagem("profissionais/criar", "error", "O ID de usuário informado não existe.");
+        return;
+    }
+
+    $id_profissional = $this->profissional->inserirProfissional(
+        $id_usuario,
+        $especialidade,
+        $valor_consulta,
+        $sinal_consulta // Modificado
+    );
+
+    if ($id_profissional) {
+        $this->usuario->atualizarUsuario(
+            $id_usuario,
+            $usuarioExistente->nome_usuario,
+            $usuarioExistente->email_usuario,
+            null,
+            'profissional',
+            $usuarioExistente->cpf ?? '',
+            'ativo'
+        );
+        Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional criado com sucesso!");
+    } else {
+        Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro ao criar o registro profissional.");
+    }
+}
+
+public function atualizarProfissionais($id) {
+    $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
+    
+    if (!$profissional) {
+        Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado para atualização.");
+        return;
+    }
+
+    $sucesso_usuario = $this->usuario->atualizarUsuario(
+        (int)$_POST['id_usuario'],
+        $_POST['nome_usuario'],
+        $_POST['email_usuario'],
+        $_POST['senha_usuario'] ?? null,
+        'profissional',
+        $profissional->cpf ?? '',
+        $_POST['status_usuario'] ?? 'ativo'
+    );
+    
+    $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
+    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0); // Modificado
+
+    $sucesso_profissional = $this->profissional->atualizarProfissional(
+        (int)$id,
+        $_POST['especialidade'],
+        $valor_consulta, 
+        $sinal_consulta // Modificado
+    );
+
+    if ($sucesso_usuario && $sucesso_profissional) {
+        Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
+    } else {
+        Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", "Erro ao atualizar profissional.");
+    }
+}
 }

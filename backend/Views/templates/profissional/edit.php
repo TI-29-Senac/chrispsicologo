@@ -37,11 +37,15 @@ $profissional = $dados['usuario'];
                 </div>
 
                 <div class="w3-row-padding w3-section">
-                    <div class="w3-half">
-                        <label for="valor_consulta"><b>Valor da Consulta (R$)</b></label>
-                        <input class="w3-input w3-border" type="number" step="0.01" id="valor_consulta" name="valor_consulta" value="<?= htmlspecialchars($profissional->valor_consulta ?? '0.00') ?>" required>
-                    </div>
-                </div>
+    <div class="w3-half">
+        <label for="valor_consulta"><b>Valor da Consulta (R$)</b></label>
+        <input class="w3-input w3-border" type="number" step="0.01" id="valor_consulta" name="valor_consulta" value="<?= htmlspecialchars($profissional->valor_consulta ?? '0.00') ?>" required>
+    </div>
+    <div class="w3-half">
+        <label for="sinal_consulta"><b>Valor do Sinal (R$)</b></label>
+        <input class="w3-input w3-border" type="number" step="0.01" id="sinal_consulta" name="sinal_consulta" value="<?= htmlspecialchars($profissional->sinal_consulta ?? '0.00') ?>" required>
+    </div>
+</div>
                 
                 <div class="w3-row-padding w3-section">
                     <div class="w3-half">
