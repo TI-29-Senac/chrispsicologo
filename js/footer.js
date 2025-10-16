@@ -64,9 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
  
         <div class="footer-col col-mapa">
-            <h3>Localização</h3>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.0254648900896!2d-46.434437023916374!3d-23.495592259180643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce63dda7be6fb9%3A0xa74e7d5a53104311!2sSenac%20S%C3%A3o%20Miguel%20Paulista!5e0!3m2!1spt-BR!2sbr!4v1756813804076!5m2!1spt-BR!2sbr" width="250" height="150" style="border:0; border-radius:10px; margin-top: 1rem" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
+        <h3>Localização</h3>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.346025191592!2d-46.43431968502358!3d-23.48391898472146!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce63dda3218521%3A0x4957271850d6f463!2sAv.%20Marechal%20Tito%2C%201500%20-%20S%C3%A3o%20Miguel%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2008011-000%2C%20Brasil!5e0!3m2!1spt-BR!2sbr!4v1670184433100!5m2!1spt-BR!2sbr" width="250" height="150" style="border:0; border-radius:10px; margin-top: 1rem" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
       </div>
   </footer>
 `

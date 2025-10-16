@@ -24,11 +24,11 @@ class Avaliacao {
     public function buscarAvaliacoesPorProfissional(int $id_profissional): array {
         $sql = "
             SELECT
-                a.descricao_avaliacao AS comentario,
-                a.nota_avaliacao AS nota,
+                a.descricao_avaliacao,
+                a.nota_avaliacao,
                 u.nome_usuario AS cliente
             FROM {$this->table} a
-            JOIN Usuario u ON a.id_cliente = u.id_usuario
+            JOIN usuario u ON a.id_cliente = u.id_usuario
             WHERE a.id_profissional = :id_profissional
             ORDER BY a.criado_em DESC
         "; 

@@ -24,12 +24,25 @@ $profissional = $dados['usuario'];
                         <input class="w3-input w3-border" id="email_usuario" name="email_usuario" type="email" value="<?= htmlspecialchars($profissional->email_usuario ?? '') ?>" required>
                     </div>
                 </div>
+                
 
                 <div class="w3-row-padding w3-section">
                     <div class="w3-half">
-                        <label for="especialidade"><b>Especialidade</b></label>
+                        <label for="especialidade"><b>Especialidades (separadas por vírgula)</b></label>
                         <input class="w3-input w3-border" id="especialidade" name="especialidade" type="text" value="<?= htmlspecialchars($profissional->especialidade ?? '') ?>" required>
                     </div>
+                    <div class="w3-row-padding w3-section">
+                    <div class="w3-full">
+                        <label for="sobre"><b>Sobre Mim (Biografia Breve)</b></label>
+                        <textarea class="w3-input w3-border" id="sobre" name="sobre" rows="4" placeholder="Escreva uma breve descrição sobre o profissional..."><?= htmlspecialchars($profissional->sobre ?? '') ?></textarea>
+                    </div>
+                </div>
+                    <div class="w3-row-padding w3-section">
+                    <div class="w3-half">
+                        <input class="w3-check" type="checkbox" id="publico" name="publico" value="1" <?= (isset($profissional->publico) && $profissional->publico == 1) ? 'checked' : '' ?>>
+                        <label for="publico"><b>Mostrar no site público?</b></label>
+                    </div>
+                </div>
                     <div class="w3-half">
                         <label for="senha_usuario"><b>Senha (deixe em branco para não alterar)</b></label>
                         <input class="w3-input w3-border" id="senha_usuario" name="senha_usuario" type="password">
@@ -45,6 +58,10 @@ $profissional = $dados['usuario'];
         <label for="sinal_consulta"><b>Valor do Sinal (R$)</b></label>
         <input class="w3-input w3-border" type="number" step="0.01" id="sinal_consulta" name="sinal_consulta" value="<?= htmlspecialchars($profissional->sinal_consulta ?? '0.00') ?>" required>
     </div>
+    <div class="w3-half">
+    <label for="ordem_exibicao"><b>Ordem de Exibição (menor = primeiro)</b></label>
+    <input class="w3-input w3-border" type="number" id="ordem_exibicao" name="ordem_exibicao" value="<?= htmlspecialchars($profissional->ordem_exibicao ?? 99) ?>">
+</div>
 </div>
                 
                 <div class="w3-row-padding w3-section">
