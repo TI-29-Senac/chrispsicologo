@@ -2520,12 +2520,11 @@ header {
 }
 
 .profissionais .container {
-  max-width: 1300px;
+  max-width: 950px; /* Define uma largura máxima para a área dos cards */
   margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
-  gap: 40px; 
-  flex-direction: column;
+  flex-direction: column; /* Mantém os cards empilhados verticalmente */
+  gap: 40px; /* Espaçamento vertical entre os cards */
 }
 
 .section-header {
@@ -2553,12 +2552,21 @@ header {
 
 .profissional {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 15%;
+  /* Coluna da foto: no máximo 250px. Coluna de detalhes: ocupa o resto. */
+  grid-template-columns: minmax(auto, 250px) 1fr;
+  gap: 40px; /* Espaçamento entre a foto e o texto */
   align-items: center;
-  margin-left: 10%;
-}
 
+  /* Estilização do card */
+  background-color: #faf6ee;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
+
+  /* Remove margens que possam causar desalinhamento */
+  margin-left: 0;
+}
 .card-prof {
   text-align: center;
   border-radius: 14px;
@@ -2880,13 +2888,15 @@ background-color: transparent;
 .hero-profissionais-aba {
   width: 100%;
   margin-top: 157px;
-  height: 3100px;
+  height: auto; 
+  min-height: 100vh; 
+  padding-bottom: 60px;
   background-image: url(../img/banners/banner3.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .planta-prof {
@@ -3302,7 +3312,254 @@ body::-webkit-scrollbar-thumb:hover {
     }
 }
 /* #endregion */
+/* #region Página de Agendamento Detalhe */
 
+/* Correção para o layout da página de agendamento detalhado */
+#agendamento-container {
+    display: flex;
+    flex-direction: column; /* Força o empilhamento vertical das seções */
+    align-items: center; /* Centraliza os blocos na página */
+    gap: 40px; /* Adiciona um espaço vertical entre as seções */
+    width: 100%;
+}
+
+.agendamento-detalhe-grid {
+    display: grid;
+    /* Coluna da foto com largura fixa e a da bio flexível */
+    grid-template-columns: 320px 1fr; 
+    gap: 50px;
+    width: 90%; /* Ocupa 90% da largura do container pai */
+    max-width: 1100px; /* Largura máxima */
+    padding: 30px;
+    background-color: #faf6ee;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+    color: #5D6D68;
+    font-family: 'Questrial', sans-serif;
+}
+
+.agenda-container, .confirmacao-container {
+    width: 90%; /* Ocupa 90% da largura */
+    max-width: 1100px; /* Respeita a mesma largura máxima */
+    padding: 30px;
+    background-color: #5D6D68;
+    border-radius: 12px;
+    color: #faf6ee;
+    font-family: 'Questrial', sans-serif;
+}
+
+.profissional-info-coluna h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.profissional-info-foto {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 3px solid #5D6D68;
+}
+
+.profissional-info-coluna h4,
+.profissional-bio-coluna h4 {
+    font-size: 1.4rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #d6e3d6;
+    padding-bottom: 5px;
+}
+
+.profissional-info-coluna .especialidades-lista,
+.profissional-info-coluna .tipos-lista {
+    list-style: none;
+    padding-left: 0;
+    font-size: 1.1rem;
+}
+
+.profissional-info-coluna .especialidades-lista li {
+    list-style-type: '→ ';
+    padding-left: 5px;
+    margin-bottom: 8px;
+}
+
+.profissional-info-coluna .tipos-lista li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.profissional-bio-coluna p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.valor-consulta-box {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #d6e3d6;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.agenda-tabela {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.agenda-header {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #faf6ee;
+}
+
+.agenda-body {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.agenda-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.horario-btn {
+    background-color: #faf6ee;
+    color: #5D6D68;
+    border: none;
+    padding: 12px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.horario-btn:hover, .horario-btn.selecionado {
+    background-color: #A3B8A1;
+    color: white;
+}
+
+.confirmacao-container h3 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+}
+
+.confirmacao-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-grupo-duplo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-grupo label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-grupo input, .form-grupo select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #faf6ee;
+    background-color: transparent;
+    color: white;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.form-grupo select option {
+    background-color: #5D6D68;
+}
+
+.termos-link {
+    display: block;
+    background-color: #faf6ee;
+    color: #5D6D68;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.form-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #faf6ee;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.valor-sinal {
+    font-size: 1.2rem;
+    color: #5D6D68;
+}
+
+.btn-pagamento {
+    background-color: #5D6D68;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Responsividade para a página de agendamento */
+@media (max-width: 800px) {
+    .agendamento-detalhe-grid {
+        grid-template-columns: 1fr; /* Coluna única em telas menores */
+    }
+    .agenda-header, .agenda-body {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .form-grupo-duplo {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .agenda-header, .agenda-body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .form-rodape {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .btn-pagamento {
+        width: 100%;
+    }
+}
+
+/* #endregion */
 
 
 

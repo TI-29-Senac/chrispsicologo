@@ -40,6 +40,10 @@ class Rotas {
                 "/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
                 "/profissionais/editar/{id}" => "ProfissionalController@viewEditarProfissionais",
                 "/profissionais/excluir/{id}" => "ProfissionalController@viewExcluirProfissionais",
+                "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
+                "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
+                "/profissionais/detalhe/{id}" => "ProfissionalController@detalhePublico",
+                "/profissionais/horarios/{id}" => "ProfissionalController@horariosPublico"                
             ],
             "POST" => [
                 // NOVAS ROTAS POST PARA USUARIOS

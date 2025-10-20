@@ -114,7 +114,10 @@ public function viewCriarProfissionais()
     $id_usuario = (int)$_POST['id_usuario'];
     $especialidade = $_POST['especialidade'];
     $valor_consulta = (float)($_POST['valor_consulta'] ?? 0.0);
-    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0.0); // Modificado
+    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0.0);
+    $publico = isset($_POST['publico']) ? 1 : 0;
+    $sobre = $_POST['sobre'] ?? null;
+    $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 6);
 
     $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
     if (!$usuarioExistente) {
@@ -126,7 +129,10 @@ public function viewCriarProfissionais()
         $id_usuario,
         $especialidade,
         $valor_consulta,
-        $sinal_consulta // Modificado
+        $sinal_consulta,
+        $publico,
+        $sobre,
+        $ordem_exibicao
     );
 
     if ($id_profissional) {
@@ -164,13 +170,19 @@ public function atualizarProfissionais($id) {
     );
     
     $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
-    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0); // Modificado
+    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0);
+    $publico = isset($_POST['publico']) ? 1 : 0;
+    $sobre = $_POST['sobre'] ?? null;
+    $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 6);
 
     $sucesso_profissional = $this->profissional->atualizarProfissional(
         (int)$id,
         $_POST['especialidade'],
         $valor_consulta, 
-        $sinal_consulta // Modificado
+        $sinal_consulta,
+        $publico,
+        $sobre,
+        $ordem_exibicao
     );
 
     if ($sucesso_usuario && $sucesso_profissional) {
@@ -179,4 +191,58 @@ public function atualizarProfissionais($id) {
         Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", "Erro ao atualizar profissional.");
     }
 }
+
+
+    public function listarPublico() {
+        header('Content-Type: application/json');
+        try {
+            // Alterado para usar o novo método com o filtro de visibilidade
+            $profissionais = $this->profissional->listarProfissionaisPublicos(); 
+            
+            http_response_code(200);
+            echo json_encode($profissionais);
+
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro interno ao buscar profissionais.', 'details' => $e->getMessage()]);
+        }
+    }
+
+    public function horariosPublico($id) {
+        header('Content-Type: application/json');
+
+        $horarios = [
+            'Segunda' => ['08:00', '10:00', '12:00', '16:00', '18:00'],
+            'Terça' => ['09:00', '11:00', '15:00', '17:00', '19:00'],
+            'Quarta' => ['09:00', '11:00', '15:00', '17:00', '19:00'],
+            'Quinta' => ['09:00', '11:00', '15:00', '17:00', '19:00'],
+            'Sexta' => ['08:00', '10:00', '12:00', '16:00', '18:00'],
+            'Sabado' => ['08:00', '10:00', '12:00']
+        ];
+
+        http_response_code(200);
+        echo json_encode($horarios);
+    }
+
+    public function detalhePublico($id) {
+        header('Content-Type: application/json');
+        try {
+            // Alterado para usar o novo método seguro
+            $profissional = $this->profissional->buscarProfissionalPublicoPorId((int)$id);
+            
+            if (!$profissional) {
+                http_response_code(404);
+                echo json_encode(['error' => 'Profissional não encontrado ou não está disponível.']);
+                return;
+            }
+
+            // Se encontrou, retorna os dados com sucesso
+            http_response_code(200);
+            echo json_encode($profissional);
+
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro interno ao buscar detalhes do profissional.', 'details' => $e->getMessage()]);
+        }
+    }
 }
