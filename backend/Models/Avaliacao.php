@@ -30,8 +30,9 @@ class Avaliacao {
             FROM {$this->table} a
             JOIN usuario u ON a.id_cliente = u.id_usuario
             WHERE a.id_profissional = :id_profissional
+            AND a.excluido_em IS NULL  -- Adicione esta linha
             ORDER BY a.criado_em DESC
-        "; 
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
         $stmt->execute();
