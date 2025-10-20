@@ -1,6 +1,7 @@
 <?php
 namespace App\Psico\Models;
 use PDO;
+use DateTime;
 
 class Agendamento {
     private PDO $db;
@@ -36,9 +37,72 @@ class Agendamento {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function atualizarAgendamento(int $id_agendamento, string $data_agendamento, string $status_consulta): bool {
+    public function buscarHorariosOcupados(int $id_profissional, string $data): array {
+        // Formata a data para buscar no banco (considera o dia inteiro)
+        $dataInicio = $data . ' 00:00:00';
+        $dataFim = $data . ' 23:59:59';
+
+        $sql = "SELECT DATE_FORMAT(data_agendamento, '%H:%i') as horario
+                FROM {$this->table}
+                WHERE id_profissional = :id_profissional
+                AND data_agendamento BETWEEN :dataInicio AND :dataFim
+                AND status_consulta != 'cancelada' -- Ignora cancelados
+                AND excluido_em IS NULL"; // Garante que não está soft deleted
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->bindParam(':dataInicio', $dataInicio);
+        $stmt->bindParam(':dataFim', $dataFim);
+        $stmt->execute();
+
+        // Retorna apenas a coluna 'horario' como um array simples
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
+
+    /**
+     * Calcula os horários disponíveis com base nos horários padrão e nos ocupados.
+     * (SIMPLIFICADO: Horários padrão fixos aqui, idealmente viriam do BD)
+     */
+    public function calcularHorariosDisponiveis(int $id_profissional, string $data): array {
+        // Horários padrão de atendimento (exemplo)
+        // Idealmente, isso seria configurável por profissional no banco de dados
+        $horariosPadrao = [
+            '08:00', '09:00', '10:00', '11:00', '12:00',
+            '14:00', '15:00', '16:00', '17:00', '18:00'
+        ]; // Adicione mais ou modifique conforme necessário
+
+        // Horários aos Sábados (exemplo)
+        $horariosSabado = ['08:00', '09:00', '10:00', '11:00', '12:00'];
+
+        try {
+            $diaDaSemana = (new DateTime($data))->format('N'); // 1 (Segunda) a 7 (Domingo)
+        } catch (\Exception $e) {
+            return []; // Retorna vazio se a data for inválida
+        }
+
+        $horariosParaHoje = [];
+        if ($diaDaSemana >= 1 && $diaDaSemana <= 5) { // Segunda a Sexta
+            $horariosParaHoje = $horariosPadrao;
+        } elseif ($diaDaSemana == 6) { // Sábado
+            $horariosParaHoje = $horariosSabado;
+        } else { // Domingo (ou outro dia sem atendimento)
+            return []; // Sem horários disponíveis
+        }
+
+
+        $horariosOcupados = $this->buscarHorariosOcupados($id_profissional, $data);
+
+        // Filtra os horários padrão, removendo os que estão ocupados
+        $horariosDisponiveis = array_diff($horariosParaHoje, $horariosOcupados);
+
+        // Reindexa o array para garantir chaves sequenciais (importante para JSON)
+        return array_values($horariosDisponiveis);
+    }
+
+    // ... (restante dos métodos: atualizar, paginacao, buscarPorId, deletar, buscarTodos) ...
+     public function atualizarAgendamento(int $id_agendamento, string $data_agendamento, string $status_consulta): bool {
         $dataAtual = date('Y-m-d H:i:s');
-        $sql = "UPDATE agendamento
+        $sql = "UPDATE {$this->table}
                 SET data_agendamento = :data_agendamento,
                     status_consulta = :status_consulta,
                     atualizado_em = :atual
@@ -55,7 +119,7 @@ class Agendamento {
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a"; 
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a WHERE a.excluido_em IS NULL"; // Considera soft delete
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
 
@@ -65,8 +129,9 @@ class Agendamento {
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
-            ORDER BY a.id_agendamento ASC
-            LIMIT :limit OFFSET :offset"; 
+            WHERE a.excluido_em IS NULL -- Considera soft delete
+            ORDER BY a.data_agendamento ASC -- Ordena pela data do agendamento
+            LIMIT :limit OFFSET :offset";
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
@@ -84,7 +149,7 @@ class Agendamento {
     }
 
     public function buscarAgendamentoPorId(int $id_agendamento): ?array {
-        $sql = "SELECT * FROM {$this->table} WHERE id_agendamento = :id_agendamento"; // REMOVIDO: AND excluido_em IS NULL
+        $sql = "SELECT * FROM {$this->table} WHERE id_agendamento = :id_agendamento AND excluido_em IS NULL"; // Considera soft delete
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
         $stmt->execute();
@@ -93,24 +158,30 @@ class Agendamento {
     }
 
     public function deletarAgendamento(int $id_agendamento): bool {
-        $sql = "UPDATE {$this->table} SET excluido_em = NOW(), status_consulta = 'cancelada' WHERE id_agendamento = :id_agendamento"; // REMOVIDO: AND excluido_em IS NULL
+        // Soft delete: marca como excluído e cancelado
+        $sql = "UPDATE {$this->table} SET excluido_em = NOW(), status_consulta = 'cancelada', atualizado_em = NOW()
+                WHERE id_agendamento = :id_agendamento AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     public function buscarTodosAgendamentos(): array {
-        $sql = "SELECT 
-                    a.*, 
-                    u.nome_usuario AS nome_paciente, 
+         // Busca todos não excluídos para a lista de seleção no painel
+        $sql = "SELECT
+                    a.id_agendamento,
+                    a.data_agendamento,
+                    u.nome_usuario AS nome_paciente,
                     p.id_profissional
                 FROM {$this->table} a
                 JOIN usuario u ON a.id_usuario = u.id_usuario
-                JOIN profissional p ON a.id_profissional = p.id_profissional 
-                ORDER BY a.data_agendamento DESC"; 
+                JOIN profissional p ON a.id_profissional = p.id_profissional
+                WHERE a.excluido_em IS NULL AND a.status_consulta = 'pendente' -- Exemplo: buscar só pendentes para criar pagamento
+                ORDER BY a.data_agendamento DESC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 }

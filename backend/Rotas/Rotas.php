@@ -14,6 +14,7 @@ class Rotas {
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
                 
                 // NOVAS ROTAS GET PARA AGENDAMENTOS
+                "/agendamentos/disponibilidade/{id_profissional}/{data}" => "AgendamentoController@buscarDisponibilidade",
                 "/agendamentos" => "AgendamentoController@index",
                 "/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
                 "/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
@@ -43,7 +44,9 @@ class Rotas {
                 "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
                 "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
                 "/profissionais/detalhe/{id}" => "ProfissionalController@detalhePublico",
-                "/profissionais/horarios/{id}" => "ProfissionalController@horariosPublico"                
+                
+                "/logout" => "UsuarioController@logout",
+                "/dashboard" => "UsuarioController@dashboard",
             ],
             "POST" => [
                 // NOVAS ROTAS POST PARA USUARIOS
@@ -73,6 +76,7 @@ class Rotas {
 
                 // LOGIN
                 "/login" => "UsuarioController@login",
+                
             ],
         ];
     }

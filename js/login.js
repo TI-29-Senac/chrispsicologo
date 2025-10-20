@@ -5,31 +5,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('login-form');
     const statusMessage = document.getElementById('login-status-message');
 
-    // Função global para abrir o modal, chamada pelo link do menu
-    window.abrirLoginModal = () => {
+    // ... (abrirLoginModal, fecharLoginModal functions remain the same) ...
+     window.abrirLoginModal = () => {
         modal.classList.add('open');
         // Fecha o menu lateral se estiver aberto (redundância para segurança)
         const menuLateral = document.getElementById('menu-lateral');
         const overlay = document.getElementById('fundo-escuro');
         if (menuLateral && menuLateral.classList.contains('aberto')) {
             menuLateral.classList.remove('aberto');
-            overlay.classList.remove('ativo');
+            if (overlay) overlay.classList.remove('ativo');
         }
     }
 
-    // Função global para fechar o modal (chamada pelo 'X' e pelo clique fora)
     window.fecharLoginModal = () => {
         modal.classList.remove('open');
         statusMessage.textContent = ''; // Limpa mensagem de status
         form.reset();
     }
 
-    // Fecha ao clicar fora do modal
-    modal.addEventListener('click', (e) => {
+     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             fecharLoginModal();
         }
     });
+
 
     // Processa a submissão do formulário via Fetch API (AJAX)
     if (form) {
@@ -51,22 +50,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    // Envia os dados no formato esperado pelo PHP ($_POST)
                     body: `email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
                 });
 
-                const result = await response.json();
+                const result = await response.json(); // Sempre espera JSON
 
-                if (response.ok) {
+                if (response.ok && result.success) { // Verifica response.ok E result.success
                     statusMessage.textContent = result.message || 'Login bem-sucedido! Redirecionando...';
                     statusMessage.style.color = 'green';
-                    
-                    // Redireciona após o sucesso
+
+                    // --- LÓGICA DE REDIRECIONAMENTO ATUALIZADA ---
                     setTimeout(() => {
-                         window.location.href = '/backend/dashboard'; // Rota de destino após o login
-                    }, 1500);
+                        // Decide o redirecionamento com base no userType recebido
+                        if (result.userType === 'cliente') {
+                            // Armazena o nome do usuário para a mensagem de boas-vindas
+                            sessionStorage.setItem('welcomeUserName', result.userName);
+                            window.location.href = '/index.html'; // Redireciona cliente para a página inicial
+                        } else if (['admin', 'profissional', 'recepcionista'].includes(result.userType)) {
+                            window.location.href = '/backend/dashboard'; // Redireciona outros para o dashboard
+                        } else {
+                             window.location.href = '/index.html'; // Redirecionamento padrão (fallback)
+                        }
+                    }, 1500); // Espera 1.5 segundos
 
                 } else {
+                    // Se response.ok for false ou result.success for false
                     statusMessage.textContent = result.message || 'Erro de autenticação. Tente novamente.';
                     statusMessage.style.color = 'red';
                 }
@@ -80,15 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
 
-    // Funções de redirecionamento para Registro e Esqueci a Senha
-    window.redirecionarRegistro = () => {
-        // Linkando para uma página de registro separada
-        window.location.href = 'registro.html'; 
+    // ... (redirecionarRegistro, redirecionarEsqueciSenha functions remain the same) ...
+     window.redirecionarRegistro = () => {
+        window.location.href = 'registro.html';
     }
 
     window.redirecionarEsqueciSenha = () => {
-        // Linkando para uma página de recuperação de senha separada
         window.location.href = 'esqueci-senha.html';
     }
+});

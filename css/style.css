@@ -3325,11 +3325,10 @@ body::-webkit-scrollbar-thumb:hover {
 
 .agendamento-detalhe-grid {
     display: grid;
-    /* Coluna da foto com largura fixa e a da bio flexível */
-    grid-template-columns: 320px 1fr; 
+    grid-template-columns: 320px 1fr; /* Mantém a estrutura de colunas */
     gap: 50px;
-    width: 90%; /* Ocupa 90% da largura do container pai */
-    max-width: 1100px; /* Largura máxima */
+    width: 90%;
+    max-width: 1100px;
     padding: 30px;
     background-color: #faf6ee;
     border-radius: 12px;
@@ -3337,6 +3336,13 @@ body::-webkit-scrollbar-thumb:hover {
     border: 1px solid #e0e0e0;
     color: #5D6D68;
     font-family: 'Questrial', sans-serif;
+    align-items: start; /* <<< ADICIONADO: Alinha o topo das colunas */
+}
+.profissional-info-coluna h3:first-of-type {
+    margin-top: 0;
+}
+.profissional-bio-coluna h4:first-of-type {
+    margin-top: 0;
 }
 
 .agenda-container, .confirmacao-container {
@@ -3561,5 +3567,216 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* #endregion */
 
+/* #region Estilo Discreto para Saudação no Menu Lateral */
+
+.links-menu-lateral .welcome-user-side {
+    padding: 8px 12px; /* Mesmo padding dos links */
+    margin-bottom: -5px; /* Reduz um pouco o espaço abaixo */
+    margin-top: 50px; /* Reduz um pouco o espaço acima */
+}
+
+.links-menu-lateral .welcome-user-side span {
+    font-family: questrial, sans-serif;
+    color: #fff; 
+    font-weight: normal;
+    display: block; 
+}
+
+/* Ajusta o link Sair para combinar */
+.links-menu-lateral li a[onclick*="performLogout"] {
+    color: #fff; 
+
+}
+.links-menu-lateral li a[onclick*="performLogout"]:hover {
+    color: #99b198;
+    }
+
+/* #endregion */
+
+/* #region Estilos Aprimorados para Agendamento Detalhe v3 */
+
+/* Container geral da agenda */
+.agenda-container {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    max-width: 1100px;
+    text-align: center;
+    padding: 30px; /* Mantém padding interno */
+    background-color: #5D6D68; /* Mantém fundo */
+    border-radius: 12px; /* Mantém bordas */
+    color: #faf6ee; /* Mantém cor do texto */
+    font-family: 'Questrial', sans-serif; /* Mantém fonte */
+}
+
+/* Título H3 dentro da agenda */
+.agenda-container h3 {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 35px; /* <<< AUMENTADO: Mais espaço abaixo do título */
+    color: #faf6ee; /* Garante cor clara */
+}
 
 
+/* Container do seletor de data */
+.seletor-data {
+    margin-bottom: 20px;
+}
+
+/* Label do seletor de data */
+.seletor-data label {
+    display: block; 
+    font-size: 1.3rem;
+    margin-bottom: 10px; 
+    color: #faf6ee;
+    font-weight: bold;
+}
+
+/* Input de data */
+#data-consulta {
+    display: inline-block;
+    padding: 12px 18px;
+    border: 2px solid #faf6ee;
+    border-radius: 8px;
+    background-color: transparent;
+    color: #faf6ee;
+    font-size: 1.2rem;
+    font-family: 'Questrial', sans-serif;
+    cursor: pointer;
+    min-width: 250px;
+    text-align: center;
+    outline: none;
+    margin: 0 auto;
+}
+
+/* Ícone do calendário (sem alterações) */
+#data-consulta::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    font-size: 1.4rem;
+    padding-left: 10px;
+}
+
+/* Feedback de texto (sem alterações) */
+#agenda-feedback {
+    color: #faf6ee;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+
+/* Grid dos horários (sem alterações) */
+.agenda-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, max-content));
+    gap: 10px;
+    justify-content: center;
+    max-width: 90%;
+    margin: 15px auto 0;
+}
+
+/* Colunas dentro do grid (sem alterações) */
+.agenda-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Botões de horário (sem alterações) */
+.horario-btn {
+    background-color: #faf6ee;
+    color: #5D6D68;
+    border: none;
+    padding: 12px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s;
+    width: 120px;
+    text-align: center;
+}
+
+.horario-btn:hover, .horario-btn.selecionado {
+    background-color: #A3B8A1;
+    color: white;
+}
+
+
+/* Ajustes responsivos (sem alterações significativas aqui, o label já era block) */
+@media (max-width: 600px) {
+     /* .seletor-data label já é block */
+    #data-consulta {
+        min-width: 80%;
+        font-size: 1.1rem;
+        padding: 10px 15px;
+        display: block;
+        margin: 0 auto;
+    }
+    .agenda-body {
+        max-width: 95%;
+         grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    }
+     .horario-btn {
+        width: 100%;
+        padding: 10px 5px;
+    }
+}
+
+/* #endregion */
+
+/* #region Estilos para Avaliações na Página de Detalhe */
+
+.profissional-bio-coluna h4 { /* Estilo geral para subtítulos na bio */
+    font-size: 1.4rem;
+    margin-top: 25px; /* Adiciona espaço acima dos subtítulos */
+    margin-bottom: 10px;
+    border-bottom: 1px solid #d6e3d6;
+    padding-bottom: 5px;
+    text-align: left; /* Alinha subtítulo à esquerda */
+}
+
+.profissional-bio-coluna h4:first-of-type {
+     margin-top: 0; /* Remove margem do primeiro H4 ("Um pouco sobre...") */
+}
+
+
+.profissional-bio-coluna .avaliacoes-detalhe {
+    margin-top: 10px; /* Espaço acima, após o H4 */
+    margin-bottom: 30px; /* Espaço abaixo, antes do valor */
+    padding: 15px;
+    background-color: #eefaea; /* Fundo sutilmente diferente */
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #d6e3d6;
+}
+
+.avaliacoes-detalhe .nota-media-detalhe {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #5D6D68;
+    margin-bottom: 5px;
+}
+
+.avaliacoes-detalhe .estrelas-media-detalhe {
+    font-size: 1.4rem; /* Estrelas um pouco maiores */
+    color: #ffd82c; /* Cor amarela padrão para estrelas preenchidas */
+    margin-bottom: 5px;
+    letter-spacing: 2px; /* Pequeno espaço entre estrelas */
+}
+
+/* Evita seleção estranha das estrelas */
+.avaliacoes-detalhe .estrelas-media-detalhe::selection { background: none; }
+.avaliacoes-detalhe .estrelas-media-detalhe::-moz-selection { background: none; }
+
+.avaliacoes-detalhe .total-avaliacoes-detalhe {
+    display: block;
+    font-size: 0.95rem;
+    color: #777; /* Cinza mais claro para o número total */
+}
+
+/* #endregion */

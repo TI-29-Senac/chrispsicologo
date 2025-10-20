@@ -229,3 +229,4 @@ function renderizarModal(comentarios, nomeProfissional) {
         });
     }
 }
+
