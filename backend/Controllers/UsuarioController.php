@@ -1,17 +1,17 @@
 <?php
 namespace App\Psico\Controllers;
- 
+
+use App\Psico\Controllers\Admin\AdminController;
 use App\Psico\Core\View;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Avaliacao;
 use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\Redirect;
-use App\Psico\Core\Flash;
 use App\Psico\Validadores\UsuarioValidador;
 use App\Psico\Core\FileManager;
  
-class UsuarioController {
+class UsuarioController extends AdminController {
     public $usuario;
     public $db;
     public $avaliacao;
