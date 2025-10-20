@@ -1,17 +1,21 @@
 <?php
 namespace App\Psico\Controllers;
 
+use App\Psico\Controllers\Admin\AdminController;
+
 use App\Psico\Core\View;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Agendamento;
 use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
 use App\Psico\Core\Redirect;
-use App\Psico\Core\Flash;
 use App\Psico\Validadores\UsuarioValidador;
-use PDOException; // Adicionado para capturar exceções do PDO
+use App\Psico\Core\FileManager;
+use PDOException; 
+use App\Psico\Core\Flash;
+ 
+class UsuarioController extends AdminController {
 
-class UsuarioController {
     public $usuario;
     public $db;
     public $agendamento;
