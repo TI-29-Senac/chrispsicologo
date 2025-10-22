@@ -1,10 +1,6 @@
 <?php
 use App\Psico\Core\Flash;
-$imagem = $dados['imagem'];
-// Variáveis passadas pelo Controller para pré-seleção
-$idPaginaPaiSelecionada = $dados['idPaginaPaiSelecionada'] ?? null;
-$idSecaoFilhaSelecionada = $dados['idSecaoFilhaSelecionada'] ?? null;
-$paginaPaiNome = $dados['paginaPaiNome'] ?? 'Home'; // Nome da página pai com filhos
+$imagem = $dados['imagem']; // Objeto imagem com nome_pagina e nome_secao
 ?>
 
 <div class="w3-container w3-white w3-text-grey w3-card-4" style="padding-bottom: 32px;">
@@ -17,28 +13,14 @@ $paginaPaiNome = $dados['paginaPaiNome'] ?? 'Home'; // Nome da página pai com f
 
             <div class="w3-row-padding w3-section">
                 <div class="w3-half">
-                    <label for="id_pagina_select"><b><i class="fa fa-sitemap"></i> Página Principal</b></label>
-                    <select class="w3-select w3-border w3-light-grey" id="id_pagina_select" name="id_pagina_select_disabled" disabled>
-                        <option value="">...</option>
-                        <?php if (!empty($paginasPrincipais)): ?>
-                            <?php foreach ($paginasPrincipais as $pagina): ?>
-                                <option value="<?= htmlspecialchars($pagina['id']) ?>"
-                                        data-nome-pagina="<?= htmlspecialchars($pagina['nome']) ?>"
-                                        <?= ($pagina['id'] == $idPaginaPaiSelecionada) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($pagina['nome']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                     <small>A página/seção não pode ser alterada após a criação.</small>
-                     <input type="hidden" name="id_secao_original" value="<?= htmlspecialchars($imagem->id_secao) ?>">
+                    <label><b><i class="fa fa-sitemap"></i> Página Atual</b></label>
+                    <input class="w3-input w3-border w3-light-grey" type="text" value="<?= htmlspecialchars($imagem->nome_pagina ?? 'N/A') ?>" readonly disabled>
+                    <small>A página não pode ser alterada.</small>
                 </div>
-
-
-                <div class="w3-half" id="container-secao-filha" style="display: none;">
-                    <label for="id_secao_display"><b><i class="fa fa-folder-open"></i> Seção Específica</b></label>
-                    <select class="w3-select w3-border w3-light-grey" id="id_secao_display" name="id_secao_display_disabled" disabled>
-                    </select>
+                <div class="w3-half">
+                    <label><b><i class="fa fa-folder-open"></i> Seção Atual</b></label>
+                    <input class="w3-input w3-border w3-light-grey" type="text" value="<?= htmlspecialchars($imagem->nome_secao ?? 'N/A') ?>" readonly disabled>
+                     <small>A seção não pode ser alterada.</small>
                 </div>
             </div>
 
@@ -71,44 +53,3 @@ $paginaPaiNome = $dados['paginaPaiNome'] ?? 'Home'; // Nome da página pai com f
         </form>
     </div>
 </div>
-
-<script>
-    // Mapeamento e IDs pré-selecionados passados pelo PHP
-    const secoesFilhasPorPagina = <?= $secoesFilhasJson ?? '{}' ?>;
-    const paginaPaiComFilhas = '<?= $paginaPaiNome ?>'; // Nome da página pai
-    const idPaginaPaiSelecionada = <?= json_encode($idPaginaPaiSelecionada) ?>;
-    const idSecaoFilhaSelecionada = <?= json_encode($idSecaoFilhaSelecionada) ?>;
-
-    const selectPagina = document.getElementById('id_pagina_select'); // O select visível (agora desabilitado)
-    const containerSecaoFilha = document.getElementById('container-secao-filha');
-    const selectSecaoFilhaDisplay = document.getElementById('id_secao_display'); // O select filho visível (desabilitado)
-
-    // Função para configurar o estado inicial (executada na carga)
-    function configurarEstadoInicial() {
-        const nomePaginaSelecionada = selectPagina.options[selectPagina.selectedIndex]?.getAttribute('data-nome-pagina');
-
-        if (nomePaginaSelecionada === paginaPaiComFilhas && secoesFilhasPorPagina[paginaPaiComFilhas]) {
-            containerSecaoFilha.style.display = 'block';
-            selectSecaoFilhaDisplay.innerHTML = '<option value="" disabled>...</option>'; // Limpa e adiciona placeholder
-
-            // Popula com as seções filhas
-            secoesFilhasPorPagina[paginaPaiComFilhas].forEach(secao => {
-                const option = document.createElement('option');
-                option.value = secao.id;
-                option.textContent = secao.nome;
-                // Pré-seleciona a seção filha correta
-                if (secao.id == idSecaoFilhaSelecionada) {
-                    option.selected = true;
-                }
-                selectSecaoFilhaDisplay.appendChild(option);
-            });
-        } else {
-            containerSecaoFilha.style.display = 'none';
-             selectSecaoFilhaDisplay.innerHTML = ''; // Limpa se não for aplicável
-        }
-    }
-
-    // Configura o estado inicial quando o DOM estiver pronto
-    document.addEventListener('DOMContentLoaded', configurarEstadoInicial);
-
-</script>

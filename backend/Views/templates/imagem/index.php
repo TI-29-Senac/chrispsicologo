@@ -13,8 +13,8 @@
     <?= Flash::getFlash() ?>
 
     <?php if (!empty($imagensAgrupadas)): ?>
-        <?php foreach ($imagensAgrupadas as $nomeSecao => $imagens): ?>
-            <h3 style="color: #5D6D68; border-bottom: 2px solid #A3B8A1; padding-bottom: 5px; margin-top: 30px;"><?= htmlspecialchars($nomeSecao) ?></h3>
+        <?php foreach ($imagensAgrupadas as $nomePagina => $imagens): ?>
+            <h3 style="color: #5D6D68; border-bottom: 2px solid #A3B8A1; padding-bottom: 5px; margin-top: 30px;"><?= htmlspecialchars($nomePagina) ?></h3>
             <div class="w3-row-padding">
                 <?php if (!empty($imagens)): ?>
                     <?php foreach ($imagens as $img): ?>
@@ -22,7 +22,8 @@
                             <div class="w3-card">
                                 <img src="/<?= htmlspecialchars($img->url_imagem) ?>" alt="Imagem <?= $img->id_imagem ?>" style="width:100%; height: 150px; object-fit: cover;">
                                 <div class="w3-container w3-center w3-padding">
-                                    <p>Ordem: <?= htmlspecialchars($img->ordem) ?></p>
+                                    <p style="font-weight: bold; margin-bottom: 5px;"><?= htmlspecialchars($img->nome_secao) ?></p>
+                                    <p style="margin-top: 0;">Ordem: <?= htmlspecialchars($img->ordem) ?></p>
                                     <a href="/backend/imagens/editar/<?= $img->id_imagem ?>" class="w3-button w3-tiny w3-round" style="background-color: #5D6D68; color: white;" title="Editar"><i class="fa fa-pencil"></i></a>
                                     <a href="/backend/imagens/excluir/<?= $img->id_imagem ?>" class="w3-button w3-tiny w3-red w3-round" title="Excluir"><i class="fa fa-trash"></i></a>
                                 </div>
@@ -30,7 +31,7 @@
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p>Nenhuma imagem encontrada para esta seção.</p>
+                    <p>Nenhuma imagem encontrada para esta página.</p>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
