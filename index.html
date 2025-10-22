@@ -141,15 +141,7 @@
         </p>
       
         <div class="carrossel-imagens">
-          <div class="faixa-imagens">
-            <img src="img/quem-somos/corredor.png" alt="Imagem da clínica">
-            <img src="img/quem-somos/recepcao.png" alt="Sala de atendimento">
-            <img src="img/quem-somos/sala1.png" alt="Ambiente acolhedor">
-            <img src="img/quem-somos/sala2.png" alt="Recepção">
-            <img src="img/quem-somos/corredor.png" alt="Imagem da clínica">
-            <img src="img/quem-somos/recepcao.png" alt="Sala de atendimento">
-            <img src="img/quem-somos/sala1.png" alt="Ambiente acolhedor">
-            <img src="img/quem-somos/sala2.png" alt="Recepção">
+          <div class="faixa-imagens" id="faixa-imagens-quem-somos">
           </div>
         </div>
         <div class="btn-quem-somos-container">
@@ -161,44 +153,19 @@
 
     <div class="barra-quebra"></div>
 
-    <section id="servicos" class="servicos">
-      <img src="img/icons/plantaas.svg" class="planta5 lado-esquerdo" alt="" aria-hidden="true">
-      <img src="img/icons/plantaas.svg" class="planta5 lado-direito" alt="" aria-hidden="true">
-      <div class="container-servicos">
-        <div class="card-central">
-          <h2 class="card-titulo">Serviços</h2>
-          <p class="card-descricao">Acolhimento psicológico em diversas fases da vida com empatia e responsabilidade.</p>
-    
-          <div class="cards-servicos">
-            <div class="card-servico">
-              <img src="img/servicos/psicologia-infantil.jpg" alt="Psicoterapia Infantil">
-              <h3>Psicoterapia Infantil</h3>
-              <p>Ajuda crianças a lidarem com sentimentos, medos e desafios escolares.</p>
-            </div>
-    
-            <div class="card-servico">
-              <img src="img/servicos/psicologia-adulto.jpg" alt="Psicoterapia para Adultos">
-              <h3>Psicoterapia para Adultos</h3>
-              <p>Apoio emocional e autoconhecimento para enfrentar ansiedades, depressão e traumas.</p>
-            </div>
-    
-            <div class="card-servico">
-              <img src="img/servicos/terapia-casal.jpg" alt="Terapia de Casal">
-              <h3>Terapia de Casal</h3>
-              <p>Melhore o diálogo, o respeito e a conexão no relacionamento.</p>
-            </div>
-    
-            <div class="card-servico">
-              <img src="img/servicos/terapia-familiar.webp" alt="Terapia Familiar">
-              <h3>Terapia Familiar</h3>
-              <p>Mediação e escuta ativa para fortalecer vínculos entre familiares.</p>
-            </div>
-          </div>
+  <section id="servicos" class="servicos">
+    <img src="img/icons/plantaas.svg" class="planta5 lado-esquerdo" alt="" aria-hidden="true">
+    <img src="img/icons/plantaas.svg" class="planta5 lado-direito" alt="" aria-hidden="true">
+    <div class="card-central">
+      <h2 class="card-titulo">Serviços</h2>
+      <p class="card-descricao">Acolhimento psicológico em diversas fases da vida com empatia e responsabilidade.</p>
 
-          <a href="servicos.html" class="btn-saiba-mais-centralizado">Saiba mais</a>
-        </div>
-      </div>
-    </section>
+    <div class="cards-servicos" id="cards-servicos-index">
+    </div>
+
+    <a href="servicos.html" class="btn-saiba-mais-centralizado">Saiba mais</a>
+    </div>
+  </section>
     
     
     
@@ -292,6 +259,107 @@
         console.error('Erro ao buscar profissionais:', error);
         container.innerHTML = '<p style="color: red; text-align: center;">Não foi possível carregar os profissionais no momento. Tente novamente mais tarde.</p>';
       });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // --- Carregar Imagens do Carrossel "Quem Somos" ---
+    const quemSomosContainer = document.getElementById('faixa-imagens-quem-somos');
+    if (quemSomosContainer) {
+        quemSomosContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; padding: 20px;">Carregando imagens...</p>';
+
+        // !!! IMPORTANTE: Endpoint Hipotético !!!
+        // Você precisa criar este endpoint no seu backend (Rotas.php, um novo Controller ou método)
+        // Ele deve retornar um JSON com a lista de URLs das imagens para o carrossel "Quem Somos".
+        // Exemplo de JSON esperado: ["img/quem-somos/corredor.png", "img/quem-somos/recepcao.png", ...]
+        // OU [{ "url_imagem": "img/quem-somos/corredor.png" }, { "url_imagem": "img/quem-somos/recepcao.png" }, ...]
+        fetch('/backend/api/imagens/quem-somos') // <<< SUBSTITUA PELO SEU ENDPOINT REAL
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Falha ao carregar imagens da clínica. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(imagens => {
+                 // Adapte a validação conforme a estrutura do seu JSON real
+                if (!Array.isArray(imagens) || imagens.length === 0) {
+                     throw new Error('Nenhuma imagem da clínica encontrada ou formato inválido.');
+                }
+
+                quemSomosContainer.innerHTML = ''; // Limpa o "Carregando..."
+
+                // --- Lógica para Duplicação (para animação infinita) ---
+                const imagensParaCarrossel = [];
+                 // Repete a lista pelo menos duas vezes para o efeito funcionar
+                 const repeticoes = Math.max(2, Math.ceil(8 / imagens.length)); // Garante pelo menos umas 8 imagens
+                 for (let i = 0; i < repeticoes; i++) {
+                     imagens.forEach(imgData => imagensParaCarrossel.push(imgData));
+                 }
+                // --- Fim da Lógica para Duplicação ---
+
+                // Itera sobre a lista DUPLICADA
+                imagensParaCarrossel.forEach(imgData => {
+                    // Adapte 'imgData.url_imagem' ou apenas 'imgData' se a API retornar só a string URL
+                    const imageUrl = typeof imgData === 'string' ? imgData : imgData.url_imagem;
+                     if (imageUrl) {
+                        const imgHtml = `<img src="${imageUrl}" alt="Imagem da clínica">`;
+                        quemSomosContainer.insertAdjacentHTML('beforeend', imgHtml);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar imagens da clínica:', error);
+                quemSomosContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Não foi possível carregar as imagens da clínica.</p>';
+            });
+    } else {
+         console.error('Elemento com ID "faixa-imagens-quem-somos" não encontrado.');
+    }
+
+
+    // --- Carregar Cards de "Serviços" ---
+    const servicosContainer = document.getElementById('cards-servicos-index');
+    if (servicosContainer) {
+        servicosContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; padding: 20px;">Carregando serviços...</p>';
+
+        // Usaremos o mesmo endpoint que você já tem para a página de serviços
+        fetch('/backend/api/servicos') // <<< Seu endpoint existente
+            .then(response =>{
+                if(!response.ok){
+                    throw new Error('Falha ao carregar dados dos serviços. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(json => {
+                // Validação baseada na estrutura que você mostrou no primeiro script
+                if (json.status !== 'success' || !Array.isArray(json.data) || json.data.length === 0){
+                    throw new Error('Nenhum serviço encontrado ou formato de dados inválido.');
+                }
+
+                servicosContainer.innerHTML = ''; // Limpa o "Carregando..."
+
+                json.data.forEach(servico => {
+                    // Cria o HTML do card exatamente como estava no seu index.html estático
+                    const cardHtml = `
+                        <div class="card-servico">
+                          <img src="${servico.caminho_imagem}" alt="${servico.nome_servico}">
+                          <h3>${servico.nome_servico}</h3>
+                          <p>${servico.descricao_servico}</p>
+                        </div>
+                    `;
+                    servicosContainer.insertAdjacentHTML('beforeend', cardHtml);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar serviços para o index:', error);
+                servicosContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Não foi possível carregar os serviços no momento.</p>';
+            });
+
+    } else {
+        console.error('Elemento com ID "cards-servicos-index" não encontrado.');
+    }
+
   });
 </script>
 

@@ -46,6 +46,8 @@
     <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>
     <a href="/backend/pagamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-credit-card fa-fw"></i>  Pagamentos</a>
     <a href="/backend/profissionais/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Profissionais</a>
+    <a href="/backend/imagens/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-picture-o fa-fw"></i>  Imagens do Site</a>
+    <a href="/backend/logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i>  Sair</a>
     
   </div>
 </nav>

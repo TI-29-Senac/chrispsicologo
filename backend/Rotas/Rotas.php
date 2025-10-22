@@ -47,6 +47,15 @@ class Rotas {
                 
                 "/logout" => "UsuarioController@logout",
                 "/dashboard" => "UsuarioController@dashboard",
+                
+                // --- ROTAS PARA GERENCIAMENTO DE IMAGENS ---
+                "/imagens/listar" => "ImagemController@viewListarImagens",
+                "/imagens/criar" => "ImagemController@viewCriarImagem",
+                "/imagens/editar/{id}" => "ImagemController@viewEditarImagem", 
+                "/imagens/excluir/{id}" => "ImagemController@viewExcluirImagem", 
+
+                // --- ROTAS DE API EXISTENTES ---
+                "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
             ],
             "POST" => [
                 // NOVAS ROTAS POST PARA USUARIOS
@@ -76,6 +85,11 @@ class Rotas {
 
                 // LOGIN
                 "/login" => "UsuarioController@login",
+
+                // --- ROTAS POST PARA IMAGENS ---
+                "/imagens/salvar" => "ImagemController@salvarImagem",
+                "/imagens/atualizar/{id}" => "ImagemController@atualizarImagem",
+                "/imagens/deletar/{id}" => "ImagemController@deletarImagem", 
                 
             ],
         ];
