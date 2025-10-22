@@ -208,6 +208,93 @@
 
   <footer id="footer"></footer>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Seleciona o container onde os cards dos profissionais serão inseridos
+    const container = document.getElementById('cards-carrossel');
+    if (!container) {
+      console.error('Elemento com ID "cards-carrossel" não encontrado.');
+      return;
+    }
+
+    container.innerHTML = '<p style="text-align: center; color: #5D6D68;">Carregando profissionais...</p>'; // Mensagem de carregamento
+
+    // Faz a requisição para buscar os dados dos profissionais públicos
+    fetch('/backend/profissionais/listar-publico')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Falha ao carregar dados da rede. Status: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(profissionais => {
+        // Verifica se a resposta contém os dados esperados
+        if (!profissionais || !Array.isArray(profissionais)) {
+          throw new Error('API retornou dados em formato inválido ou vazio.');
+        }
+
+        container.innerHTML = ''; // Limpa a mensagem de carregamento
+
+        if (profissionais.length === 0) {
+           container.innerHTML = '<p style="text-align: center; color: #5D6D68;">Nenhum profissional disponível no momento.</p>';
+           return;
+        }
+
+        // --- Lógica para Duplicação (para carrossel infinito) ---
+        // Cria uma lista maior repetindo os profissionais para o efeito de loop
+        const profissionaisParaCarrossel = [];
+        // Repete a lista algumas vezes (ex: 3 vezes para ter blocos antes e depois)
+        for (let i = 0; i < 3; i++) {
+            profissionais.forEach(prof => profissionaisParaCarrossel.push(prof));
+        }
+        // --- Fim da Lógica para Duplicação ---
+
+
+        // Itera sobre a lista DUPLICADA para criar os cards
+        profissionaisParaCarrossel.forEach(profissional => {
+          // Lógica para definir a imagem (igual ao profissionais.js)
+          const nomeBase = profissional.nome_usuario.split(' ')[0].toLowerCase();
+          const fotoUrlPadrao = `img/profissionais/${nomeBase}.png`;
+          const fotoFinal = profissional.img_profissional || fotoUrlPadrao;
+
+          // Cria o HTML do card para cada profissional
+          const cardHtml = `
+            <div class="card" data-id-profissional="${profissional.id_profissional}">
+              <a href="profissionais.html" class="card-link">
+                <div class="foto" style="background-image: url('${fotoFinal}'); background-size: cover; background-position: center;">
+                </div>
+                <h3>${profissional.nome_usuario}</h3>
+                <div class="avaliacoes">
+                  <h4>Psicólogo(a)</h4>
+                  <p>${profissional.especialidade || 'Clínica Geral'}</p>
+                </div>
+              </a>
+            </div>
+          `;
+          // Insere o HTML do card no container
+          container.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        // Após adicionar todos os cards, inicializa a lógica de destaque do carrossel (se existir)
+        if (typeof destacarCardCentral === 'function') {
+            destacarCardCentral();
+             // --- Ajuste Inicial do Scroll para o Meio (após duplicar) ---
+             const cardWidth = 300 + 60; // Largura do card + gap
+             const totalOriginalCards = profissionais.length;
+             // Começa no início do segundo bloco de cards
+             container.scrollLeft = totalOriginalCards * cardWidth;
+             // --- Fim do Ajuste Inicial ---
+        }
+
+
+      })
+      .catch(error => {
+        console.error('Erro ao buscar profissionais:', error);
+        container.innerHTML = '<p style="color: red; text-align: center;">Não foi possível carregar os profissionais no momento. Tente novamente mais tarde.</p>';
+      });
+  });
+</script>
+
   <script src="js/header.js" defer></script>
   <script src="js/cards.js" defer></script>
   <script src="js/cerebro.js" defer></script>

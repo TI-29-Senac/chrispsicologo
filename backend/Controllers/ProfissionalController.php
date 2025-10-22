@@ -7,16 +7,19 @@ use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\ProfissionalValidador;
+use App\Psico\Core\FileManager;
 
 class ProfissionalController {
     public $profissional;   
     public $db;
     public $usuario;
+    public $fileManager;
 
     public function __construct(){
         $this->db = Database::getInstance();
         $this->profissional = new Profissional($this->db);
         $this->usuario = new Usuario($this->db);
+        $this->fileManager = new FileManager(__DIR__ . '/../../');
     }
 
 public function viewCriarProfissionais()
@@ -104,54 +107,81 @@ public function viewCriarProfissionais()
     }
 
     public function salvarProfissionais()
-{
-    $erros = ProfissionalValidador::ValidarEntradas($_POST);
-    if (!empty($erros)) {
-        Redirect::redirecionarComMensagem("profissionais/criar", "error", implode("<br>", $erros));
-        return;
-    }
+    {
+        $erros = ProfissionalValidador::ValidarEntradas($_POST);
+        if (!empty($erros)) {
+            Redirect::redirecionarComMensagem("profissionais/criar", "error", implode("<br>", $erros));
+            return;
+        }
 
-    $id_usuario = (int)$_POST['id_usuario'];
-    $especialidade = $_POST['especialidade'];
-    $valor_consulta = (float)($_POST['valor_consulta'] ?? 0.0);
-    $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0.0);
-    $publico = isset($_POST['publico']) ? 1 : 0;
-    $sobre = $_POST['sobre'] ?? null;
-    $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 6);
+        $caminhoImagemSalva = null; // Inicializa como nulo
 
-    $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
-    if (!$usuarioExistente) {
-        Redirect::redirecionarComMensagem("profissionais/criar", "error", "O ID de usuário informado não existe.");
-        return;
-    }
+        // --- Processamento do Upload ---
+        if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
+            try {
+                // Tenta salvar o arquivo na pasta 'img/profissionais/'
+                // Tipos permitidos: jpeg, png, webp. Tamanho máximo: 2MB (2 * 1024 * 1024 bytes)
+                $caminhoImagemSalva = $this->fileManager->salvarArquivo(
+                    $_FILES['img_profissional'],
+                    'img/profissionais', // Subdiretório
+                    ['image/jpeg', 'image/png', 'image/webp'], // Tipos permitidos
+                    2 * 1024 * 1024 // Tamanho máximo (2MB)
+                );
+            } catch (\Exception $e) {
+                // Se o upload falhar, redireciona com o erro
+                Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro no upload da imagem: " . $e->getMessage());
+                return;
+            }
+        }
+        // --- Fim do Processamento do Upload ---
 
-    $id_profissional = $this->profissional->inserirProfissional(
-        $id_usuario,
-        $especialidade,
-        $valor_consulta,
-        $sinal_consulta,
-        $publico,
-        $sobre,
-        $ordem_exibicao
-    );
+        $id_usuario = (int)$_POST['id_usuario'];
+        $especialidade = $_POST['especialidade'];
+        $valor_consulta = (float)($_POST['valor_consulta'] ?? 0.0);
+        $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0.0);
+        $publico = isset($_POST['publico']) ? 1 : 0;
+        $sobre = $_POST['sobre'] ?? null;
+        $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 99);
 
-    if ($id_profissional) {
-        $this->usuario->atualizarUsuario(
+        $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
+        if (!$usuarioExistente) {
+            Redirect::redirecionarComMensagem("profissionais/criar", "error", "O ID de usuário informado não existe.");
+            return;
+        }
+
+        $id_profissional = $this->profissional->inserirProfissional(
             $id_usuario,
-            $usuarioExistente->nome_usuario,
-            $usuarioExistente->email_usuario,
-            null,
-            'profissional',
-            $usuarioExistente->cpf ?? '',
-            'ativo'
+            $especialidade,
+            $valor_consulta,
+            $sinal_consulta,
+            $publico,
+            $sobre,
+            $ordem_exibicao,
+            $caminhoImagemSalva // <<< Usa o caminho retornado pelo FileManager (ou null)
         );
-        Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional criado com sucesso!");
-    } else {
-        Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro ao criar o registro profissional.");
-    }
-}
 
-public function atualizarProfissionais($id) {
+        if ($id_profissional) {
+            $this->usuario->atualizarUsuario(
+                $id_usuario,
+                $usuarioExistente->nome_usuario,
+                $usuarioExistente->email_usuario,
+                null,
+                'profissional',
+                $usuarioExistente->cpf ?? '',
+                'ativo'
+            );
+            Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional criado com sucesso!");
+        } else {
+            // Se falhou ao inserir no DB, tenta remover a imagem que foi salva (se houver)
+            if ($caminhoImagemSalva) {
+                $this->fileManager->delete($caminhoImagemSalva);
+            }
+            Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro ao criar o registro profissional no banco de dados.");
+        }
+    }
+
+// --- Método atualizarProfissionais ATUALIZADO para UPLOAD ---
+    public function atualizarProfissionais($id) {
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
 
         if (!$profissional) {
@@ -160,56 +190,83 @@ public function atualizarProfissionais($id) {
         }
 
         // --- ATUALIZAÇÃO DO USUÁRIO ---
-        // (Validação do usuário pode ser adicionada aqui se necessário)
+        // (Validação pode ser adicionada)
         $sucesso_usuario = $this->usuario->atualizarUsuario(
-            (int)$_POST['id_usuario'], // Usa o id_usuario vindo do formulário (hidden)
+            (int)$_POST['id_usuario'],
             $_POST['nome_usuario'],
             $_POST['email_usuario'],
-            $_POST['senha_usuario'] ?? null, // Senha opcional
-            'profissional', // Garante que continua profissional
-            $profissional->cpf ?? '', // Mantém CPF original (não editável aqui)
-            $_POST['status_usuario'] ?? 'ativo' // Pega status do select
+            $_POST['senha_usuario'] ?? null,
+            'profissional',
+            $profissional->cpf ?? '', // Mantém CPF
+            $_POST['status_usuario'] ?? 'ativo'
         );
 
+        // --- Processamento do Upload da Nova Imagem (se houver) ---
+        $caminhoNovaImagem = null;
+        $imagemAntiga = $_POST['imagem_atual'] ?? null; // Pega do campo hidden
+
+        if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
+             try {
+                $caminhoNovaImagem = $this->fileManager->salvarArquivo(
+                    $_FILES['img_profissional'],
+                    'img/profissionais',
+                    ['image/jpeg', 'image/png', 'image/webp'],
+                    2 * 1024 * 1024
+                );
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", "Erro no upload da nova imagem: " . $e->getMessage());
+                return;
+            }
+        }
+        // --- Fim do Processamento do Upload ---
+
+        // Define qual caminho de imagem será salvo no banco
+        // Se uma nova imagem foi enviada, usa o caminho dela. Senão, mantém o caminho antigo.
+        $caminhoImagemParaSalvar = $caminhoNovaImagem ?? $imagemAntiga;
+
         // --- ATUALIZAÇÃO DO PROFISSIONAL ---
-        // (Validação dos dados do profissional pode ser adicionada aqui)
+        // (Validação pode ser adicionada)
         $especialidadeInput = $_POST['especialidade'] ?? '';
         $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
         $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0);
-        $publico = isset($_POST['publico']) ? 1 : 0; // Verifica se o checkbox foi marcado
+        $publico = isset($_POST['publico']) ? 1 : 0;
         $sobre = $_POST['sobre'] ?? null;
         $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 99);
 
-        // --- Processamento da Especialidade ---
+        // Processamento da Especialidade (igual ao anterior)
         $especialidadeTrimmed = trim($especialidadeInput);
-        // Substitui uma ou mais quebras de linha por ", "
         $especialidadeProcessed = preg_replace('/(\r\n|\n|\r)+/', ', ', $especialidadeTrimmed);
-        // Remove espaços extras ao redor das vírgulas e vírgulas duplicadas
         $especialidadeProcessed = preg_replace('/[ ,]*,[ ,]*/', ',', $especialidadeProcessed);
-        // Remove vírgulas ou espaços no início/fim que podem ter sobrado
         $especialidadeProcessed = trim($especialidadeProcessed, ', ');
-        // --- Fim do Processamento ---
 
         $sucesso_profissional = $this->profissional->atualizarProfissional(
-            (int)$id, // ID do profissional vindo da URL
-            $especialidadeProcessed, // <<< USA A VARIÁVEL PROCESSADA
+            (int)$id,
+            $especialidadeProcessed,
             $valor_consulta,
             $sinal_consulta,
             $publico,
             $sobre,
-            $ordem_exibicao
+            $ordem_exibicao,
+            $caminhoImagemParaSalvar // <<< Passa o caminho final (novo ou antigo)
         );
 
         // --- VERIFICAÇÃO E REDIRECIONAMENTO ---
         if ($sucesso_usuario && $sucesso_profissional) {
+             // Se a atualização foi bem-sucedida E uma nova imagem foi enviada, deleta a antiga (se existir)
+             if ($caminhoNovaImagem && !empty($imagemAntiga) && $imagemAntiga !== $caminhoNovaImagem) {
+                 $this->fileManager->delete($imagemAntiga);
+             }
             Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
         } else {
-             // Monta mensagem de erro mais específica, se possível
+             // Se a atualização falhou, remove a nova imagem que pode ter sido salva
+             if ($caminhoNovaImagem) {
+                 $this->fileManager->delete($caminhoNovaImagem);
+             }
              $erros = [];
              if (!$sucesso_usuario) $erros[] = "Erro ao atualizar dados do usuário.";
              if (!$sucesso_profissional) $erros[] = "Erro ao atualizar dados do profissional.";
              $mensagemErro = implode(" ", $erros);
-             if (empty($mensagemErro)) $mensagemErro = "Erro desconhecido ao atualizar profissional."; // Fallback
+             if (empty($mensagemErro)) $mensagemErro = "Erro desconhecido ao atualizar profissional.";
 
             Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", $mensagemErro);
         }

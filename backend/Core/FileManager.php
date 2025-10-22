@@ -8,7 +8,7 @@ class FileManager{
         $this->diretorioBase = rtrim($diretorioBase, '/');
     }
 
-    public function salvarArquivo(array $file,string $subDiretorio,array $tiposPermitidos = ['image/jpeg', 'image/png', 'application/pdf'],int $tamanhoMaximo = 2097152) {
+    public function salvarArquivo(array $file,string $subDiretorio,array $tiposPermitidos = ['image/jpeg', 'image/png', 'application/pdf', 'image/webp'],int $tamanhoMaximo = 2097152) {
         $this->validarArquivo($file, $tiposPermitidos, $tamanhoMaximo);
 
         $diretorioDestino = $this->diretorioBase . '/' . trim($subDiretorio, '/');
