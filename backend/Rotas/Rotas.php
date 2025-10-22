@@ -12,6 +12,8 @@ class Rotas {
                 "/usuario/listar" => "UsuarioController@viewListarUsuarios",
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
+
+                "/carrossel/cards" => "ProfissionalController@getCarrosselCardsHtml",
                 
                 // NOVAS ROTAS GET PARA AGENDAMENTOS
                 "/agendamentos/disponibilidade/{id_profissional}/{data}" => "AgendamentoController@buscarDisponibilidade",

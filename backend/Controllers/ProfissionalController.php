@@ -8,6 +8,7 @@ use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\ProfissionalValidador;
 use App\Psico\Core\FileManager;
+use PDO;
 
 class ProfissionalController {
     public $profissional;   
@@ -311,5 +312,74 @@ public function viewCriarProfissionais()
             echo json_encode(['error' => 'Erro interno ao buscar detalhes do profissional.', 'details' => $e->getMessage()]);
         }
     }
+    
+    public function getCarrosselCardsHtml() {
+        // Define os IDs corretos
+        $idsProfissionaisCarrossel = [6, 7, 8, 9, 10]; // IDs corretos que funcionaram
 
+        $htmlCards = '';
+        $profissionaisParaCarrossel = [];
+
+        foreach ($idsProfissionaisCarrossel as $id) {
+            $prof = $this->profissional->buscarProfissionalPublicoPorId($id);
+            if ($prof) {
+                $profissionaisParaCarrossel[] = $prof;
+            } else {
+                error_log("Aviso: Profissional com ID {$id} não encontrado para o carrossel.");
+            }
+        }
+
+        // --- Gera o HTML ---
+        foreach ($profissionaisParaCarrossel as $profissional) {
+
+            // ===== INÍCIO DA LÓGICA CORRETA PARA PEGAR A PRIMEIRA ESPECIALIDADE =====
+            $especialidadeExibida = 'Clínica Geral'; // Define um padrão
+            if (!empty($profissional->especialidade)) {
+                // Remove espaços em branco do início e fim da string completa
+                $especialidadesString = trim($profissional->especialidade);
+
+                // Divide a string na PRIMEIRA vírgula encontrada, limitando a 2 partes
+                $partes = explode(',', $especialidadesString, 2);
+
+                // Pega a primeira parte (índice 0) ou uma string vazia se não houver nada
+                $primeiraEspecialidade = $partes[0] ?? '';
+
+                // Remove espaços em branco extras da primeira parte
+                $primeiraEspecialidadeLimpa = trim($primeiraEspecialidade);
+
+                // Usa a especialidade limpa APENAS se ela não ficou vazia após a limpeza
+                if ($primeiraEspecialidadeLimpa !== '') {
+                    $especialidadeExibida = $primeiraEspecialidadeLimpa;
+                }
+            }
+            // ===== FIM DA LÓGICA CORRETA PARA PEGAR A PRIMEIRA ESPECIALIDADE =====
+
+
+            // Define a URL da foto (sem alterações)
+            $nomeBase = explode(' ', $profissional->nome_usuario)[0];
+            $fotoUrlPadrao = "/img/profissionais/" . strtolower($nomeBase) . ".png";
+            $fotoFinal = (!empty($profissional->img_profissional)) ? "/" . ltrim($profissional->img_profissional, '/') : $fotoUrlPadrao;
+
+            // Gera o HTML do card (sem alterações)
+            $htmlCards .= '
+            <div class="card" data-id-profissional="'.htmlspecialchars($profissional->id_profissional).'">
+              <a href="profissionais.html?id='.htmlspecialchars($profissional->id_profissional).'" class="card-link">
+                <div class="foto" style="background-image: url(\''.htmlspecialchars($fotoFinal).'\'); background-size: cover; background-position: center;">
+                </div>
+                <h3>'.htmlspecialchars($profissional->nome_usuario).'</h3>
+                <div class="avaliacoes">
+                  <h4>Psicólogo(a)</h4>
+                  <p>'.htmlspecialchars($especialidadeExibida).'</p> </div>
+              </a>
+            </div>
+            ';
+        }
+
+        // Envia apenas o HTML dos 5 cards (sem duplicação no PHP)
+        $htmlCompleto = $htmlCards;
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo $htmlCompleto;
+        exit;
+    }
 }
