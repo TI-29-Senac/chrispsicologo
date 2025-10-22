@@ -29,7 +29,7 @@ $profissional = $dados['usuario'];
                 <div class="w3-row-padding w3-section">
                     <div class="w3-half">
                         <label for="especialidade"><b>Especialidades (separadas por vírgula)</b></label>
-                        <input class="w3-input w3-border" id="especialidade" name="especialidade" type="text" value="<?= htmlspecialchars($profissional->especialidade ?? '') ?>" required>
+                        <textarea class="w3-input w3-border" id="especialidade" name="especialidade" rows="3" placeholder="Ex: Terapia de Casal, Psicanálise, Terapia Cognitivo-Comportamental" required><?= htmlspecialchars($profissional->especialidade ?? '') ?></textarea>
                     </div>
                     <div class="w3-row-padding w3-section">
                     <div class="w3-full">

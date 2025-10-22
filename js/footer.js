@@ -3,8 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const footer = document.getElementById("footer");
     footer.innerHTML = `
     <footer class="footer">
-    <img src="img/icons/vaso.svg" class="planta-footer planta-esquerda" alt="" aria-hidden="true">
-    <img src="img/icons/vaso.svg" class="planta-footer planta-direita" alt="" aria-hidden="true">
  
     <div class="footer-container">
       <div class="footer-logo">

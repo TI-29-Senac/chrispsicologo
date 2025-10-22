@@ -92,7 +92,13 @@ function renderizarCardsProfissionais(profissionais) {
     profissionais.forEach((prof, index) => {
         const card = document.createElement("div");
         card.classList.add("profissional");
-        
+
+     
+        const maxChars = 130; 
+        let sobreResumido = prof.sobre || '';
+        if (sobreResumido.length > maxChars) {
+            sobreResumido = sobreResumido.substring(0, maxChars).trim() + '...'; // Trunca e adiciona "..."
+        }
         card.innerHTML = `
           <div class="card-prof">
             <h3>${prof.nome}</h3>
@@ -110,7 +116,7 @@ function renderizarCardsProfissionais(profissionais) {
 
           <div class="detalhes">
           <h4>Sobre Mim</h4>
-          <p style="font-size: 1.1rem; line-height: 1.4;">${prof.sobre}</p>
+          <p style="font-size: 1.1rem; line-height: 1.4;">${sobreResumido}</p>
             <h4>Especialidades</h4>
             <ul class="especialidades-lista">${prof.especialidades.map(e => `<li>${e}</li>`).join("")}</ul>
             <h4 class="espaco-prof">Duração e Tipo de Atendimento</h4>

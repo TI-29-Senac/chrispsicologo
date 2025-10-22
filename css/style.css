@@ -2552,21 +2552,17 @@ header {
 
 .profissional {
   display: grid;
-  /* Coluna da foto: no máximo 250px. Coluna de detalhes: ocupa o resto. */
   grid-template-columns: minmax(auto, 250px) 1fr;
-  gap: 40px; /* Espaçamento entre a foto e o texto */
-  align-items: center;
-
-  /* Estilização do card */
+  gap: 40px; 
+  align-items: start; 
   background-color: #faf6ee;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border: 1px solid #e0e0e0;
-
-  /* Remove margens que possam causar desalinhamento */
   margin-left: 0;
 }
+
 .card-prof {
   text-align: center;
   border-radius: 14px;
@@ -3325,8 +3321,8 @@ body::-webkit-scrollbar-thumb:hover {
 
 .agendamento-detalhe-grid {
     display: grid;
-    grid-template-columns: 320px 1fr; /* Mantém a estrutura de colunas */
-    gap: 50px;
+    grid-template-columns: 320px 1fr;
+    gap: 70px; 
     width: 90%;
     max-width: 1100px;
     padding: 30px;
@@ -3336,13 +3332,25 @@ body::-webkit-scrollbar-thumb:hover {
     border: 1px solid #e0e0e0;
     color: #5D6D68;
     font-family: 'Questrial', sans-serif;
-    align-items: start; /* <<< ADICIONADO: Alinha o topo das colunas */
+    align-items: start;
 }
 .profissional-info-coluna h3:first-of-type {
     margin-top: 0;
 }
 .profissional-bio-coluna h4:first-of-type {
     margin-top: 0;
+}
+
+.profissional-bio-coluna .avaliacoes-detalhe {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #eefaea;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #d6e3d6;
+    margin-left: 10px; /* <<< ADICIONADO: Pequena margem para alinhar com o texto */
+    margin-right: 10px;/* <<< ADICIONADO: Pequena margem para alinhar com o texto */
 }
 
 .agenda-container, .confirmacao-container {
@@ -3368,20 +3376,29 @@ body::-webkit-scrollbar-thumb:hover {
     border: 3px solid #5D6D68;
 }
 
-.profissional-info-coluna h4,
-.profissional-bio-coluna h4 {
-    font-size: 1.4rem;
+.profissional-info-coluna h4 {
+    font-size: 1.2rem;
     margin-top: 20px;
     margin-bottom: 10px;
     border-bottom: 1px solid #d6e3d6;
     padding-bottom: 5px;
+}
+.profissional-bio-coluna h4 {
+    font-size: 1.2rem;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #d6e3d6;
+    padding-bottom: 5px;
+    text-align: left;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .profissional-info-coluna .especialidades-lista,
 .profissional-info-coluna .tipos-lista {
     list-style: none;
     padding-left: 0;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 .profissional-info-coluna .especialidades-lista li {
@@ -3398,18 +3415,24 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .profissional-bio-coluna p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     line-height: 1.6;
     text-align: justify;
+    padding: 0 30px; 
+    margin-left: 20px; 
+    margin-right: 90px; 
+    max-width: 100%; 
 }
-
 .valor-consulta-box {
-    margin-top: 30px;
-    padding: 15px;
+    margin-top: 150px;
+    padding:  60px 10px;
     background-color: #d6e3d6;
     border-radius: 8px;
     text-align: center;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+    margin-left: 30px; 
+    margin-right: 30px;
+    border: 1px solid #5D6D68;
 }
 
 .agenda-tabela {
@@ -3476,7 +3499,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .form-grupo label {
-    display: block;
+    display: flex;
     margin-bottom: 5px;
 }
 
@@ -3505,13 +3528,19 @@ body::-webkit-scrollbar-thumb:hover {
     font-weight: bold;
     margin-bottom: 10px;
 }
+.termos-link:hover {
+  background-color: #A3B8A1;
+  color: white;
+
+}
 
 .checkbox-container {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 5px;
+    margin-top: 10px;
 }
+
 
 .form-rodape {
     display: flex;
@@ -3537,6 +3566,9 @@ body::-webkit-scrollbar-thumb:hover {
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
+}
+.btn-pagamento:hover{
+  background-color: #A3B8A1;
 }
 
 /* Responsividade para a página de agendamento */
@@ -3730,9 +3762,9 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* #region Estilos para Avaliações na Página de Detalhe */
 
-.profissional-bio-coluna h4 { /* Estilo geral para subtítulos na bio */
-    font-size: 1.4rem;
-    margin-top: 25px; /* Adiciona espaço acima dos subtítulos */
+.profissional-bio-coluna h4 { 
+    font-size: 1.2rem;
+    margin-top: 333px;
     margin-bottom: 10px;
     border-bottom: 1px solid #d6e3d6;
     padding-bottom: 5px;
@@ -3745,13 +3777,15 @@ body::-webkit-scrollbar-thumb:hover {
 
 
 .profissional-bio-coluna .avaliacoes-detalhe {
-    margin-top: 10px; /* Espaço acima, após o H4 */
-    margin-bottom: 30px; /* Espaço abaixo, antes do valor */
-    padding: 15px;
-    background-color: #eefaea; /* Fundo sutilmente diferente */
+    margin-top: 10px;
+    margin-bottom: 30px; 
+    padding: 15px; 
     border-radius: 8px;
     text-align: center;
-    border: 1px solid #d6e3d6;
+    border: 1px solid #5D6D68;
+    background-color: #d6e3d6;
+    margin-left: 30px; 
+    margin-right: 30px;
 }
 
 .avaliacoes-detalhe .nota-media-detalhe {
