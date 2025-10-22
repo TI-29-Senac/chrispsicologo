@@ -61,8 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderizarLayoutBase(prof) {
         const nomeBase = prof.nome_usuario.split(' ')[0].toLowerCase();
-        const fotoUrlPadrao = `img/profissionais/${nomeBase}.png`;
-        const fotoFinal = prof.img_profissional || fotoUrlPadrao;
+        const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`;
+        const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao;
         const hojeFormatado = getHojeFormatado(); // Pega a data de hoje para o input
 
         const conteudoHTML = `

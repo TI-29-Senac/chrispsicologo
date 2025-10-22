@@ -40,7 +40,7 @@
   </div>
   <div class="w3-bar-block">
     <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-    <a href="../index.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Home</a>
+    <a href="/index.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Home</a>
     <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Usuários</a>
     <a href="/backend/agendamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-calendar fa-fw"></i>  Agendamentos</a>
     <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>
