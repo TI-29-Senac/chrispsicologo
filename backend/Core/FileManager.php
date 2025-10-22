@@ -5,13 +5,13 @@ namespace App\Psico\Core;
 class FileManager {
     private string $diretorioBase;
 
-    // Construtor ligeiramente melhorado para garantir caminho absoluto
+    
     public function __construct(string $diretorioBase) {
         $realBaseDir = realpath($diretorioBase);
         if ($realBaseDir === false) {
             throw new \InvalidArgumentException("O diretório base especificado não existe ou não é acessível: " . $diretorioBase);
         }
-        $this->diretorioBase = $realBaseDir; // Usa o caminho absoluto resolvido
+        $this->diretorioBase = $realBaseDir; 
     }
 
     /**
@@ -27,46 +27,46 @@ class FileManager {
     public function salvarArquivo(
         array $file,
         string $subDiretorio,
-        array $tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'], // Adicionado webp para garantir
-        int $tamanhoMaximo = 2097152 // 2MB
+        array $tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'], 
+        int $tamanhoMaximo = 2097152 
     ): string {
 
-        // Valida e obtém o tipo MIME real
+        
         $tipoArquivo = $this->validarArquivo($file, $tiposPermitidos, $tamanhoMaximo);
 
-        // Cria o diretório de destino se não existir
+        
         $diretorioDestino = $this->diretorioBase . '/' . trim($subDiretorio, '/');
         if (!is_dir($diretorioDestino)) {
-            if (!mkdir($diretorioDestino, 0755, true)) { // O terceiro parâmetro 'true' permite criar diretórios aninhados
+            if (!mkdir($diretorioDestino, 0755, true)) { 
                 throw new \Exception("Falha ao criar o diretório de destino: " . $diretorioDestino);
             }
         }
 
-        // Determina a extensão CORRETA baseada no tipo MIME detectado
+        
         $extension = match ($tipoArquivo) {
             'image/jpeg' => 'jpg',
             'image/png' => 'png',
             'image/webp' => 'webp',
             'application/pdf' => 'pdf',
-            // Adicione outros mapeamentos se necessário
+            
             default => throw new \Exception("Tipo MIME validado ('" . $tipoArquivo . "') não possui uma extensão mapeada."),
         };
 
-        // Gera nome único e adiciona a extensão correta
+        
         $nomeBaseUnico = $this->gerarNomeUnico();
         $novoNome = $nomeBaseUnico . '.' . $extension;
         $caminhoCompletoDestino = $diretorioDestino . '/' . $novoNome;
 
-        // Move o arquivo enviado para o destino final
+        
         if (!move_uploaded_file($file['tmp_name'], $caminhoCompletoDestino)) {
-            // Adiciona mais detalhes ao erro, se possível
+            
             $error = error_get_last();
             $errorMessage = $error ? $error['message'] : 'desconhecido';
             throw new \Exception("Falha ao mover o arquivo enviado para '" . $caminhoCompletoDestino . "'. Erro: " . $errorMessage);
         }
-        @chmod($caminhoCompletoDestino, 0644); // Tenta definir permissão 644 (leitura para todos)
+        @chmod($caminhoCompletoDestino, 0644); 
         
-        // Retorna o caminho RELATIVO para ser salvo no banco de dados
+        
         return trim($subDiretorio, '/') . '/' . $novoNome;
     }
 
@@ -80,13 +80,13 @@ class FileManager {
      * @throws \Exception Se a validação falhar
      */
     private function validarArquivo(array $file, array $tiposPermitidos, int $tamanhoMaximo): string {
-        // Verifica erros de upload do PHP
+        
         if (!isset($file['error']) || is_array($file['error'])) {
              throw new \RuntimeException('Parâmetros de arquivo inválidos.');
         }
         switch ($file['error']) {
             case UPLOAD_ERR_OK:
-                break; // Sem erro, continua
+                break; 
             case UPLOAD_ERR_NO_FILE:
                 throw new \RuntimeException('Nenhum arquivo enviado.');
             case UPLOAD_ERR_INI_SIZE:
@@ -96,15 +96,15 @@ class FileManager {
                 throw new \RuntimeException('Erro desconhecido no upload do arquivo.');
         }
 
-        // Verifica tamanho do arquivo
+        
         if ($file['size'] > $tamanhoMaximo) {
             throw new \RuntimeException("O arquivo excede o tamanho máximo de " . ($tamanhoMaximo / 1024 / 1024) . "MB.");
         }
 
-        // Verifica o tipo MIME real do arquivo
+        
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $tipoArquivo = $finfo->file($file['tmp_name']);
-         if (false === $tipoArquivo) { // Verifica se finfo falhou
+         if (false === $tipoArquivo) { 
             throw new \RuntimeException('Falha ao verificar o tipo MIME do arquivo.');
         }
 
@@ -118,14 +118,14 @@ class FileManager {
             );
         }
 
-        return $tipoArquivo; // Retorna o tipo MIME validado
+        return $tipoArquivo; 
     }
 
     /**
      * Gera uma string base única para o nome do arquivo.
      */
     private function gerarNomeUnico(): string {
-        // Gera um ID único mais seguro e com mais entropia
+        
         return bin2hex(random_bytes(8)) . time();
     }
 
@@ -137,28 +137,28 @@ class FileManager {
      */
     public function delete(?string $caminhoRelativo): bool {
         if (empty($caminhoRelativo)) {
-            return true; // Considera sucesso se não há caminho
+            return true; 
         }
 
-        // Garante que não haja barras extras no início
+        
         $caminhoRelativoLimpo = ltrim($caminhoRelativo, '/');
         $caminhoCompleto = $this->diretorioBase . '/' . $caminhoRelativoLimpo;
 
-        // Verifica se o arquivo existe e é realmente um arquivo (não um diretório)
+        
         if (is_file($caminhoCompleto)) {
-            // Tenta deletar e retorna o sucesso/falha
+            
             if (!unlink($caminhoCompleto)) {
-                 error_log("Falha ao deletar arquivo: " . $caminhoCompleto); // Loga o erro para debug
-                 return false; // Indica falha
+                 error_log("Falha ao deletar arquivo: " . $caminhoCompleto); 
+                 return false; 
             }
-            return true; // Deletado com sucesso
+            return true; 
         } elseif (file_exists($caminhoCompleto)) {
-             // Existe mas não é um arquivo (pode ser diretório, link simbólico, etc.)
+             
              error_log("Tentativa de deletar algo que não é um arquivo: " . $caminhoCompleto);
-             return false; // Falha pois não era um arquivo esperado
+             return false; 
         }
 
-        // Se o arquivo nem existia, considera como 'já deletado'
+        
         return true;
     }
 }

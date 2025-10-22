@@ -1,7 +1,6 @@
 <?php
 namespace App\Psico\Controllers;
 
-// ... (usos existentes) ...
 use App\Psico\Models\ImagemSite;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
@@ -12,57 +11,55 @@ use App\Psico\Controllers\Admin\AuthenticatedController;
 
 class ImagemController extends AuthenticatedController {
 
-    // ... (propriedades e construtor existentes) ...
+    
     private ImagemSite $imagemModel;
     private FileManager $fileManager;
     private string $diretorioUpload = 'img/site';
 
     public function __construct() {
-        // parent::__construct();
+        
         $db = Database::getInstance();
         $this->imagemModel = new ImagemSite($db);
         $this->fileManager = new FileManager(__DIR__ . '/../../');
     }
 
-    // ... (viewListarImagens existente) ...
+    
     public function viewListarImagens() {
         $imagensAgrupadas = $this->imagemModel->buscarTodasAgrupadasPorSecao();
         View::render('imagem/index', ['imagensAgrupadas' => $imagensAgrupadas]);
     }
 
 
-    /**
-     * Exibe o formulário para adicionar uma nova imagem, com lógica para dropdowns dependentes.
-     */
+
     public function viewCriarImagem() {
         $todasSecoes = $this->imagemModel->buscarSecoesDisponiveis();
 
         $paginasPrincipais = [];
-        $secoesFilhasPorPagina = []; // Mapeamento para o JavaScript
+        $secoesFilhasPorPagina = []; 
 
-        // Define o nome da página pai que terá subseções
-        $paginaPaiNome = 'Home'; // <<< AJUSTE SE O NOME FOR DIFERENTE NO SEU BANCO
+        
+        $paginaPaiNome = 'Home'; 
 
         foreach ($todasSecoes as $secao) {
-            // Ajuste 'nome_pagina' e 'id_pagina' se os nomes das colunas forem diferentes
+            
             $nomeSecao = $secao->nome_pagina;
             $idSecao = $secao->id_pagina;
 
-            // Verifica se é uma subseção da página principal (ex: começa com "Home - ")
+            
             if (strpos($nomeSecao, $paginaPaiNome . ' - ') === 0) {
-                // Remove o prefixo para exibir no dropdown filho (ex: "Quem Somos Carrossel")
+                
                 $nomeFilha = str_replace($paginaPaiNome . ' - ', '', $nomeSecao);
                 if (!isset($secoesFilhasPorPagina[$paginaPaiNome])) {
                     $secoesFilhasPorPagina[$paginaPaiNome] = [];
                 }
                 $secoesFilhasPorPagina[$paginaPaiNome][] = ['id' => $idSecao, 'nome' => $nomeFilha];
             } else {
-                // É uma página principal ou uma seção que não depende de outra
+                
                 $paginasPrincipais[] = ['id' => $idSecao, 'nome' => $nomeSecao];
             }
         }
 
-        // Garante que a página pai principal (ex: "Home") esteja na lista, caso exista como entrada separada
+        
         $paginaPaiEncontrada = false;
         foreach($paginasPrincipais as $p) {
             if ($p['nome'] === $paginaPaiNome) {
@@ -70,15 +67,15 @@ class ImagemController extends AuthenticatedController {
                 break;
             }
         }
-        // Se a página "Home" não foi adicionada (porque só existem seções filhas dela),
-        // busca o ID dela especificamente para adicionar ao dropdown principal.
-        // Isso assume que existe uma entrada "Home" na tabela pagina_site.
+        
+        
+        
         if (!$paginaPaiEncontrada && !empty($secoesFilhasPorPagina[$paginaPaiNome])) {
-             // Você precisaria de um método no Model ou fazer a query aqui para buscar o ID da "Home"
-             // Exemplo simplificado (idealmente seria $this->imagemModel->buscarSecaoPorNome($paginaPaiNome)):
+             
+             
              foreach ($todasSecoes as $secao) {
                  if ($secao->nome_pagina === $paginaPaiNome) {
-                     array_unshift($paginasPrincipais, ['id' => $secao->id_pagina, 'nome' => $secao->nome_pagina]); // Adiciona no início
+                     array_unshift($paginasPrincipais, ['id' => $secao->id_pagina, 'nome' => $secao->nome_pagina]); 
                      break;
                  }
              }
@@ -87,16 +84,16 @@ class ImagemController extends AuthenticatedController {
 
         View::render('imagem/create', [
             'paginasPrincipais' => $paginasPrincipais,
-            // Passa o mapeamento como JSON para o JavaScript usar
+            
             'secoesFilhasJson' => json_encode($secoesFilhasPorPagina)
         ]);
     }
 
-    // ... (salvarImagem, viewEditarImagem, atualizarImagem, viewExcluirImagem, deletarImagem, listarQuemSomos existentes) ...
-     // Salvar imagem não precisa mudar muito, pois o <select name="id_secao"> final terá o ID correto.
+    
+     
     public function salvarImagem() {
-        // Validação básica
-         // A validação agora deve checar 'id_secao' que virá do dropdown final (ou do único, se não for Home)
+        
+         
         if (empty($_POST['id_secao']) || !isset($_FILES['arquivo_imagem']) || $_FILES['arquivo_imagem']['error'] != UPLOAD_ERR_OK) {
              Redirect::redirecionarComMensagem("imagens/criar", "error", "Selecione a página/seção final e envie um arquivo de imagem válido.");
             return;
@@ -111,7 +108,7 @@ class ImagemController extends AuthenticatedController {
                 2 * 1024 * 1024
             );
 
-            // Usa o id_secao que veio do formulário (que será o ID da seção filha ou da página principal)
+            
             $id_secao = (int)$_POST['id_secao'];
             $ordem = isset($_POST['ordem']) ? (int)$_POST['ordem'] : 99;
 
@@ -139,16 +136,16 @@ class ImagemController extends AuthenticatedController {
             return;
         }
 
-        // Lógica similar à viewCriarImagem para preparar os dropdowns
+        
         $todasSecoes = $this->imagemModel->buscarSecoesDisponiveis();
         $paginasPrincipais = [];
         $secoesFilhasPorPagina = [];
-        $paginaPaiNome = 'Home'; // <<< AJUSTE SE NECESSÁRIO
+        $paginaPaiNome = 'Home'; 
         $idPaginaPaiSelecionada = null;
         $idSecaoFilhaSelecionada = null;
-        $paginaPaiEncontrada = false; // <<< INICIALIZAÇÃO ADICIONADA AQUI
+        $paginaPaiEncontrada = false; 
 
-        // Determina se a imagem atual pertence a uma página pai ou a uma subseção
+        
         $nomeSecaoAtual = $imagem->nome_secao ?? '';
         $idSecaoAtual = $imagem->id_secao;
 
@@ -165,32 +162,32 @@ class ImagemController extends AuthenticatedController {
                 }
                 $secoesFilhasPorPagina[$paginaPaiNome][] = ['id' => $idSecao, 'nome' => $nomeFilha];
 
-                // Se a imagem atual é desta subseção, marca o ID
+                
                 if ($eSubsecao && $idSecao == $idSecaoAtual) {
                     $idSecaoFilhaSelecionada = $idSecao;
                 }
             } else {
                 $paginasPrincipais[] = ['id' => $idSecao, 'nome' => $nomeSecao];
-                // Se a imagem atual pertence a esta página principal, marca o ID
+                
                 if (!$eSubsecao && $idSecao == $idSecaoAtual) {
                      $idPaginaPaiSelecionada = $idSecao;
                 }
-                 // Se a imagem atual é subseção, precisamos encontrar o ID da página pai "Home" para pré-selecionar
+                 
                  if ($eSubsecao && $nomeSecao === $paginaPaiNome) {
                       $idPaginaPaiSelecionada = $idSecao;
                  }
-                 // Marca que a página pai foi encontrada na lista principal
+                 
                  if ($nomeSecao === $paginaPaiNome) {
-                    $paginaPaiEncontrada = true; // <<< Marca como encontrada
+                    $paginaPaiEncontrada = true; 
                  }
             }
         }
-         // Garante que "Home" esteja na lista principal se tiver filhas E não tiver sido adicionada antes
+         
          if (!$paginaPaiEncontrada && !empty($secoesFilhasPorPagina[$paginaPaiNome])) {
               foreach ($todasSecoes as $secao) {
                   if ($secao->nome_pagina === $paginaPaiNome) {
                       array_unshift($paginasPrincipais, ['id' => $secao->id_pagina, 'nome' => $secao->nome_pagina]);
-                      // Se a imagem for subseção, marca o ID pai aqui se não foi marcado antes
+                      
                       if ($eSubsecao && !$idPaginaPaiSelecionada) {
                            $idPaginaPaiSelecionada = $secao->id_pagina;
                       }
@@ -210,7 +207,7 @@ class ImagemController extends AuthenticatedController {
         ]);
     }
 
-    // Atualizar não precisa mudar muito, pois o name="id_secao" virá preenchido corretamente pelo JS
+    
      public function atualizarImagem(int $id) {
         $imagemAtual = $this->imagemModel->buscarImagemPorId($id);
         if (!$imagemAtual) {
@@ -218,7 +215,7 @@ class ImagemController extends AuthenticatedController {
             return;
         }
 
-        // A seção não pode ser alterada na edição, apenas ordem e arquivo
+        
         $ordem = isset($_POST['ordem']) ? (int)$_POST['ordem'] : $imagemAtual->ordem;
         $caminhoNovaImagem = null;
         $caminhoImagemAntiga = $imagemAtual->url_imagem;
@@ -237,10 +234,10 @@ class ImagemController extends AuthenticatedController {
             }
         }
 
-        $urlParaSalvar = $caminhoNovaImagem; // null se não houver nova imagem
+        $urlParaSalvar = $caminhoNovaImagem; 
 
         try {
-            // A atualização no Model só precisa da URL nova (ou null) e da ordem
+            
             $sucesso = $this->imagemModel->atualizarImagem($id, $urlParaSalvar, $ordem);
 
             if ($sucesso) {
@@ -296,7 +293,7 @@ class ImagemController extends AuthenticatedController {
      public function listarQuemSomos() {
          header('Content-Type: application/json');
          try {
-             $idSecaoQuemSomos = 4; // <<< AJUSTE ID CONFORME SEU BANCO
+             $idSecaoQuemSomos = 4; 
              $imagensObjs = $this->imagemModel->buscarImagensPorSecao($idSecaoQuemSomos);
              $urls = array_map(fn($img) => $img->url_imagem, $imagensObjs);
 

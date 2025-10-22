@@ -6,8 +6,8 @@ use PDO;
 class ImagemSite {
     private PDO $db;
     private string $table = 'imagem_site';
-    // Assumindo que você tem uma tabela para mapear seções (ex: pagina_site ou similar)
-    private string $secaoTable = 'pagina_site'; // <<< AJUSTE SE O NOME DA TABELA FOR DIFERENTE
+    
+    private string $secaoTable = 'pagina_site'; 
 
     public function __construct(PDO $db) {
         $this->db = $db;
@@ -44,7 +44,7 @@ class ImagemSite {
       * Busca todas as imagens agrupadas por seção para o dashboard.
       */
      public function buscarTodasAgrupadasPorSecao(): array {
-         // Ajuste s.nome_pagina se o nome da coluna for diferente na sua tabela de seções/páginas
+         
          $sql = "SELECT i.*, s.nome_pagina as nome_secao
                  FROM {$this->table} i
                  JOIN {$this->secaoTable} s ON i.id_secao = s.id_pagina -- Ajuste s.id_pagina se necessário
@@ -53,10 +53,10 @@ class ImagemSite {
          $stmt = $this->db->query($sql);
          $imagens = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-         // Agrupa as imagens pelo nome da seção
+         
          $agrupadas = [];
          foreach ($imagens as $imagem) {
-             $nomeSecao = $imagem->nome_secao ?? 'Outras'; // Seção padrão
+             $nomeSecao = $imagem->nome_secao ?? 'Outras'; 
              if (!isset($agrupadas[$nomeSecao])) {
                  $agrupadas[$nomeSecao] = [];
              }

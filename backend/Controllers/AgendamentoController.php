@@ -21,7 +21,7 @@ class AgendamentoController {
         $this->usuario = new Usuario($this->db);
         $this->profissional = new Profissional($this->db); 
     }
-    // Index
+    
     public function index() {
         $agendamentos = $this->agendamento->buscarAgendamentos();
         var_dump($agendamentos);
@@ -30,7 +30,7 @@ class AgendamentoController {
     public function buscarDisponibilidade($id_profissional, $data) {
         header('Content-Type: application/json');
 
-        // Validação básica da data (formato YYYY-MM-DD)
+        
         $d = DateTime::createFromFormat('Y-m-d', $data);
         if (!$d || $d->format('Y-m-d') !== $data) {
             http_response_code(400);
@@ -38,7 +38,7 @@ class AgendamentoController {
             return;
         }
 
-        // Verifica se o profissional existe e está ativo (opcional, mas bom)
+        
         $profissional = $this->profissional->buscarProfissionalPublicoPorId((int)$id_profissional);
         if (!$profissional) {
             http_response_code(404);
@@ -52,37 +52,37 @@ class AgendamentoController {
             echo json_encode(['success' => true, 'horarios' => $horariosDisponiveis]);
         } catch (\Exception $e) {
             http_response_code(500);
-            error_log("Erro ao buscar disponibilidade: " . $e->getMessage()); // Log do erro
+            error_log("Erro ao buscar disponibilidade: " . $e->getMessage()); 
             echo json_encode(['success' => false, 'message' => 'Erro ao buscar horários disponíveis.']);
         }
     }
 
-    // --- MÉTODO SALVAR AJUSTADO PARA AJAX E SESSÃO ---
+    
     public function salvarAgendamentos() {
-        header('Content-Type: application/json'); // Resposta será JSON
+        header('Content-Type: application/json'); 
 
-        // Verifica se o usuário está logado (CLIENTE)
+        
          if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSION['usuario_tipo'] !== 'cliente') {
-             http_response_code(401); // Unauthorized
+             http_response_code(401); 
              echo json_encode(['success' => false, 'message' => 'Acesso não autorizado. Faça login como cliente para agendar.']);
              return;
          }
-         $id_usuario = $_SESSION['usuario_id']; // Pega ID do cliente da sessão
+         $id_usuario = $_SESSION['usuario_id']; 
 
-        // Recebe dados via JSON (ou formulário, ajuste o frontend)
-        // Se o frontend enviar como form data:
+        
+        
         $id_profissional = $_POST['id_profissional'] ?? null;
         $data_selecionada = $_POST['data_selecionada'] ?? null;
         $horario_selecionado = $_POST['horario_selecionado'] ?? null;
 
-        // Validações básicas
+        
         if (empty($id_profissional) || empty($data_selecionada) || empty($horario_selecionado)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Dados incompletos para agendamento.']);
             return;
         }
 
-        // Combina data e hora no formato YYYY-MM-DD HH:MM:SS
+        
         $data_agendamento_str = $data_selecionada . ' ' . $horario_selecionado . ':00';
         $data_agendamento = DateTime::createFromFormat('Y-m-d H:i:s', $data_agendamento_str);
 
@@ -91,31 +91,31 @@ class AgendamentoController {
              echo json_encode(['success' => false, 'message' => 'Data ou hora inválida.']);
              return;
         }
-         // Verifica se o horário ainda está disponível (importante para evitar condição de corrida)
+         
          $horariosDisponiveis = $this->agendamento->calcularHorariosDisponiveis((int)$id_profissional, $data_selecionada);
          if (!in_array($horario_selecionado, $horariosDisponiveis)) {
-             http_response_code(409); // Conflict
+             http_response_code(409); 
              echo json_encode(['success' => false, 'message' => 'Desculpe, este horário acabou de ser reservado. Por favor, escolha outro.']);
              return;
          }
 
 
-        // Tenta inserir no banco
+        
         $resultado = $this->agendamento->inserirAgendamento(
             (int)$id_usuario,
             (int)$id_profissional,
-            $data_agendamento->format('Y-m-d H:i:s'), // Formato correto para o BD
-            'pendente' // Status inicial
+            $data_agendamento->format('Y-m-d H:i:s'), 
+            'pendente' 
         );
 
         if($resultado){
-            http_response_code(201); // Created
-            // Aqui seria o ponto para iniciar o pagamento do sinal
+            http_response_code(201); 
+            
             echo json_encode([
                 'success' => true,
                 'message' => 'Agendamento solicitado com sucesso! Efetue o pagamento do sinal para confirmar.',
                 'agendamentoId' => $resultado
-                // 'redirectPagamento' => '/pagamento/iniciar/' . $resultado // Exemplo
+                
             ]);
         } else {
             http_response_code(500);
@@ -123,7 +123,7 @@ class AgendamentoController {
         }
     }
 
-    // ... (outros métodos como viewListar, viewEditar, atualizar, viewExcluir, deletar permanecem) ...
+    
     public function viewListarAgendamentos() {
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10);
@@ -206,11 +206,11 @@ class AgendamentoController {
     }
 
     public function atualizarAgendamentos($id) {
-         // Validação pode ser adicionada aqui se necessário
-        $data_agendamento_str = $_POST['data_agendamento']; // Vem do datetime-local
+         
+        $data_agendamento_str = $_POST['data_agendamento']; 
         $status_consulta = $_POST['status_consulta'] ?? 'pendente';
 
-        // Converte o formato do datetime-local para o formato do banco
+        
          try {
             $data_agendamento_dt = new DateTime($data_agendamento_str);
             $data_agendamento_bd = $data_agendamento_dt->format('Y-m-d H:i:s');
@@ -222,7 +222,7 @@ class AgendamentoController {
 
         $sucesso = $this->agendamento->atualizarAgendamento(
             (int)$id,
-             $data_agendamento_bd, // Usa a data formatada
+             $data_agendamento_bd, 
             $status_consulta
         );
 

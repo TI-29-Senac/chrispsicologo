@@ -1,4 +1,4 @@
-  // Sentimentos
+  
 
 function toggleCard(selectedCard) {
   const allCards = document.querySelectorAll('.card-sentimento');
@@ -12,13 +12,13 @@ function toggleCard(selectedCard) {
 
 
 
-  // Serviços
+  
 
 document.querySelectorAll('.card-servico img').forEach(img => {
-  img.style.cursor = 'pointer'; // muda o cursor para indicar clique
+  img.style.cursor = 'pointer'; 
 
   img.addEventListener('click', () => {
-    // cria o modal
+    
     const modal = document.createElement('div');
     modal.style.position = 'fixed';
     modal.style.top = 0;
@@ -32,7 +32,7 @@ document.querySelectorAll('.card-servico img').forEach(img => {
     modal.style.zIndex = 9999;
     modal.style.cursor = 'zoom-out';
 
-    // cria a imagem maior
+    
     const modalImg = document.createElement('img');
     modalImg.src = img.src;
     modalImg.alt = img.alt;
@@ -43,12 +43,12 @@ document.querySelectorAll('.card-servico img').forEach(img => {
 
     modal.appendChild(modalImg);
 
-    // fecha o modal ao clicar em qualquer lugar
+    
     modal.addEventListener('click', () => {
       modal.remove();
     });
 
-    // adiciona o modal ao body
+    
     document.body.appendChild(modal);
   });
 });

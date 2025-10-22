@@ -41,7 +41,7 @@ class Flash {
      */
     public static function getFlash()
     {
-        $flash = self::get(); // Usa o método get() para pegar e limpar a mensagem
+        $flash = self::get(); 
 
         if ($flash) {
             $tipo = $flash['tipo'] ?? 'info';

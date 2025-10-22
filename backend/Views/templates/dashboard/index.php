@@ -1,7 +1,7 @@
 <?php
-// backend/Views/templates/dashboard/index.php
 
-// Mensagem de boas-vindas
+
+
 $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Utilizador';
 ?>
 
@@ -15,17 +15,17 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Utilizador';
     <div class="w3-row-padding w3-margin-bottom">
 
         <?php
-          // Define um array de cores para variar os cards, se não vier do header
+          
           $dashboard_colors = ['#5D6D68', '#7C8F88', '#A3B8A1', '#8F9E8B', '#B9C8B5'];
           $d_colorIndex = 0;
 
-          // Verifica se a variável $stats foi passada pela view
+          
           if (isset($stats) && is_array($stats) && !empty($stats)):
             foreach ($stats as $stat):
-              // Define a cor para o card
+              
               $d_color = $dashboard_colors[$d_colorIndex % count($dashboard_colors)];
-              // Define o link (se existir)
-              $link = $stat['link'] ?? '#'; // Link padrão '#' se não for definido
+              
+              $link = $stat['link'] ?? '#'; 
         ?>
         <div class="w3-quarter w3-margin-bottom">
           <a href="<?= htmlspecialchars($link) ?>" style="text-decoration: none;">
@@ -40,10 +40,10 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Utilizador';
           </a>
         </div>
         <?php
-              $d_colorIndex++; // Incrementa o índice da cor
+              $d_colorIndex++; 
             endforeach;
           else:
-            // Mensagem se não houver stats para exibir
+            
             echo "<p>Nenhuma estatística rápida disponível no momento.</p>";
           endif;
         ?>
