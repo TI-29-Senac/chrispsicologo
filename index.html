@@ -300,6 +300,45 @@
   <script src="js/cerebro.js" defer></script>
   <script src="js/profissionais.js" defer></script>
   <script src="js/carrossel.js" defer></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cardsContainer = document.getElementById('cards-carrossel');
+
+      if (cardsContainer) {
+        // Adiciona mensagem de carregamento inicial
+        cardsContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; width: 100%; padding: 20px 0;">Carregando profissionais...</p>';
+
+        fetch('/backend/carrossel/cards') // Backend agora envia SÓ os 5 cards
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Falha ao carregar cards do carrossel. Status: ' + response.status);
+            }
+            return response.text();
+          })
+          .then(htmlString => {
+            cardsContainer.innerHTML = htmlString; // Injesta os 5 cards recebidos
+
+            // --- CHAMA A INICIALIZAÇÃO DO CARROSSEL QUE AGORA FAZ A DUPLICAÇÃO ---
+            if (typeof inicializarCarrosselHome === 'function') {
+                inicializarCarrosselHome(); // Esta função agora duplica e ajusta o scroll
+            } else {
+                 console.error('Função inicializarCarrosselHome() não encontrada em carrossel.js. O carrossel não funcionará.');
+                 cardsContainer.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Erro: Script do carrossel não carregado corretamente.</p>';
+            }
+            // --- FIM DA INICIALIZAÇÃO ---
+
+          })
+          .catch(error => {
+            console.error('Erro ao buscar ou injetar cards do carrossel:', error);
+            cardsContainer.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Não foi possível carregar os profissionais no momento.</p>';
+          });
+      } else {
+        console.error('Elemento #cards-carrossel não encontrado.');
+      }
+    });
+  </script>
+
   <script src="js/footer.js" defer></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="js/login-modal-injector.js" defer></script> 
