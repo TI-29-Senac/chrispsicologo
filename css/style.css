@@ -3880,3 +3880,54 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* #endregion */
+
+
+/* ===== ESTILOS DA TELA DE CARREGAMENTO ===== */
+
+#loading-overlay {
+    position: fixed; /* Fixa na tela inteira */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #faf6ee; /* Cor de fundo do seu site para cobrir tudo */
+    /* Ou use a cor principal: background-color: #5D6D68; */
+    z-index: 9999; /* Garante que fique por cima de tudo */
+    display: flex; /* Para centralizar o spinner */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Caso adicione texto abaixo do spinner */
+    opacity: 1; /* Começa visível */
+    transition: opacity 0.5s ease-out; /* Efeito suave de fade-out */
+}
+
+/* Esconde a overlay com fade */
+#loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none; /* Impede cliques após ficar invisível */
+}
+
+/* Spinner Simples */
+.spinner {
+    border: 6px solid #f3f3f3; /* Cinza claro */
+    border-top: 6px solid #5D6D68; /* Cor principal do site */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px; /* Espaço se houver texto abaixo */
+}
+
+/* Animação do Spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilo opcional para o texto "Carregando..." */
+#loading-overlay p {
+    color: #5D6D68; /* Cor do texto (se o fundo for claro) */
+    /* color: #faf6ee; */ /* Cor do texto (se o fundo for escuro) */
+    font-family: 'Questrial', sans-serif;
+    font-size: 1.2rem;
+}

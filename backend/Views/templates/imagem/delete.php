@@ -17,7 +17,8 @@ $imagem = $dados['imagem'];
              <?php else: ?>
                 <p><i>Imagem sem arquivo associado.</i></p>
              <?php endif; ?>
-             <p><strong>ID:</strong> <?= htmlspecialchars($imagem->id_imagem ?? '') ?></p>
+             <p><strong>ID Imagem:</strong> <?= htmlspecialchars($imagem->id_imagem ?? '') ?></p>
+             <p><strong>Página:</strong> <?= htmlspecialchars($imagem->nome_pagina ?? 'N/A') ?></p>
              <p><strong>Seção:</strong> <?= htmlspecialchars($imagem->nome_secao ?? 'N/A') ?></p>
              <p><strong>Ordem:</strong> <?= htmlspecialchars($imagem->ordem ?? '') ?></p>
         </div>

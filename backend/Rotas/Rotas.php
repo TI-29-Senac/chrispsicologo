@@ -56,6 +56,9 @@ class Rotas {
                 "/imagens/editar/{id}" => "ImagemController@viewEditarImagem", 
                 "/imagens/excluir/{id}" => "ImagemController@viewExcluirImagem", 
 
+                // --- NOVA ROTA API PARA BUSCAR SEÇÕES ---
+                "/api/secoes/por-pagina/{id_pagina}" => "ImagemController@buscarSecoesPorPaginaApi", // <<< ADICIONADA
+
                 // --- ROTAS DE API EXISTENTES ---
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
             ],
