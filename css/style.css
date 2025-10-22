@@ -64,14 +64,14 @@ header {
   display: flex;
   gap: 14px;
   list-style: none;
-  margin-left: 25rem;
+  margin-left: 15rem;
 }
 
 .menu-navegacao a {
   text-decoration: none;
   background-color: #fff;
   color: #5e6c69;
-  border-radius: 20px 4px 20px 4px;
+  border-radius: 20px;
   transition: background 0.3s ease;
   border: solid 1px #5e6c69;
   font-family: 'Questrial', sans-serif;
@@ -84,6 +84,7 @@ header {
   text-align: center;
   box-sizing: border-box;
   padding: 0 10px;
+  font-size: 1.1rem;
 }
 
 .menu-navegacao a:hover {
@@ -200,11 +201,10 @@ header {
 
 /* MAIS region */
 .more {
-  display: block;
+  display: flex;
   width: 64px;
   height: 4rem;
   clip-path: inset(40% 0 40% 0);
-  margin-bottom: 35px;
 }
 
 .mais-titulo{
@@ -214,7 +214,7 @@ header {
   letter-spacing: 0.1rem;
 }
 .svg-wrapper {
-  height: 3.5rem; 
+  height: 2rem; 
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -247,7 +247,8 @@ header {
   padding: 0;
   font-size: 1rem;
   line-height: 1;
-  user-select: none; /* opcional, só pra evitar seleção ao clicar */
+  user-select: none;
+  margin-top: 10px;
 }
 .botao-fechar {
   align-self: flex-end;
@@ -3811,6 +3812,68 @@ body::-webkit-scrollbar-thumb:hover {
     display: block;
     font-size: 0.95rem;
     color: #777; /* Cinza mais claro para o número total */
+}
+
+/* #endregion */
+
+/* #region Header Actions (Profile Icon + Menu Button) */
+
+.header-actions {
+    display: flex;
+    align-items: flex-start;
+    text-align: center;
+    gap: 15px;
+
+}
+
+.profile-icon-btn {
+    background: none;
+    border: none;
+    padding: 5px; /* Pequeno padding interno */
+    cursor: pointer;
+    color: white; /* Cor do ícone */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Faz o fundo ficar redondo no hover/focus */
+    transition: background-color 0.2s ease;
+}
+
+.profile-icon-btn:hover,
+.profile-icon-btn:focus {
+    background-color: rgba(255, 255, 255, 0.15); /* Leve destaque no hover/focus */
+    outline: none;
+}
+
+.profile-icon-btn svg {
+    display: block; /* Garante que o SVG se comporte como bloco */
+}
+
+/* Ajustes para o botão de menu existente quando ao lado do ícone */
+#btn-more {
+    margin-top: 0;
+}
+
+
+@media (max-width: 768px) {
+    .header-actions {
+        gap: 0px; 
+    }
+
+     #btn-more .mais-titulo {
+        display: none;
+     }
+     /* Ajusta o wrapper do ícone do botão de menu */
+    #btn-more .svg-wrapper {
+         height: auto;
+         margin-bottom: 0; 
+    }
+     #btn-more .more {
+        clip-path: none; 
+         margin-bottom: 0;
+        height: 2rem; /* Ajusta altura do ícone de menu, se necessário */
+        width: auto;
+    }
 }
 
 /* #endregion */
