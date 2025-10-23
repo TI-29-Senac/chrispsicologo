@@ -3931,3 +3931,205 @@ body::-webkit-scrollbar-thumb:hover {
     font-family: 'Questrial', sans-serif;
     font-size: 1.2rem;
 }
+
+/* Adicionar no final de css/style.css (ou substituir o bloco anterior de minha-conta) */
+
+/* Estilos para a página Minha Conta */
+.minha-conta-container {
+    max-width: 900px;
+    margin: 50px auto; 
+    padding: 30px;
+    background-color: #faf6ee; /* Cor de fundo principal */
+    border-radius: 12px; /* Aumenta o arredondamento */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais destacada */
+    font-family: 'Questrial', sans-serif;
+    color: #5D6D68;
+    z-index: 10;
+    position: relative;
+    border: 1px solid #d6e3d6; /* Adiciona uma borda sutil */
+}
+
+/* Título e Subtítulo */
+.minha-conta-container h3 {
+    font-size: 2rem;
+    color: #5D6D68;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.minha-conta-container .subtitulo-registro {
+    font-size: 1.1rem;
+    color: #7C8F88;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Navegação Interna */
+.minha-conta-nav {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.minha-conta-nav .nav-btn {
+    background-color: #A3B8A1;
+    color: white;
+    border: 1px solid #A3B8A1;
+    padding: 12px 25px; /* Aumenta o padding */
+    border-radius: 8px; /* Aumenta o arredondamento */
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    min-width: 180px; /* Garante tamanho mínimo */
+}
+
+.minha-conta-nav .nav-btn:hover {
+    background-color: #7C8F88;
+    border-color: #7C8F88;
+}
+
+.minha-conta-nav .nav-btn.active {
+    background-color: #5D6D68; /* Cor de destaque mais escura */
+    border-color: #5D6D68;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Estilo do Formulário de Perfil (usando classes de registro) */
+#secao-perfil {
+    /* Removido: display: grid; grid-template-columns: 1fr 1fr; */
+    padding: 20px 0;
+    max-width: 450px; /* Limita a largura do formulário */
+    margin: 0 auto;  /* Centraliza o formulário */
+}
+
+#secao-perfil label,
+#secao-perfil input[type="text"],
+#secao-perfil input[type="email"],
+#secao-perfil input[type="password"] {
+    display: block; /* Força que cada elemento ocupe a largura total */
+    width: 100%;
+}
+
+#secao-perfil input[type="text"],
+#secao-perfil input[type="email"],
+#secao-perfil input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    color: #5D6D68;
+}
+
+/* Ajuste para campos menores como CPF e Senha em colunas separadas */
+#secao-perfil label[for="cpf"], 
+#secao-perfil input[name="cpf"],
+#secao-perfil label[for="senha_usuario"],
+#secao-perfil input[name="senha_usuario"] {
+    grid-column: span 1; 
+}
+#secao-perfil label[for="senha_usuario"] {
+     margin-top: 15px;
+}
+
+/* Botão de Atualizar */
+#btn-atualizar-perfil {
+    display: block;
+    grid-column: 2 / 3; /* Alinha à direita na segunda coluna */
+    justify-self: end;
+    width: 100%;
+    max-width: 250px;
+    padding: 12px 20px;
+    background-color: #A3B8A1;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin: 20px auto 0 auto;
+}
+
+#btn-atualizar-perfil:hover {
+    background-color: #5D6D68;
+}
+
+
+/* Estilos Agendamentos */
+#secao-agendamentos {
+    padding: 20px 0;
+    text-align: center;
+}
+
+#secao-agendamentos h4 {
+    font-size: 1.4rem;
+    color: #5D6D68;
+    margin-bottom: 15px;
+}
+
+.agendamento-card {
+    background-color: #d6e3d6;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.agendamento-card a {
+    color: #5D6D68;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.agendamento-card a:hover {
+    color: #A3B8A1;
+}
+
+.tag-status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.tag-status.pendente { background-color: #f3c74c; }
+.tag-status.confirmada { background-color: #5D6D68; }
+.tag-status.cancelada { background-color: #dc3545; }
+.tag-status.realizada { background-color: #A3B8A1; }
+
+
+/* Responsivo */
+@media (max-width: 768px) {
+     .minha-conta-nav .nav-btn {
+        min-width: 45%;
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+    #secao-perfil {
+        grid-template-columns: 1fr; /* Volta para coluna única */
+    }
+    #secao-perfil label[for="cpf"], 
+    #secao-perfil input[name="cpf"],
+    #secao-perfil label[for="senha_usuario"],
+    #secao-perfil input[name="senha_usuario"] {
+        grid-column: span 1; 
+    }
+    #btn-atualizar-perfil {
+        grid-column: 1 / 2;
+        max-width: 100%;
+    }
+    .agendamento-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}

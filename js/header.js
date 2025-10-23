@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (userName) {
              sideMenuAuthItemHTML = `
                 <li class="welcome-user-side"><span>Olá, ${userName}!</span></li>
-                <li><a href="#">Minha Conta</a></li>
+                <li><a href="minha-conta.html">Minha Conta</a></li>
                 <li><a href="#" onclick="performLogout(event)">Sair</a></li>
             `;
         } else {

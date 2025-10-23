@@ -401,4 +401,89 @@ class UsuarioController extends AdminController {
               exit();
       }
 }
+
+    public function meuPerfilApi() {
+        header('Content-Type: application/json');
+        
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Acesso não autorizado.']);
+            return;
+        }
+
+        $id_usuario = $_SESSION['usuario_id']; 
+        
+        $usuario = $this->usuario->buscarUsuarioPorId((int)$id_usuario);
+        
+        if ($usuario) {
+            unset($usuario->senha_usuario); // Garante que a senha não é exposta
+            
+            http_response_code(200);
+            echo json_encode(['success' => true, 'data' => $usuario]);
+
+        } else {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Usuário não encontrado.']);
+        }
+    }
+
+    public function atualizarMeuPerfil() {
+         header('Content-Type: application/json'); 
+
+         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+             http_response_code(401);
+             echo json_encode(['success' => false, 'message' => 'Acesso não autorizado.']);
+             return;
+         }
+         $id = $_SESSION['usuario_id'];
+         
+         // Usa o validador para atualização
+         $erros = \App\Psico\Validadores\UsuarioValidador::ValidarEntradas($_POST, true); 
+         if (!empty($erros)) {
+             http_response_code(400);
+             echo json_encode(['success' => false, 'message' => implode("<br>", array_values($erros))]);
+             return;
+         }
+         
+         try {
+             $usuarioAtual = $this->usuario->buscarUsuarioPorId((int)$id);
+             if (!$usuarioAtual) {
+                 http_response_code(404);
+                 echo json_encode(['success' => false, 'message' => 'Usuário não encontrado.']);
+                 return;
+             }
+
+             $sucesso = $this->usuario->atualizarUsuario(
+                 (int)$id,
+                 $_POST['nome_usuario'],
+                 $_POST['email_usuario'],
+                 $_POST['senha_usuario'] ?? null, 
+                 $usuarioAtual->tipo_usuario,
+                 $_POST['cpf'] ?? '', 
+                 $usuarioAtual->status_usuario
+             );
+
+             if ($sucesso) {
+                 if (isset($_POST['nome_usuario'])) {
+                      $_SESSION['usuario_nome'] = $_POST['nome_usuario'];
+                 }
+
+                 http_response_code(200);
+                 echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!', 'userName' => $_SESSION['usuario_nome']]);
+             } else {
+                 http_response_code(500);
+                 echo json_encode(['success' => false, 'message' => 'Erro ao atualizar perfil.']);
+             }
+         } catch (\PDOException $e) {
+              if ($e->getCode() == 23000 || $e->getCode() == 1062) {
+                 http_response_code(409);
+                 echo json_encode(['success' => false, 'message' => "Erro ao atualizar: O email fornecido já está em uso."]);
+             } else {
+                 error_log("Erro de PDO ao atualizar usuário: " . $e->getMessage()); 
+                 http_response_code(500);
+                 echo json_encode(['success' => false, 'message' => 'Ocorreu um erro inesperado no servidor ao atualizar.']);
+             }
+         }
+     }
+
 }
