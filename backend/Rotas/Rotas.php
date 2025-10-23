@@ -62,6 +62,8 @@ class Rotas {
                 // --- ROTAS DE API EXISTENTES ---
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
                 "/api/imagens/servicos" => "ImagemController@listarServicos",
+                "/api/cliente/meu-perfil" => "UsuarioController@meuPerfilApi",
+                "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarMeusAgendamentosApi",
 
             ],
             "POST" => [
@@ -96,7 +98,8 @@ class Rotas {
                 // --- ROTAS POST PARA IMAGENS ---
                 "/imagens/salvar" => "ImagemController@salvarImagem",
                 "/imagens/atualizar/{id}" => "ImagemController@atualizarImagem",
-                "/imagens/deletar/{id}" => "ImagemController@deletarImagem", 
+                "/imagens/deletar/{id}" => "ImagemController@deletarImagem",
+                "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
                 
             ],
         ];

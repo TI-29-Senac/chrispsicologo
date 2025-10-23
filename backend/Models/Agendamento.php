@@ -184,4 +184,29 @@ class Agendamento {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // ... (Dentro da classe Agendamento em Agendamento.php) ...
+
+    public function buscarAgendamentosPorUsuario(int $id_usuario): array {
+        $sql = "
+            SELECT
+                a.id_agendamento,
+                a.data_agendamento,
+                a.status_consulta,
+                prof_usuario.nome_usuario AS nome_profissional
+            FROM {$this->table} a
+            JOIN profissional p ON a.id_profissional = p.id_profissional
+            JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
+            WHERE a.id_usuario = :id_usuario
+            AND a.excluido_em IS NULL
+            ORDER BY a.data_agendamento DESC
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+// ...
+
 }
