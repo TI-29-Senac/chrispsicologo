@@ -1,7 +1,7 @@
 <?php use App\Psico\Core\Flash; ?>
 
 <div class="w3-container w3-white w3-text-grey w3-card-4" style="padding-bottom: 32px;">
-    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-plus-circle fa-fw w3-margin-right w3-xxlarge" style="color: #A3B8A1;"></i>Adicionar Nova Imagem</h2>
+    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-plus-circle fa-fw w3-margin-right w3-xxlarge" style="color: #A3B8A1;"></i>Adicionar Nova Imagem e Conteúdo</h2>
 
     <?= Flash::getFlash() ?>
 
@@ -35,7 +35,7 @@
 
              <div class="w3-row-padding w3-section">
                 <div class="w3-half">
-                    <label for="ordem"><b><i class="fa fa-sort-numeric-asc"></i> Ordem de Exibição</b></label>
+                    <label for="ordem"><b><i class="fa fa-sort-numeric-asc"></i> Ordem de Exibição (Imagem/Conteúdo)</b></label>
                     <input class="w3-input w3-border" type="number" id="ordem" name="ordem" value="99" min="1">
                     <small>Menor número aparece primeiro (1, 2, 3...).</small>
                 </div>
@@ -46,20 +46,43 @@
                  </div>
             </div>
 
-            <button type="submit" class="w3-button w3-right w3-padding" style="background-color: #A3B8A1 !important;">Salvar Imagem</button>
+            <hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+
+             <h4 style="color: #5D6D68;"><i class="fa fa-file-text-o"></i> Conteúdo Associado (para tabela conteudo_site)</h4>
+
+             <div class="w3-row-padding w3-section">
+                 <div class="w3-half">
+                     <label for="titulo_secao"><b><i class="fa fa-header"></i> Título / Nome do Serviço</b></label>
+                     <input class="w3-input w3-border" type="text" id="titulo_secao" name="titulo_secao" placeholder="Ex: Psicoterapia Individual" required>
+                 </div>
+                  <div class="w3-half">
+                     <label for="subtitulo"><b><i class="fa fa-tag"></i> Subtítulo (Opcional)</b></label>
+                     <input class="w3-input w3-border" type="text" id="subtitulo" name="subtitulo" placeholder="Ex: Para Adultos">
+                 </div>
+             </div>
+
+             <div class="w3-row-padding w3-section">
+                 <div class="w3-full">
+                     <label for="texto"><b><i class="fa fa-align-left"></i> Texto / Descrição</b></label>
+                     <textarea class="w3-input w3-border" id="texto" name="texto" rows="4" placeholder="Descreva o serviço ou conteúdo aqui..." required></textarea>
+                 </div>
+             </div>
+
+            <button type="submit" class="w3-button w3-right w3-padding" style="background-color: #A3B8A1 !important;">Salvar Imagem e Conteúdo</button>
             <a href="/backend/imagens/listar" class="w3-button w3-right w3-padding w3-light-grey w3-margin-right">Cancelar</a>
         </form>
     </div>
 </div>
 
 <script>
+    // O Javascript para carregar as seções permanece o mesmo
     const selectPagina = document.getElementById('id_pagina');
     const selectSecao = document.getElementById('id_secao');
     const secaoFeedback = document.getElementById('secao-feedback');
 
     selectPagina.addEventListener('change', function() {
         const idPaginaSelecionada = this.value;
-        selectSecao.innerHTML = '<option value="" disabled selected>Carregando seções...</option>'; // Placeholder
+        selectSecao.innerHTML = '<option value="" disabled selected>Carregando seções...</option>';
         selectSecao.disabled = true;
         secaoFeedback.textContent = '';
 
@@ -68,19 +91,18 @@
             return;
         }
 
-        // Fazer a chamada API para buscar as seções
         fetch(`/backend/api/secoes/por-pagina/${idPaginaSelecionada}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.secoes && data.secoes.length > 0) {
-                    selectSecao.innerHTML = '<option value="" disabled selected>Selecione a seção...</option>'; // Reset com prompt
+                    selectSecao.innerHTML = '<option value="" disabled selected>Selecione a seção...</option>';
                     data.secoes.forEach(secao => {
                         const option = document.createElement('option');
                         option.value = secao.id_secao;
                         option.textContent = secao.nome_secao;
                         selectSecao.appendChild(option);
                     });
-                    selectSecao.disabled = false; // Habilita o select
+                    selectSecao.disabled = false;
                 } else {
                      selectSecao.innerHTML = '<option value="" disabled selected>Nenhuma seção encontrada</option>';
                      secaoFeedback.textContent = data.message || 'Nenhuma seção específica encontrada para esta página.';
@@ -93,19 +115,26 @@
             });
     });
 
-    // Validação no submit (opcional, mas recomendada)
+     // Validação no submit agora também verifica os novos campos
      document.getElementById('form-add-imagem').addEventListener('submit', function(e) {
          if (!selectPagina.value) {
              alert('Por favor, selecione a Página do Site.');
-             e.preventDefault();
-             selectPagina.focus();
-             return;
+             e.preventDefault(); selectPagina.focus(); return;
          }
          if (!selectSecao.value || selectSecao.disabled) {
               alert('Por favor, selecione a Seção Específica.');
-              e.preventDefault();
-              selectSecao.focus();
-              return;
+              e.preventDefault(); selectSecao.focus(); return;
+         }
+         // Verifica campos de conteúdo
+         const titulo = document.getElementById('titulo_secao').value.trim();
+         const texto = document.getElementById('texto').value.trim();
+         if (!titulo) {
+             alert('Por favor, preencha o Título / Nome do Serviço.');
+             e.preventDefault(); document.getElementById('titulo_secao').focus(); return;
+         }
+         if (!texto) {
+              alert('Por favor, preencha o Texto / Descrição.');
+              e.preventDefault(); document.getElementById('texto').focus(); return;
          }
      });
 </script>
