@@ -61,6 +61,8 @@ class Rotas {
 
                 // --- ROTAS DE API EXISTENTES ---
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
+                "/api/imagens/servicos" => "ImagemController@listarServicos",
+
             ],
             "POST" => [
                 // NOVAS ROTAS POST PARA USUARIOS

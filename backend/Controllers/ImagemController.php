@@ -1,6 +1,6 @@
 <?php
 namespace App\Psico\Controllers;
-
+ 
 use App\Psico\Models\ImagemSite;
 use App\Psico\Database\Database;
 use App\Psico\Core\View;
@@ -8,98 +8,48 @@ use App\Psico\Core\Redirect;
 use App\Psico\Core\FileManager;
 use App\Psico\Controllers\Admin\AuthenticatedController;
 use PDO;
-
+ 
 class ImagemController extends AuthenticatedController {
-
-    // ... (propriedades e construtor existentes) ...
+ 
     private ImagemSite $imagemModel;
     private FileManager $fileManager;
     private string $diretorioUpload = 'img/site';
     private PDO $db;
-
+ 
     public function __construct() {
         // parent::__construct();
-        $db = Database::getInstance();
-        $this->imagemModel = new ImagemSite($db);
+        $this->db = Database::getInstance();
+        $this->imagemModel = new ImagemSite($this->db);
         $this->fileManager = new FileManager(__DIR__ . '/../../');
     }
-
-    // ... (viewListarImagens existente) ...
+ 
+    // ... (viewListarImagens, viewCriarImagem, buscarSecoesPorPaginaApi, salvarImagem, viewEditarImagem, atualizarImagem, viewExcluirImagem, deletarImagem - permanecem iguais à versão anterior) ...
     public function viewListarImagens() {
         $imagensAgrupadas = $this->imagemModel->buscarTodasAgrupadasPorPagina();
         View::render('imagem/index', ['imagensAgrupadas' => $imagensAgrupadas]);
     }
-
-
-    /**
-     * Exibe o formulário para adicionar uma nova imagem, com lógica para dropdowns dependentes.
-     */
+ 
     public function viewCriarImagem() {
-        $todasSecoes = $this->imagemModel->buscarSecoesDisponiveis();
-
-        $paginasPrincipais = [];
-        $secoesFilhasPorPagina = []; // Mapeamento para o JavaScript
-
-        // Define o nome da página pai que terá subseções
-        $paginaPaiNome = 'Home'; // <<< AJUSTE SE O NOME FOR DIFERENTE NO SEU BANCO
-
-        foreach ($todasSecoes as $secao) {
-            // Ajuste 'nome_pagina' e 'id_pagina' se os nomes das colunas forem diferentes
-            $nomeSecao = $secao->nome_pagina;
-            $idSecao = $secao->id_pagina;
-
-            // Verifica se é uma subseção da página principal (ex: começa com "Home - ")
-            if (strpos($nomeSecao, $paginaPaiNome . ' - ') === 0) {
-                // Remove o prefixo para exibir no dropdown filho (ex: "Quem Somos Carrossel")
-                $nomeFilha = str_replace($paginaPaiNome . ' - ', '', $nomeSecao);
-                if (!isset($secoesFilhasPorPagina[$paginaPaiNome])) {
-                    $secoesFilhasPorPagina[$paginaPaiNome] = [];
-                }
-                $secoesFilhasPorPagina[$paginaPaiNome][] = ['id' => $idSecao, 'nome' => $nomeFilha];
-            } else {
-                // É uma página principal ou uma seção que não depende de outra
-                $paginasPrincipais[] = ['id' => $idSecao, 'nome' => $nomeSecao];
-            }
-        }
-
-        // Garante que a página pai principal (ex: "Home") esteja na lista, caso exista como entrada separada
-        $paginaPaiEncontrada = false;
-        foreach($paginasPrincipais as $p) {
-            if ($p['nome'] === $paginaPaiNome) {
-                $paginaPaiEncontrada = true;
-                break;
-            }
-        }
-        // Se a página "Home" não foi adicionada (porque só existem seções filhas dela),
-        // busca o ID dela especificamente para adicionar ao dropdown principal.
-        // Isso assume que existe uma entrada "Home" na tabela pagina_site.
-        if (!$paginaPaiEncontrada && !empty($secoesFilhasPorPagina[$paginaPaiNome])) {
-             // Você precisaria de um método no Model ou fazer a query aqui para buscar o ID da "Home"
-             // Exemplo simplificado (idealmente seria $this->imagemModel->buscarSecaoPorNome($paginaPaiNome)):
-             foreach ($todasSecoes as $secao) {
-                 if ($secao->nome_pagina === $paginaPaiNome) {
-                     array_unshift($paginasPrincipais, ['id' => $secao->id_pagina, 'nome' => $secao->nome_pagina]); // Adiciona no início
-                     break;
-                 }
-             }
-        }
-
-
-        View::render('imagem/create', [
-            'paginasPrincipais' => $paginasPrincipais,
-            // Passa o mapeamento como JSON para o JavaScript usar
-            'secoesFilhasJson' => json_encode($secoesFilhasPorPagina)
-        ]);
+        $paginas = $this->imagemModel->buscarPaginasDisponiveis();
+        View::render('imagem/create', ['paginas' => $paginas]);
     }
-
-    // ... (salvarImagem, viewEditarImagem, atualizarImagem, viewExcluirImagem, deletarImagem, listarQuemSomos existentes) ...
-     // Salvar imagem não precisa mudar muito, pois o <select name="id_secao"> final terá o ID correto.
+ 
+    public function buscarSecoesPorPaginaApi(int $id_pagina) {
+        header('Content-Type: application/json');
+        try {
+            $secoes = $this->imagemModel->buscarSecoesPorPagina($id_pagina);
+            echo json_encode(['success' => true, 'secoes' => $secoes]);
+        } catch (\Exception $e) {
+            error_log("Erro API buscarSecoesPorPagina: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao buscar seções.']);
+        }
+    }
+ 
     public function salvarImagem() {
-        // Validação básica
-         // A validação agora deve checar 'id_secao' que virá do dropdown final (ou do único, se não for Home)
-        if (empty($_POST['id_secao']) || !isset($_FILES['arquivo_imagem']) || $_FILES['arquivo_imagem']['error'] != UPLOAD_ERR_OK) {
-             Redirect::redirecionarComMensagem("imagens/criar", "error", "Selecione a página/seção final e envie um arquivo de imagem válido.");
-            return;
+        if (empty($_POST['id_pagina']) || empty($_POST['id_secao']) || !isset($_FILES['arquivo_imagem']) || $_FILES['arquivo_imagem']['error'] != UPLOAD_ERR_OK) {
+             Redirect::redirecionarComMensagem("imagens/criar", "error", "Selecione a Página, a Seção e envie um arquivo de imagem válido.");
+             return;
         }
         $caminhoImagemSalva = null;
         try {
@@ -109,12 +59,10 @@ class ImagemController extends AuthenticatedController {
                 ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
                 2 * 1024 * 1024
             );
-
-            // Usa o id_secao que veio do formulário (que será o ID da seção filha ou da página principal)
             $id_secao = (int)$_POST['id_secao'];
             $ordem = isset($_POST['ordem']) ? (int)$_POST['ordem'] : 99;
             $id_inserido = $this->imagemModel->inserirImagem($id_secao, $caminhoImagemSalva, $ordem);
-
+ 
             if ($id_inserido) {
                 Redirect::redirecionarComMensagem("imagens/listar", "success", "Imagem adicionada com sucesso!");
             } else {
@@ -126,98 +74,26 @@ class ImagemController extends AuthenticatedController {
             Redirect::redirecionarComMensagem("imagens/criar", "error", "Erro: " . $e->getMessage());
         }
     }
-
+ 
     public function viewEditarImagem(int $id) {
         $imagem = $this->imagemModel->buscarImagemPorId($id);
         if (!$imagem) {
             Redirect::redirecionarComMensagem("imagens/listar", "error", "Imagem não encontrada.");
             return;
         }
-
-        // Lógica similar à viewCriarImagem para preparar os dropdowns
-        $todasSecoes = $this->imagemModel->buscarSecoesDisponiveis();
-        $paginasPrincipais = [];
-        $secoesFilhasPorPagina = [];
-        $paginaPaiNome = 'Home'; // <<< AJUSTE SE NECESSÁRIO
-        $idPaginaPaiSelecionada = null;
-        $idSecaoFilhaSelecionada = null;
-        $paginaPaiEncontrada = false; // <<< INICIALIZAÇÃO ADICIONADA AQUI
-
-        // Determina se a imagem atual pertence a uma página pai ou a uma subseção
-        $nomeSecaoAtual = $imagem->nome_secao ?? '';
-        $idSecaoAtual = $imagem->id_secao;
-
-        $eSubsecao = strpos($nomeSecaoAtual, $paginaPaiNome . ' - ') === 0;
-
-        foreach ($todasSecoes as $secao) {
-            $nomeSecao = $secao->nome_pagina;
-            $idSecao = $secao->id_pagina;
-
-            if (strpos($nomeSecao, $paginaPaiNome . ' - ') === 0) {
-                $nomeFilha = str_replace($paginaPaiNome . ' - ', '', $nomeSecao);
-                if (!isset($secoesFilhasPorPagina[$paginaPaiNome])) {
-                    $secoesFilhasPorPagina[$paginaPaiNome] = [];
-                }
-                $secoesFilhasPorPagina[$paginaPaiNome][] = ['id' => $idSecao, 'nome' => $nomeFilha];
-
-                // Se a imagem atual é desta subseção, marca o ID
-                if ($eSubsecao && $idSecao == $idSecaoAtual) {
-                    $idSecaoFilhaSelecionada = $idSecao;
-                }
-            } else {
-                $paginasPrincipais[] = ['id' => $idSecao, 'nome' => $nomeSecao];
-                // Se a imagem atual pertence a esta página principal, marca o ID
-                if (!$eSubsecao && $idSecao == $idSecaoAtual) {
-                     $idPaginaPaiSelecionada = $idSecao;
-                }
-                 // Se a imagem atual é subseção, precisamos encontrar o ID da página pai "Home" para pré-selecionar
-                 if ($eSubsecao && $nomeSecao === $paginaPaiNome) {
-                      $idPaginaPaiSelecionada = $idSecao;
-                 }
-                 // Marca que a página pai foi encontrada na lista principal
-                 if ($nomeSecao === $paginaPaiNome) {
-                    $paginaPaiEncontrada = true; // <<< Marca como encontrada
-                 }
-            }
-        }
-         // Garante que "Home" esteja na lista principal se tiver filhas E não tiver sido adicionada antes
-         if (!$paginaPaiEncontrada && !empty($secoesFilhasPorPagina[$paginaPaiNome])) {
-              foreach ($todasSecoes as $secao) {
-                  if ($secao->nome_pagina === $paginaPaiNome) {
-                      array_unshift($paginasPrincipais, ['id' => $secao->id_pagina, 'nome' => $secao->nome_pagina]);
-                      // Se a imagem for subseção, marca o ID pai aqui se não foi marcado antes
-                      if ($eSubsecao && !$idPaginaPaiSelecionada) {
-                           $idPaginaPaiSelecionada = $secao->id_pagina;
-                      }
-                      break;
-                  }
-              }
-         }
-
-
-        View::render('imagem/edit', [
-            'imagem' => $imagem,
-            'paginasPrincipais' => $paginasPrincipais,
-            'secoesFilhasJson' => json_encode($secoesFilhasPorPagina),
-            'idPaginaPaiSelecionada' => $idPaginaPaiSelecionada,
-            'idSecaoFilhaSelecionada' => $idSecaoFilhaSelecionada,
-            'paginaPaiNome' => $paginaPaiNome
-        ]);
+        View::render('imagem/edit', ['imagem' => $imagem]);
     }
-
-    // Atualizar não precisa mudar muito, pois o name="id_secao" virá preenchido corretamente pelo JS
-     public function atualizarImagem(int $id) {
+ 
+    public function atualizarImagem(int $id) {
         $imagemAtual = $this->imagemModel->buscarImagemPorId($id);
         if (!$imagemAtual) {
             Redirect::redirecionarComMensagem("imagens/listar", "error", "Imagem não encontrada para atualizar.");
             return;
         }
-
-        // A seção não pode ser alterada na edição, apenas ordem e arquivo
         $ordem = isset($_POST['ordem']) ? (int)$_POST['ordem'] : $imagemAtual->ordem;
         $caminhoNovaImagem = null;
         $caminhoImagemAntiga = $imagemAtual->url_imagem;
-
+ 
         if (isset($_FILES['arquivo_imagem']) && $_FILES['arquivo_imagem']['error'] == UPLOAD_ERR_OK) {
             try {
                 $caminhoNovaImagem = $this->fileManager->salvarArquivo(
@@ -231,11 +107,8 @@ class ImagemController extends AuthenticatedController {
                  return;
              }
         }
-
-        $urlParaSalvar = $caminhoNovaImagem; // null se não houver nova imagem
-
+        $urlParaSalvar = $caminhoNovaImagem;
         try {
-            // A atualização no Model só precisa da URL nova (ou null) e da ordem
             $sucesso = $this->imagemModel->atualizarImagem($id, $urlParaSalvar, $ordem);
             if ($sucesso) {
                  if ($caminhoNovaImagem && !empty($caminhoImagemAntiga) && $caminhoImagemAntiga !== $caminhoNovaImagem) {
@@ -251,7 +124,7 @@ class ImagemController extends AuthenticatedController {
              Redirect::redirecionarComMensagem("imagens/editar/{$id}", "error", "Erro durante a atualização: " . $e->getMessage());
         }
     }
-
+ 
     public function viewExcluirImagem(int $id) {
         $imagem = $this->imagemModel->buscarImagemPorId($id);
         if (!$imagem) {
@@ -260,7 +133,7 @@ class ImagemController extends AuthenticatedController {
         }
         View::render('imagem/delete', ['imagem' => $imagem]);
     }
-
+ 
     public function deletarImagem(int $id) {
         $imagem = $this->imagemModel->buscarImagemPorId($id);
         if (!$imagem) {
@@ -269,7 +142,7 @@ class ImagemController extends AuthenticatedController {
         }
         $caminhoArquivo = $imagem->url_imagem;
         $sucessoDB = $this->imagemModel->deletarImagem($id);
-
+ 
         if ($sucessoDB) {
             $sucessoArquivo = $this->fileManager->delete($caminhoArquivo);
             if (!$sucessoArquivo) {
@@ -281,8 +154,8 @@ class ImagemController extends AuthenticatedController {
             Redirect::redirecionarComMensagem("imagens/listar", "error", "Erro ao marcar a imagem como excluída no banco de dados.");
         }
     }
-
-
+ 
+ 
      /**
       * API para listar imagens da seção "Quem Somos (Carrosel)" da página "Home".
       * Refatorado para usar a estrutura correta do DER.
@@ -290,18 +163,76 @@ class ImagemController extends AuthenticatedController {
      public function listarQuemSomos() {
          header('Content-Type: application/json');
          try {
-             $idSecaoQuemSomos = 4; // <<< AJUSTE ID CONFORME SEU BANCO
+             // --- CORREÇÃO APLICADA AQUI ---
+             // Acessa as propriedades paginaTable e secaoTable através do $this->imagemModel
+             $paginaTable = $this->imagemModel->paginaTable; // Nome da tabela de páginas vindo do Model
+             $secaoTable = $this->imagemModel->secaoTable;   // Nome da tabela de seções vindo do Model
+ 
+             // 1. Encontrar o id_pagina da 'Home' (Ajuste 'Home' se o nome for diferente)
+             $sqlPagina = "SELECT id_pagina FROM {$paginaTable} WHERE nome_pagina = 'Home' LIMIT 1";
+             $stmtPagina = $this->db->query($sqlPagina);
+             $pagina = $stmtPagina->fetch(PDO::FETCH_OBJ);
+ 
+             if (!$pagina) { throw new \Exception("Página 'Home' não encontrada na tabela '{$paginaTable}'."); }
+             $idPaginaHome = $pagina->id_pagina;
+ 
+             // 2. Encontrar o id_secao de 'Quem Somos (Carrosel)' DENTRO da página 'Home' (Ajuste o nome se necessário)
+             $sqlSecao = "SELECT id_secao FROM {$secaoTable} WHERE id_pagina = :id_pagina AND nome_secao = 'Quem Somos (Carrosel)' AND excluido_em IS NULL LIMIT 1";
+             $stmtSecao = $this->db->prepare($sqlSecao);
+             $stmtSecao->bindParam(':id_pagina', $idPaginaHome, PDO::PARAM_INT);
+             $stmtSecao->execute();
+             $secao = $stmtSecao->fetch(PDO::FETCH_OBJ);
+ 
+             if (!$secao) { throw new \Exception("Seção 'Quem Somos (Carrosel)' não encontrada ou inativa na tabela '{$secaoTable}' para a página Home."); }
+             $idSecaoQuemSomos = $secao->id_secao;
+             // --- FIM DA CORREÇÃO ---
+ 
+             // 3. Buscar imagens usando o id_secao encontrado
              $imagensObjs = $this->imagemModel->buscarImagensPorSecao($idSecaoQuemSomos);
              $urls = array_map(fn($img) => $img->url_imagem, $imagensObjs);
-
+ 
              http_response_code(200);
              echo json_encode($urls);
-
+ 
          } catch (\Exception $e) {
              http_response_code(500);
              error_log("Erro API listarQuemSomos: " . $e->getMessage());
              echo json_encode(['error' => 'Erro interno ao buscar imagens: ' . $e->getMessage()]);
          }
      }
-
-} // Fim da classe ImagemController
+ 
+     public function listarServicos(){
+            header('Content-Type: application/json');
+            try {
+                $paginaTable = $this->imagemModel->paginaTable;
+                $secaoTable = $this->imagemModel->secaoTable;
+    
+                $sqlPagina = "SELECT id_pagina FROM {$paginaTable} WHERE nome_pagina = 'Serviços' LIMIT 1";
+                $stmtPagina = $this->db->query($sqlPagina);
+                $pagina = $stmtPagina->fetch(PDO::FETCH_OBJ);
+    
+                if (!$pagina) { throw new \Exception("Página 'Serviços' não encontrada na tabela '{$paginaTable}'."); }
+                $idPaginaServicos = $pagina->id_pagina;
+    
+                $sqlSecao = "SELECT id_secao FROM {$secaoTable} WHERE id_pagina = :id_pagina AND nome_secao = 'Ícones de Serviços' AND excluido_em IS NULL LIMIT 1";
+                $stmtSecao = $this->db->prepare($sqlSecao);
+                $stmtSecao->bindParam(':id_pagina', $idPaginaServicos, PDO::PARAM_INT);
+                $stmtSecao->execute();
+                $secao = $stmtSecao->fetch(PDO::FETCH_OBJ);
+    
+                if (!$secao) { throw new \Exception("Seção 'Ícones de Serviços' não encontrada ou inativa na tabela '{$secaoTable}' para a página Serviços."); }
+                $idSecaoServicos = $secao->id_secao;
+    
+                $imagensObjs = $this->imagemModel->buscarImagensPorSecao($idSecaoServicos);
+                $urls = array_map(fn($img) => $img->url_imagem, $imagensObjs);
+    
+                http_response_code(200);
+                echo json_encode($urls);
+    
+            } catch (\Exception $e) {
+                http_response_code(500);
+                error_log("Erro API listarServicos: " . $e->getMessage());
+                echo json_encode(['error' => 'Erro interno ao buscar imagens: ' . $e->getMessage()]);
+            }
+     }
+}
