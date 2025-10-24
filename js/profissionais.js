@@ -152,15 +152,13 @@ function renderizarCardsProfissionais(profissionais) {
                 <span class="nota-media" id="nota-media-prof-${prof.id_db}">0.0</span>
               </div>
             </div>
-            <div class="valor">Valor da Consulta: R$${prof.valor}</div>
-            <a href="agendamento-detalhe.html?id=${prof.id_db}" class="btn">Agenda Disponível</a>
+            <div class="valor">Consulta: R$${prof.valor}</div>
+            
           </div>
 
           <div class="detalhes">
-            <h4>Sobre Mim</h4>
-            <p style="font-size: 1.1rem; line-height: 1.4;">${sobreResumido || 'Descrição não disponível.'}</p>
-            <h4>Especialidades</h4>
-            <ul class="especialidades-lista">${prof.especialidades.map(e => `<li>${e}</li>`).join("")}</ul>
+         <h4>Especialidades</h4>
+            <ul class="especialidades-lista">${prof.especialidades.slice(0, 5).map(e => `<li>${e}</li>`).join("")}</ul>
             <h4 class="espaco-prof">Duração e Tipo de Atendimento</h4>
             <div class="tipos">
               <ul>
@@ -168,6 +166,7 @@ function renderizarCardsProfissionais(profissionais) {
                 ${prof.tipos.map(t => `<li><img src="${t.icone}" class="icon-prof" alt=""> ${t.texto}</li>`).join("")}
               </ul>
             </div>
+            <a href="agendamento-detalhe.html?id=${prof.id_db}" class="btn">Agendar</a>
           </div>`;
         container.appendChild(card);
     });

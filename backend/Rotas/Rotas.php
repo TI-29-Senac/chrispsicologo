@@ -49,6 +49,7 @@ class Rotas {
                 
                 "/logout" => "UsuarioController@logout",
                 "/dashboard" => "UsuarioController@dashboard",
+                "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
                 
                 // --- ROTAS PARA GERENCIAMENTO DE IMAGENS ---
                 "/imagens/listar" => "ImagemController@viewListarImagens",
@@ -92,6 +93,8 @@ class Rotas {
 
                 // LOGIN
                 "/login" => "UsuarioController@login",
+                "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
+                "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
 
                 // --- ROTAS POST PARA IMAGENS ---
                 "/imagens/salvar" => "ImagemController@salvarImagem",

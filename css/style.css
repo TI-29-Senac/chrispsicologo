@@ -2560,11 +2560,14 @@ header {
   gap: 40px; 
   align-items: start; 
   background-color: #faf6ee;
-  padding: 30px;
+  padding: 60px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border: 1px solid #e0e0e0;
   margin-left: 0;
+  flex-wrap: wrap;
+  width: 800px;
+  height: 800px;
 }
 
 .card-prof {
@@ -2603,16 +2606,24 @@ header {
 }
 
 .valor {
-  margin: 20px 0px;
-  font-size: 1.3rem;
+  margin: 100px 0px;
+  padding: 20px 10px;
+  font-size: 1.2rem;
   color: #5D6D68;
   max-width: 400px;
   flex-wrap: wrap;
+  background: transparent;
+  border: 1px solid #5D6D68;
+  border-radius: 14px;
+  position: absolute;
+  bottom: 0px;
+  margin-left: 10px;
 }
 
 .btn {
   display: inline-block;
-  padding: 12px 18px;
+  margin: 40px 0px;
+  padding: 20px 70px;
   border: 1px solid #5D6D68;
   border-radius: 14px;
   background: #5D6D68;
@@ -2620,6 +2631,9 @@ header {
   text-decoration: none;
   font-size: 1.2rem;
   transition: all 0.2s ease;
+  justify-content: center;
+  margin-left: 60px;
+
 }
 
 .btn:hover {
@@ -2635,7 +2649,7 @@ background-color: transparent;
 }
 
 .detalhes h4 {
-  margin-top: 0rem;
+  margin-top: 1.2rem;
   margin-bottom: 8px;
   font-size: 1.5rem;
   color: #5D6D68;
@@ -2651,7 +2665,7 @@ background-color: transparent;
 }
 
 .espaco-prof {
-  margin-top: 18% !important;
+  margin-top: 15% !important;
   margin-bottom: 2% !important;
 }
 
@@ -3326,8 +3340,8 @@ body::-webkit-scrollbar-thumb:hover {
 .agendamento-detalhe-grid {
     display: grid;
     grid-template-columns: 320px 1fr;
-    gap: 70px; 
-    width: 90%;
+    gap: 40px; 
+    width: 800px;
     max-width: 1100px;
     padding: 30px;
     background-color: #faf6ee;
@@ -3343,12 +3357,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 .profissional-bio-coluna h4:first-of-type {
     margin-top: 0;
+    text-align: center;
 }
 
 .profissional-bio-coluna .avaliacoes-detalhe {
     margin-top: 10px;
     margin-bottom: 30px;
-    padding: 15px;
+    padding: 0px;
     background-color: #eefaea;
     border-radius: 8px;
     text-align: center;
@@ -3358,8 +3373,8 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .agenda-container, .confirmacao-container {
-    width: 90%; /* Ocupa 90% da largura */
-    max-width: 1100px; /* Respeita a mesma largura máxima */
+    width: 90%; 
+    max-width: 1100px;
     padding: 30px;
     background-color: #5D6D68;
     border-radius: 12px;
@@ -3370,22 +3385,25 @@ body::-webkit-scrollbar-thumb:hover {
 .profissional-info-coluna h3 {
     font-size: 1.8rem;
     margin-bottom: 20px;
+    margin-left: 30px;
 }
 
 .profissional-info-foto {
-    width: 100%;
+    width: 80%;
     height: auto;
     border-radius: 8px;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     border: 3px solid #5D6D68;
+    margin-left: 25px;
 }
 
 .profissional-info-coluna h4 {
     font-size: 1.2rem;
-    margin-top: 20px;
+    margin-top: 30px;
     margin-bottom: 10px;
     border-bottom: 1px solid #d6e3d6;
     padding-bottom: 5px;
+    text-align: center;
 }
 .profissional-bio-coluna h4 {
     font-size: 1.2rem;
@@ -3403,6 +3421,9 @@ body::-webkit-scrollbar-thumb:hover {
     list-style: none;
     padding-left: 0;
     font-size: 1.2rem;
+    align-items: center;
+    text-align: center;
+    margin-left: 20px;
 }
 
 .profissional-info-coluna .especialidades-lista li {
@@ -3421,15 +3442,15 @@ body::-webkit-scrollbar-thumb:hover {
 .profissional-bio-coluna p {
     font-size: 1.2rem;
     line-height: 1.6;
-    text-align: justify;
-    padding: 0 30px; 
+    text-align: left;
+    padding: 0 10px; 
     margin-left: 20px; 
-    margin-right: 90px; 
+    margin-right: 0px; 
     max-width: 100%; 
 }
 .valor-consulta-box {
-    margin-top: 150px;
-    padding:  60px 10px;
+    margin-top: 10px;
+    padding:  20px 10px;
     background-color: #d6e3d6;
     border-radius: 8px;
     text-align: center;
@@ -3543,6 +3564,7 @@ body::-webkit-scrollbar-thumb:hover {
     align-items: center;
     gap: 10px;
     margin-top: 10px;
+    flex-direction: column-reverse;
 }
 
 
@@ -3798,13 +3820,15 @@ body::-webkit-scrollbar-thumb:hover {
     font-weight: bold;
     color: #5D6D68;
     margin-bottom: 5px;
+    text-align: center;
 }
 
 .avaliacoes-detalhe .estrelas-media-detalhe {
-    font-size: 1.4rem; /* Estrelas um pouco maiores */
-    color: #ffd82c; /* Cor amarela padrão para estrelas preenchidas */
+    font-size: 1.4rem; 
+    color: #ffd82c; 
     margin-bottom: 5px;
-    letter-spacing: 2px; /* Pequeno espaço entre estrelas */
+    letter-spacing: 2px; 
+    text-align: center;
 }
 
 /* Evita seleção estranha das estrelas */
@@ -3814,7 +3838,8 @@ body::-webkit-scrollbar-thumb:hover {
 .avaliacoes-detalhe .total-avaliacoes-detalhe {
     display: block;
     font-size: 0.95rem;
-    color: #777; /* Cinza mais claro para o número total */
+    color: #777;
+    text-align: center;
 }
 
 /* #endregion */

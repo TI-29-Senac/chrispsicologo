@@ -8,18 +8,28 @@ class Config {
         self::loadEnv();
 
         return [
-            'database' => [
-                'driver' => 'mysql',
-                'mysql' => [
-                    'host' => getenv('DB_HOST') ?: 'localhost',
-                    'db_name' => getenv('DB_NAME') ?: '',
-                    'username' => getenv('DB_USER') ?: '',
-                    'password' => getenv('DB_PASS') ?: '',
-                    'charset' => 'utf8mb4',
-                    'port' => getenv('DB_PORT') ?: 3306
-                ],
-            ]
-        ];
+    'database' => [
+        'driver' => 'mysql',
+        'mysql' => [
+            'host' => getenv('DB_HOST') ?: 'localhost',
+            'db_name' => getenv('DB_NAME') ?: '',
+            'username' => getenv('DB_USER') ?: '',
+            'password' => getenv('DB_PASS') ?: '',
+            'charset' => 'utf8mb4',
+            'port' => getenv('DB_PORT') ?: 3306
+        ]
+    ],
+    'mailer' => [
+        'host' => getenv('MAIL_HOST') ?: 'localhost',
+        'port' => (int)(getenv('MAIL_PORT') ?: 587),
+        'username' => getenv('MAIL_USERNAME') ?: '',
+        'password' => getenv('MAIL_PASSWORD') ?: '',
+        'encryption' => getenv('MAIL_ENCRYPTION') ?: '',
+        'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'nao-responda@localhost',
+        'from_name' => trim(getenv('MAIL_FROM_NAME') ?: 'Chris Psicologia'),
+    ]
+];
+
     }
 
     /**
@@ -27,9 +37,7 @@ class Config {
      */
     private static function loadEnv()
     {
-        // --- CORREÇÃO APLICADA AQUI ---
-        // O caminho correto é subir dois níveis a partir de /backend/Database/
-        $dotenvPath = __DIR__ . '/../../.env'; 
+        $dotenvPath = __DIR__ . '/../../.env';
 
         if (is_readable($dotenvPath)) {
             $lines = file($dotenvPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

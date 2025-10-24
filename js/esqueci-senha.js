@@ -1,13 +1,6 @@
 // chrispsicologo/js/esqueci-senha.js
 
 document.addEventListener('DOMContentLoaded', function() {
-
-    // Configurações (CHAVES CONFIRMADAS DO SEU PAINEL)
-    const PUBLIC_KEY = 'dL0q3Ab4FKPWIXtg5'; 
-    const SERVICE_ID = 'service_twmzfu6'; 
-    const TEMPLATE_ID = 'template_bkeyh0k'; // ID do Template Responder
-    emailjs.init(PUBLIC_KEY);
-
     const form = document.getElementById('form-recuperar-senha');
     const statusMessage = document.getElementById('status-mensagem-recuperacao');
     const submitButton = document.getElementById('btn-recuperar-senha');
@@ -15,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!form) return;
 
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', async function(event) { // Adicionado async
         event.preventDefault();
 
         const email = emailInput.value;
@@ -24,34 +17,36 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true;
         statusMessage.textContent = '';
         statusMessage.style.color = 'black';
-        
-        // --- CORREÇÃO APLICADA AQUI ---
-        // Cria a URL de recuperação dinamicamente usando o domínio atual do site
-        const recovery_link = `${window.location.origin}/esqueci-senha.html?email=${encodeURIComponent(email)}`;
-        
-        const templateParams = {
-            email: email, 
-            recovery_link: recovery_link, 
-            from_email: 'jeanmarconascimentodarocha@gmail.com' 
-        };
 
-        emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
-            .then(function(response) {
-                console.log('SUCESSO!', response.status, response.text);
-                
-                statusMessage.textContent = 'Se o e-mail estiver cadastrado, um link de recuperação foi enviado.';
+        try {
+            // --- MODIFICADO: Chama o backend via fetch ---
+            const response = await fetch('/backend/recuperar-senha/solicitar', { // URL do novo endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', // Dados como formulário
+                },
+                body: `email=${encodeURIComponent(email)}` // Envia o email no corpo
+            });
+
+            const result = await response.json(); // Espera uma resposta JSON
+
+            if (response.ok && result.success) {
+                statusMessage.textContent = result.message; // Exibe a mensagem do backend
                 statusMessage.style.color = 'green';
                 form.reset();
+            } else {
+                // Se o backend retornou erro (4xx, 5xx) ou success: false
+                throw new Error(result.message || `Erro ${response.status}`);
+            }
+            // --- FIM DA MODIFICAÇÃO ---
 
-            }, function(error) {
-                console.error('FALHA...', error);
-                
-                statusMessage.textContent = 'Se o e-mail estiver cadastrado, um link de recuperação foi enviado.';
-                statusMessage.style.color = 'green'; 
-            })
-            .finally(function() {
-                submitButton.textContent = 'Enviar Link de Redefinição';
-                submitButton.disabled = false;
-            });
+        } catch (error) {
+            console.error('FALHA...', error);
+            statusMessage.textContent = error.message || 'Ocorreu um erro. Tente novamente.';
+            statusMessage.style.color = 'red';
+        } finally {
+            submitButton.textContent = 'Enviar Link de Redefinição';
+            submitButton.disabled = false;
+        }
     });
 });

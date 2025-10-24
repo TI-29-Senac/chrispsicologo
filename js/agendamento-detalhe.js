@@ -72,30 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
                  <div class="profissional-info-coluna">
                     <h3>${prof.nome_usuario}</h3>
                     <img src="${fotoFinal}" alt="${prof.nome_usuario}" class="profissional-info-foto">
-                    <h4>Especialidades</h4>
-                    <ul class="especialidades-lista">
-                        ${(prof.especialidade || 'N/A').split(',').map(e => `<li>${e.trim()}</li>`).join('')}
-                    </ul>
+                    
                     <h4>Duração e Tipo de Atendimento</h4>
                     <ul class="tipos-lista">
                         <li><img src="img/icons/relogio.svg" class="icon-prof"> Sessão com duração de 50min</li>
                         <li><img src="img/icons/adulto.svg" class="icon-prof"> Adultos</li>
                         <li><img src="img/icons/casais.svg" class="icon-prof"> Casais</li>
                     </ul>
+                    <div class="valor-consulta-box">
+                        Valor da Consulta: <strong>R$ ${parseFloat(prof.valor_consulta || 0).toFixed(2).replace('.', ',')}</strong>
+                    </div>
                 </div>
                 <div class="profissional-bio-coluna">
                     <h4>Um pouco sobre ${prof.nome_usuario.split(' ')[0]}</h4>
                     <p>${prof.sobre || 'Biografia não disponível.'}</p>
-                    <h4>Avaliações de Clientes</h4>
-<div class="avaliacoes-detalhe" id="avaliacoes-detalhe-${prof.id_profissional}">
-    <span class="nota-media-detalhe">Carregando avaliações...</span>
-    <div class="estrelas-media-detalhe">☆☆☆☆☆</div>
-    <span class="total-avaliacoes-detalhe"></span>
-</div>
-
-                    <div class="valor-consulta-box">
-                        Valor da Consulta: <strong>R$ ${parseFloat(prof.valor_consulta || 0).toFixed(2).replace('.', ',')}</strong>
-                    </div>
+                    
                 </div>
             </div>
 

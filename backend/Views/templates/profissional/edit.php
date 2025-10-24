@@ -57,6 +57,7 @@ $profissional = $dados['usuario'];
                         <label for="img_profissional"><b>Alterar Foto (Opcional)</b></label>
                         <input class="w3-input w3-border" type="file" id="img_profissional" name="img_profissional" accept="image/png, image/jpeg, image/webp">
                         <small>Deixe em branco para manter a atual. Máx 2MB.</small>
+                        <input type="hidden" name="imagem_atual" value="<?= htmlspecialchars($profissional->img_profissional ?? '') ?>">
                         <?php if (!empty($profissional->img_profissional)): ?>
                             <div style="margin-top: 10px;">
                                 <label>Imagem Atual:</label><br>

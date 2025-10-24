@@ -12,7 +12,11 @@ use App\Psico\Core\Redirect;
 use App\Psico\Validadores\UsuarioValidador;
 use App\Psico\Core\FileManager;
 use PDOException; 
+use PDO;
 use App\Psico\Core\Flash;
+use App\Psico\Core\EmailService; 
+use DateTime; 
+use DateInterval;
  
 class UsuarioController extends AdminController {
 
@@ -20,12 +24,14 @@ class UsuarioController extends AdminController {
     public $db;
     public $agendamento;
     public $profissional;
+    private $emailService;
 
     public function __construct(){
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
         $this->agendamento = new Agendamento($this->db);
         $this->profissional = new Profissional($this->db);
+        $this->emailService = new EmailService();
     }
 
     
@@ -485,5 +491,216 @@ class UsuarioController extends AdminController {
              }
          }
      }
+
+     public function solicitarRecuperacaoSenha() {
+        header('Content-Type: application/json');
+
+        if (empty($_POST['email'])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'O endereço de e-mail é obrigatório.']);
+            return;
+        }
+
+        $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+        if (!$email) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Formato de e-mail inválido.']);
+            return;
+        }
+
+        $usuario = $this->usuario->buscarUsuarioPorEmail($email);
+
+        if ($usuario) {
+            // 1. Gerar Token Seguro
+            $token = bin2hex(random_bytes(32));
+
+            // 2. Definir Expiração (ex: 1 hora a partir de agora)
+            $agora = new DateTime();
+            $expiraEm = (clone $agora)->add(new DateInterval('PT1H')); // PT1H = Período de Tempo de 1 Hora
+
+            // 3. Salvar no Banco (ou atualizar se já existir pedido para o email)
+            try {
+                $sql = "INSERT INTO password_resets (email, token, expires_at) VALUES (:email, :token, :expira)
+                        ON DUPLICATE KEY UPDATE token = :token, created_at = NOW(), expires_at = :expira";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':token', $token);
+                $stmt->bindValue(':expira', $expiraEm->format('Y-m-d H:i:s'));
+                $stmt->execute();
+                if (!$stmt->execute()) { // Verifica se execute falhou
+                    throw new \RuntimeException("Erro ao salvar token de reset no banco.");
+                }
+
+            } catch (\PDOException $e) { // Captura especificamente PDOException
+                error_log("Erro de PDO ao salvar token de reset: " . $e->getMessage());
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Erro interno [DB] ao processar a solicitação. Tente novamente mais tarde.']);
+                return;
+             } catch (\Exception $e) { // Captura outras exceções (como RuntimeException)
+                 error_log("Erro geral ao salvar token de reset: " . $e->getMessage());
+                 http_response_code(500);
+                 echo json_encode(['success' => false, 'message' => $e->getMessage()]); // Retorna a mensagem da exceção
+                 return;
+             }
+
+            $urlBaseSite = ($_SERVER['HTTPS'] ?? 'http') . '://' . $_SERVER['HTTP_HOST'];
+            $linkReset = $urlBaseSite . '/redefinir-senha.html?token=' . urlencode($token);
+
+            $assunto = "Redefinição de Senha - Chris Psicologia";
+            $corpoHtml = "
+                <p>Olá " . htmlspecialchars($usuario->nome_usuario) . ",</p>
+                <p>Recebemos uma solicitação para redefinir a senha da sua conta em Chris Psicologia.</p>
+                <p>Se você não fez esta solicitação, pode ignorar este email.</p>
+                <p>Para redefinir sua senha, clique no link abaixo:</p>
+                <p><a href='" . $linkReset . "'>" . $linkReset . "</a></p>
+                <p>Este link expirará em 1 hora.</p>
+                <p>Atenciosamente,<br>Equipe Chris Psicologia</p>
+            ";
+             $corpoTexto = "Olá " . $usuario->nome_usuario . ",\n\nRecebemos uma solicitação para redefinir a senha...\n\nLink: " . $linkReset . "\n\nExpira em 1 hora.\n\nAtenciosamente,\nEquipe Chris Psicologia";
+
+            $enviado = $this->emailService->enviarEmail($email, $usuario->nome_usuario, $assunto, $corpoHtml, $corpoTexto);
+
+            if (!$enviado) {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Erro ao tentar enviar o email de recuperação. Tente novamente mais tarde.']);
+                return;
+            }
+
+        }
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Se o e-mail estiver cadastrado em nosso sistema, um link de recuperação foi enviado.']);
+        return;
+    }
+
+    public function validarTokenReset(string $token) {
+        header('Content-Type: application/json');
+
+        if (empty($token)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Token não fornecido.']);
+            return;
+        }
+
+        try {
+            $sql = "SELECT email, expires_at FROM password_resets WHERE token = :token LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':token', $token);
+            $stmt->execute();
+            $resetRequest = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$resetRequest) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Token inválido. Solicite a recuperação novamente.']);
+                return;
+            }
+
+            // Verificar expiração
+            $agora = new DateTime();
+            $expiraEm = new DateTime($resetRequest['expires_at']);
+
+            if ($agora > $expiraEm) {
+                http_response_code(410); // Gone
+                echo json_encode(['success' => false, 'message' => 'Token expirado. Solicite a recuperação novamente.']);
+                // Opcional: Remover token expirado do banco aqui
+                // $this->db->prepare("DELETE FROM password_resets WHERE token = :token")->execute([':token' => $token]);
+                return;
+            }
+
+            // Token válido e não expirado
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Token válido.']);
+
+        } catch (\Exception $e) { // Captura PDOException e DateTime Exception
+            error_log("Erro ao validar token de reset: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro interno ao validar o token.']);
+        }
+    }
+
+    // --- NOVO MÉTODO: Processar a Redefinição ---
+    public function processarRedefinicaoSenha() {
+        header('Content-Type: application/json');
+
+        $token = $_POST['token'] ?? null;
+        $novaSenha = $_POST['nova_senha'] ?? null;
+
+        // Validação básica
+        if (empty($token) || empty($novaSenha)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Token e nova senha são obrigatórios.']);
+            return;
+        }
+        if (strlen($novaSenha) < 6) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'A nova senha deve ter pelo menos 6 caracteres.']);
+            return;
+        }
+
+        try {
+            // 1. Validar o Token Novamente (busca e expiração)
+            $sqlSelect = "SELECT email, expires_at FROM password_resets WHERE token = :token LIMIT 1";
+            $stmtSelect = $this->db->prepare($sqlSelect);
+            $stmtSelect->bindParam(':token', $token);
+            $stmtSelect->execute();
+            $resetRequest = $stmtSelect->fetch(PDO::FETCH_ASSOC);
+
+            if (!$resetRequest) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Token inválido ou já utilizado. Solicite novamente.']);
+                return;
+            }
+
+            $agora = new DateTime();
+            $expiraEm = new DateTime($resetRequest['expires_at']);
+            if ($agora > $expiraEm) {
+                http_response_code(410);
+                echo json_encode(['success' => false, 'message' => 'Token expirado. Solicite novamente.']);
+                // Opcional: Remover token expirado
+                // $this->db->prepare("DELETE FROM password_resets WHERE token = :token")->execute([':token' => $token]);
+                return;
+            }
+
+            // 2. Buscar o usuário pelo email associado ao token
+            $emailUsuario = $resetRequest['email'];
+            $usuario = $this->usuario->buscarUsuarioPorEmail($emailUsuario);
+            if (!$usuario) {
+                // Isso não deveria acontecer se o token foi gerado corretamente, mas é uma segurança extra
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Utilizador associado ao token não encontrado.']);
+                // Considerar remover o token inválido aqui também
+                return;
+            }
+
+            // 3. Atualizar a senha do usuário
+            // Usaremos o método atualizarUsuario, mas precisamos dos outros dados.
+            // Poderíamos criar um método específico no Model `Usuario.php` só para atualizar a senha.
+            // Vamos usar o `atualizarUsuario` por enquanto:
+            $senhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
+            $sqlSenha = "UPDATE usuario SET senha_usuario = :senhaHash, atualizado_em = NOW() WHERE id_usuario = :id";
+            $stmtSenha = $this->db->prepare($sqlSenha);
+            $stmtSenha->bindParam(':senhaHash', $senhaHash);
+            $stmtSenha->bindParam(':id', $usuario->id_usuario, PDO::PARAM_INT);
+            $sucessoUpdate = $stmtSenha->execute();
+
+            if (!$sucessoUpdate) {
+                 throw new \Exception('Falha ao atualizar a senha no banco de dados.');
+            }
+
+            // 4. Remover/Invalidar o Token da tabela password_resets
+            $sqlDelete = "DELETE FROM password_resets WHERE email = :email";
+            $stmtDelete = $this->db->prepare($sqlDelete);
+            $stmtDelete->bindParam(':email', $emailUsuario);
+            $stmtDelete->execute();
+
+            // 5. Retornar Sucesso
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Senha redefinida com sucesso!']);
+
+        } catch (\Exception $e) {
+            error_log("Erro ao processar redefinição de senha: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro interno ao redefinir a senha. Tente novamente mais tarde.']);
+        }
+    }
 
 }
