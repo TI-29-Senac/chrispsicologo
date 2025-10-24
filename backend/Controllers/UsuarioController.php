@@ -289,42 +289,6 @@ class UsuarioController extends AdminController {
         }
     }
 
-    public function dashboard() {
-        
-        $this->verificarAcesso(['admin', 'recepcionista', 'profissional']);
-
-        
-        $totalUsuarios = count($this->usuario->buscarTodosUsuarios());
-        $totalAgendamentos = count($this->agendamento->buscarAgendamentos()); 
-        $totalProfissionais = count($this->profissional->listarProfissionais()); 
-
-        
-        $stats = [
-             [
-                'label' => 'Total de Usuários',
-                'value' => $totalUsuarios,
-                'icon' => 'fa-users',
-                'link' => '/backend/usuario/listar' 
-            ],
-             [
-                'label' => 'Agendamentos',
-                'value' => $totalAgendamentos,
-                'icon' => 'fa-calendar',
-                'link' => '/backend/agendamentos/listar'
-            ],
-             [
-                'label' => 'Profissionais',
-                'value' => $totalProfissionais,
-                'icon' => 'fa-user-md',
-                'link' => '/backend/profissionais/listar'
-            ]
-            
-        ];
-
-        
-        View::render("dashboard/index", ["stats" => $stats]);
-    }
-
     
     public function login() {
         header('Content-Type: application/json'); 
@@ -701,6 +665,86 @@ class UsuarioController extends AdminController {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Erro interno ao redefinir a senha. Tente novamente mais tarde.']);
         }
+    }
+
+    public function dashboard() {
+        
+        $this->verificarAcesso(['admin', 'recepcionista', 'profissional']);
+
+        // --- DADOS DOS CARDS (JÁ EXISTENTES) ---
+        $totalUsuarios = count($this->usuario->buscarTodosUsuarios());
+        $totalAgendamentos = count($this->agendamento->buscarAgendamentos()); 
+        $totalProfissionais = count($this->profissional->listarProfissionais()); 
+
+        $stats = [
+             [
+                'label' => 'Total de Usuários',
+                'value' => $totalUsuarios,
+                'icon' => 'fa-users',
+                'link' => '/backend/usuario/listar' 
+            ],
+             [
+                'label' => 'Agendamentos',
+                'value' => $totalAgendamentos,
+                'icon' => 'fa-calendar',
+                'link' => '/backend/agendamentos/listar'
+            ],
+             [
+                'label' => 'Profissionais',
+                'value' => $totalProfissionais,
+                'icon' => 'fa-user-md',
+                'link' => '/backend/profissionais/listar'
+            ]
+        ];
+
+        // --- INÍCIO: NOVOS DADOS PARA GRÁFICOS ---
+        
+        // Carrega o model de Pagamento
+        $pagamentoModel = new \App\Psico\Models\Pagamento($this->db);
+
+        // 1. Gráfico de Agendamentos
+        $agendamentosData = $this->agendamento->getAgendamentosPorMes();
+        $chartAgendamentosLabels = [];
+        $chartAgendamentosValores = [];
+        foreach ($agendamentosData as $data) {
+            // Formata '2023-10-01' para 'Out/2023' (Exemplo de formatação)
+            $chartAgendamentosLabels[] = date('m/Y', strtotime($data->mes_ano)); 
+            $chartAgendamentosValores[] = $data->total;
+        }
+
+        // 2. Gráfico de Novos Clientes
+        $novosClientesData = $this->usuario->getNovosClientesPorMes();
+        $chartNovosClientesLabels = [];
+        $chartNovosClientesValores = [];
+        foreach ($novosClientesData as $data) {
+            $chartNovosClientesLabels[] = date('m/Y', strtotime($data->mes_ano));
+            $chartNovosClientesValores[] = $data->total;
+        }
+
+        // 3. Gráfico de Faturamento
+        $faturamentoData = $pagamentoModel->getFaturamentoPorMes();
+        $chartFaturamentoLabels = [];
+        $chartFaturamentoValores = [];
+        foreach ($faturamentoData as $data) {
+            $chartFaturamentoLabels[] = date('m/Y', strtotime($data->mes_ano));
+            $chartFaturamentoValores[] = $data->total;
+        }
+        
+        // --- FIM: NOVOS DADOS PARA GRÁFICOS ---
+
+
+        // Adiciona os dados dos gráficos ao array enviado para a View
+        View::render("dashboard/index", [
+            "stats" => $stats,
+
+            // Dados para os gráficos
+            "chartAgendamentosLabels" => json_encode($chartAgendamentosLabels),
+            "chartAgendamentosValores" => json_encode($chartAgendamentosValores),
+            "chartNovosClientesLabels" => json_encode($chartNovosClientesLabels),
+            "chartNovosClientesValores" => json_encode($chartNovosClientesValores),
+            "chartFaturamentoLabels" => json_encode($chartFaturamentoLabels),
+            "chartFaturamentoValores" => json_encode($chartFaturamentoValores)
+        ]);
     }
 
 }

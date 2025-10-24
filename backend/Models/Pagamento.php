@@ -135,4 +135,66 @@ class Pagamento {
         $stmt->bindParam(':id_pagamento', $id_pagamento, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public function getFaturamentoPorMes() {
+        
+        $sql = "
+            SELECT 
+              DATE_FORMAT(p.criado_em, '%Y-%m-01') AS mes_ano,
+              
+              /* --- CORREÇÃO AQUI --- */
+              /* Somamos o 'valor' da tabela 'profissional' */
+              SUM(COALESCE(prof.valor, 0)) AS total
+              /* --- FIM DA CORREÇÃO --- */
+
+            FROM pagamento p
+            
+            /* JOIN para encontrar o agendamento */
+            JOIN agendamento a ON p.id_agendamento = a.id_agendamento
+            
+            /* JOIN para encontrar o profissional e seu valor */
+            JOIN profissional prof ON a.id_profissional = prof.id_profissional
+            
+            WHERE p.criado_em >= (NOW() - INTERVAL 6 MONTH)
+            GROUP BY mes_ano
+            ORDER BY mes_ano;
+        ";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            return $this->preencherMesesAusentes($data); // Helper para adicionar meses vazios
+        } catch (\PDOException $e) {
+            error_log("Erro ao buscar faturamento por mês: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Helper para preencher os últimos 6 meses com valor 0 se não houver dados.
+     * @param array $data Os dados do banco (FETCH_OBJ)
+     * @return array
+     */
+    private function preencherMesesAusentes(array $data) {
+        $mesesFormatados = [];
+        $dadosIndexados = [];
+
+        foreach ($data as $item) {
+            $dadosIndexados[$item->mes_ano] = $item->total;
+        }
+
+        for ($i = 5; $i >= 0; $i--) {
+            $dataRef = new \DateTime(date('Y-m-01') . " -$i months");
+            $mesKey = $dataRef->format('Y-m-01');
+            $total = $dadosIndexados[$mesKey] ?? 0;
+
+            $mesesFormatados[] = (object)[
+                'mes_ano' => $mesKey,
+                'total' => $total
+            ];
+        }
+        
+        return $mesesFormatados;
+    }
 }

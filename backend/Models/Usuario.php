@@ -164,4 +164,54 @@ class Usuario {
             'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
         ];
     }
+
+    public function getNovosClientesPorMes() {
+        $sql = "
+            SELECT 
+              DATE_FORMAT(criado_em, '%Y-%m-01') AS mes_ano,
+              COUNT(id_usuario) AS total
+            FROM usuario
+            WHERE criado_em >= (NOW() - INTERVAL 6 MONTH)
+              AND tipo_usuario = 'cliente'
+            GROUP BY mes_ano
+            ORDER BY mes_ano;
+        ";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            return $this->preencherMesesAusentes($data); // Helper para adicionar meses vazios
+        } catch (\PDOException $e) {
+            error_log("Erro ao buscar novos clientes por mês: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Helper para preencher os últimos 6 meses com valor 0 se não houver dados.
+     * @param array $data Os dados do banco (FETCH_OBJ)
+     * @return array
+     */
+    private function preencherMesesAusentes(array $data) {
+        $mesesFormatados = [];
+        $dadosIndexados = [];
+
+        foreach ($data as $item) {
+            $dadosIndexados[$item->mes_ano] = $item->total;
+        }
+
+        for ($i = 5; $i >= 0; $i--) {
+            $dataRef = new \DateTime(date('Y-m-01') . " -$i months");
+            $mesKey = $dataRef->format('Y-m-01');
+            $total = $dadosIndexados[$mesKey] ?? 0;
+
+            $mesesFormatados[] = (object)[
+                'mes_ano' => $mesKey,
+                'total' => $total
+            ];
+        }
+        
+        return $mesesFormatados;
+    }
 }

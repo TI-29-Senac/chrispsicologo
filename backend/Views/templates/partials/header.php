@@ -35,12 +35,24 @@
       <img src="/img/logo/logochris.svg" alt="Logo Chris Psicologia" class="header-logo">
   </div>
   <hr>
+  <div class="w3-container" style="padding-left: 16px; color: white;">
+    <?php if (isset($_SESSION['usuario_nome'])): ?>
+        <h5 style="font-size: 1.2rem; margin-bottom: 2px; word-wrap: break-word;">Olá, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></h5>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['usuario_tipo'])): ?>
+        <span style="font-size: 0.9rem; text-transform: capitalize; opacity: 0.8;">
+            (<?= htmlspecialchars($_SESSION['usuario_tipo']) ?>)
+        </span>
+    <?php endif; ?>
+  </div>
+  <hr style="margin-top: 16px;">
   <div class="w3-container">
-    <h5 style="color: white; font-size: 1.5rem">Dashboard</h5>
+    <h5 style="color: white; font-size: 1.5rem">Menu</h5>
   </div>
   <div class="w3-bar-block">
     <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-    <a href="/index.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Home</a>
+    <a href="/backend/dashboard" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Dashboard</a>
     <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Usuários</a>
     <a href="/backend/agendamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-calendar fa-fw"></i>  Agendamentos</a>
     <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>

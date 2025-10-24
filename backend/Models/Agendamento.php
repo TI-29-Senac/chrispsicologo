@@ -207,6 +207,57 @@ class Agendamento {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-// ...
+    public function getAgendamentosPorMes() {
+        
+        $sql = "
+            SELECT 
+              DATE_FORMAT(data_agendamento, '%Y-%m-01') AS mes_ano, -- <<< CORRIGIDO AQUI
+              COUNT(id_agendamento) AS total
+            FROM agendamento
+            WHERE data_agendamento >= (NOW() - INTERVAL 6 MONTH) -- <<< DESCOMENTAR E CORRIGIR AQUI
+            GROUP BY mes_ano
+            ORDER BY mes_ano;
+        ";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            return $this->preencherMesesAusentes($data); 
+        } catch (\PDOException $e) {
+            error_log("Erro ao buscar agendamentos por mês: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Helper para preencher os últimos 6 meses com valor 0 se não houver dados.
+     * @param array $data Os dados do banco (FETCH_OBJ)
+     * @return array
+     */
+    private function preencherMesesAusentes(array $data) {
+        $mesesFormatados = [];
+        $dadosIndexados = [];
+
+        // Indexa os dados recebidos por 'mes_ano' (ex: '2023-10-01')
+        foreach ($data as $item) {
+            $dadosIndexados[$item->mes_ano] = $item->total;
+        }
+
+        // Gera os últimos 6 meses
+        for ($i = 5; $i >= 0; $i--) {
+            $dataRef = new \DateTime(date('Y-m-01') . " -$i months");
+            $mesKey = $dataRef->format('Y-m-01');
+            
+            $total = $dadosIndexados[$mesKey] ?? 0; // Pega o total se existir, senão 0
+
+            $mesesFormatados[] = (object)[
+                'mes_ano' => $mesKey,
+                'total' => $total
+            ];
+        }
+        
+        return $mesesFormatados;
+    }
 
 }
