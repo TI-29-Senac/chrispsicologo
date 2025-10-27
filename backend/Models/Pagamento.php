@@ -137,34 +137,35 @@ class Pagamento {
     }
 
     public function getFaturamentoPorMes() {
-        
+
         $sql = "
-            SELECT 
+            SELECT
               DATE_FORMAT(p.criado_em, '%Y-%m-01') AS mes_ano,
-              
-              /* --- CORREÇÃO AQUI --- */
-              /* Somamos o 'valor' da tabela 'profissional' */
-              SUM(COALESCE(prof.valor, 0)) AS total
+
+              /* --- CORREÇÃO APLICADA AQUI --- */
+              /* Somamos o 'valor_consulta' da tabela 'profissional' */
+              SUM(COALESCE(prof.valor_consulta, 0)) AS total
               /* --- FIM DA CORREÇÃO --- */
 
             FROM pagamento p
-            
+
             /* JOIN para encontrar o agendamento */
             JOIN agendamento a ON p.id_agendamento = a.id_agendamento
-            
+
             /* JOIN para encontrar o profissional e seu valor */
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
-            
+
             WHERE p.criado_em >= (NOW() - INTERVAL 6 MONTH)
             GROUP BY mes_ano
             ORDER BY mes_ano;
         ";
-        
+
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
-            return $this->preencherMesesAusentes($data); // Helper para adicionar meses vazios
+            // O helper para preencher meses ausentes está correto
+            return $this->preencherMesesAusentes($data);
         } catch (\PDOException $e) {
             error_log("Erro ao buscar faturamento por mês: " . $e->getMessage());
             return [];
