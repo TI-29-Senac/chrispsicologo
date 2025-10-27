@@ -122,4 +122,21 @@ class Avaliacao {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function buscarAvaliacaoPorClienteEProfissional(int $id_cliente, int $id_profissional): array|false {
+        $sql = "SELECT * FROM {$this->table}
+                WHERE id_cliente = :id_cliente
+                AND id_profissional = :id_profissional
+                AND excluido_em IS NULL -- Considera apenas avaliações não excluídas (soft delete)
+                ORDER BY criado_em DESC -- Pega a mais recente, caso haja mais de uma por algum motivo
+                LIMIT 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->execute();
+        $avaliacao = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $avaliacao ?: false; // Retorna o array da avaliação ou false
+    }
 }

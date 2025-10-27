@@ -9,12 +9,14 @@ abstract class AuthenticatedController {
 
     public function __construct(){
         $this->session = new Session();
-        if(!$this->session->has('usuario_id')){
-            Redirect::redirecionarComMensagem(
-                'login',
-                'error',
-                'Você precisa estar logado para acessar essa área.'
-            );
-        }
+      if(!$this->session->has('usuario_id')){
+        Redirect::redirecionarComMensagem(
+            'login', // Assumindo que 'login' é a rota ou página correta
+            'error',
+            'Você precisa estar logado para acessar essa área.'
+        );
+        exit(); // Adiciona exit após redirecionamento
     }
+ }
+
 }

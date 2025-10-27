@@ -24,7 +24,6 @@ class AgendamentoController {
     
     public function index() {
         $agendamentos = $this->agendamento->buscarAgendamentos();
-        var_dump($agendamentos);
     }
 
     public function buscarDisponibilidade($id_profissional, $data) {
@@ -270,5 +269,53 @@ class AgendamentoController {
             echo json_encode(['success' => false, 'message' => 'Erro interno ao buscar agendamentos.']);
         }
     }
-// ...
+
+    public function buscarAgendamentosPorUsuarioApi() {
+        // --- INÍCIO DA CORREÇÃO ---
+        header('Content-Type: application/json'); // Garante o cabeçalho JSON
+
+        // Limpa qualquer buffer de saída anterior para evitar output indesejado
+        while (ob_get_level() > 0) { ob_end_clean(); }
+
+        // Verifica a sessão
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || ($_SESSION['usuario_tipo'] ?? '') !== 'cliente') {
+            http_response_code(401); // Não autorizado
+            echo json_encode(['success' => false, 'message' => 'Acesso não autorizado. Faça login como cliente.']);
+            exit; // Termina a execução
+        }
+        $id_cliente = $_SESSION['usuario_id'];
+
+        try {
+            // Chama o método do Model para buscar os agendamentos
+            $agendamentos = $this->agendamento->buscarAgendamentosPorUsuario((int)$id_cliente);
+
+            // Verifica se a busca foi bem-sucedida (retorna array ou false)
+            if ($agendamentos === false) {
+                 // Considera como um erro interno se a busca falhar, mas não for exceção
+                 throw new \RuntimeException("Erro ao buscar agendamentos no Model.");
+            }
+
+            // Envia a resposta JSON de sucesso
+            http_response_code(200);
+            echo json_encode(['success' => true, 'agendamentos' => $agendamentos]);
+
+        } catch (\PDOException $e) {
+            // Captura erros específicos do banco de dados
+            error_log("Erro PDO ao buscar agendamentos do cliente: " . $e->getMessage());
+            http_response_code(500); // Internal Server Error
+            echo json_encode(['success' => false, 'message' => 'Erro interno [DB] ao buscar seus agendamentos.']);
+        } catch (\Exception $e) {
+            // Captura outros erros gerais
+            error_log("Erro geral ao buscar agendamentos do cliente: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro interno ao processar sua solicitação: ' . $e->getMessage()]);
+        } finally {
+            // Garante que a execução termina após enviar a resposta JSON
+            exit;
+        }
+        // --- FIM DA CORREÇÃO ---
+    }
 }

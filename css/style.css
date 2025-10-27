@@ -3250,7 +3250,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* #region Registro de Usuário */
 .formulario-registro-container {
-    max-width: 500px; /* Limita a largura do container do formulário */
+    max-width: 600px; /* Limita a largura do container do formulário */
     margin: 0 auto;
     padding: 30px;
     background-color: #faf6ee; /* Cor de fundo clara para destaque */
@@ -3451,7 +3451,8 @@ body::-webkit-scrollbar-thumb:hover {
 .valor-consulta-box {
     margin-top: 10px;
     padding:  15px 10px;
-    background-color: #d6e3d6;
+    background-color: #5D6D68;
+    color: white;
     border-radius: 8px;
     text-align: center;
     font-size: 1.2rem;
@@ -3532,8 +3533,8 @@ body::-webkit-scrollbar-thumb:hover {
     width: 100%;
     padding: 10px;
     border: 1px solid #faf6ee;
-    background-color: transparent;
-    color: white;
+    background-color: #faf6ee;
+    color: #5D6D68;
     border-radius: 6px;
     font-size: 1rem;
 }
@@ -3961,17 +3962,16 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* Estilos para a página Minha Conta */
 .minha-conta-container {
-    max-width: 900px;
-    margin: 50px auto; 
+    max-width: 1000px;
+    margin: 0px auto; 
     padding: 30px;
-    background-color: #faf6ee; /* Cor de fundo principal */
-    border-radius: 12px; /* Aumenta o arredondamento */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais destacada */
+    background-color: transparent;
+    border-radius: 12px; 
     font-family: 'Questrial', sans-serif;
     color: #5D6D68;
     z-index: 10;
     position: relative;
-    border: 1px solid #d6e3d6; /* Adiciona uma borda sutil */
+
 }
 
 /* Título e Subtítulo */
@@ -4106,6 +4106,7 @@ body::-webkit-scrollbar-thumb:hover {
     justify-content: space-between;
     align-items: center;
     font-size: 1.1rem;
+    line-height: 1.6;
 }
 
 .agendamento-card a {
@@ -4125,6 +4126,7 @@ body::-webkit-scrollbar-thumb:hover {
     color: white;
     font-size: 0.9rem;
     font-weight: bold;
+
 }
 .tag-status.pendente { background-color: #f3c74c; }
 .tag-status.confirmada { background-color: #5D6D68; }
@@ -4158,3 +4160,29 @@ body::-webkit-scrollbar-thumb:hover {
         gap: 8px;
     }
 }
+
+/* #region Estilos para Avaliação por Estrelas */
+.estrelas-input {
+    display: inline-block; /* Para centralizar se o container for text-align: center */
+}
+
+.estrela-avaliacao {
+    font-size: 2.5rem; /* Tamanho das estrelas */
+    color: #ccc;      /* Cor padrão (vazia) */
+    cursor: pointer;
+    transition: color 0.2s ease;
+    margin: 0 3px;     /* Espaçamento entre estrelas */
+}
+
+.estrelas-input:hover .estrela-avaliacao {
+    color: #ffc107; /* Cor ao passar o mouse por cima */
+}
+
+.estrela-avaliacao:hover ~ .estrela-avaliacao {
+    color: #ccc;      /* Estrelas à direita voltam ao normal */
+}
+
+.estrelas-input .estrela-avaliacao.selecionada {
+    color: #ffc107; /* Cor da estrela selecionada e anteriores */
+}
+/* #endregion */

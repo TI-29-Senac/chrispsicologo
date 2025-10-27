@@ -7,7 +7,7 @@ class Rotas {
         return [
             "GET" => [
                 // NOVAS ROTAS GET PARA USUARIOS
-                "/usuarios" => "UsuarioController@index",
+                "/usuarios" => "UsuarioController@meuPerfilApi",
                 "/usuario/criar" => "UsuarioController@viewCriarUsuarios",
                 "/usuario/listar" => "UsuarioController@viewListarUsuarios",
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
@@ -24,6 +24,7 @@ class Rotas {
                 "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
                 "/avaliacoes" => "AvaliacaoController@buscarPorProfissional",
                 "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
+                "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
             
                 // NOVAS ROTAS GET PARA PAGAMENTOS
                 "/pagamentos/criar" => "PagamentoController@viewCriarPagamentos",
@@ -101,6 +102,7 @@ class Rotas {
                 "/imagens/atualizar/{id}" => "ImagemController@atualizarImagem",
                 "/imagens/deletar/{id}" => "ImagemController@deletarImagem",
                 "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
+                "/api/cliente/avaliar" => "AvaliacaoController@salvarAvaliacaoCliente",
                 
             ],
         ];

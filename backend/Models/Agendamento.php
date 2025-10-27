@@ -2,6 +2,7 @@
 namespace App\Psico\Models;
 use PDO;
 use DateTime;
+use PDOException;
 
 class Agendamento {
     private PDO $db;
@@ -100,20 +101,55 @@ class Agendamento {
     }
 
     // ... (restante dos métodos: atualizar, paginacao, buscarPorId, deletar, buscarTodos) ...
-     public function atualizarAgendamento(int $id_agendamento, string $data_agendamento, string $status_consulta): bool {
-        $dataAtual = date('Y-m-d H:i:s');
-        $sql = "UPDATE {$this->table}
-                SET data_agendamento = :data_agendamento,
-                    status_consulta = :status_consulta,
-                    atualizado_em = :atual
-                WHERE id_agendamento = :id_agendamento";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
-        $stmt->bindParam(':data_agendamento', $data_agendamento);
-        $stmt->bindParam(':status_consulta', $status_consulta);
-        $stmt->bindParam(':atual', $dataAtual);
+    public function atualizarAgendamento(
+        int $id_agendamento,
+        string $data_agendamento,
+        string $status_consulta,
+            ?int $id_profissional = null, // Torna opcional
+            ?int $id_cliente = null      // Torna opcional
+    ): bool {
+        // Constrói a query dinamicamente apenas com os campos que podem mudar
+        $fieldsToUpdate = [
+            'data_agendamento = :data_agendamento',
+            'status_consulta = :status_consulta',
+            'atualizado_em = NOW()'
+        ];
+        $params = [
+            ':data_agendamento' => $data_agendamento,
+            ':status_consulta' => $status_consulta,
+            ':id_agendamento' => $id_agendamento
+        ];
 
-        return $stmt->execute();
+        // Adiciona profissional e cliente apenas se forem fornecidos (permite alterá-los se necessário no futuro)
+        if ($id_profissional !== null) {
+            $fieldsToUpdate[] = 'id_profissional = :id_profissional';
+            $params[':id_profissional'] = $id_profissional;
+        }
+        if ($id_cliente !== null) {
+            $fieldsToUpdate[] = 'id_cliente = :id_cliente';
+            $params[':id_cliente'] = $id_cliente;
+        }
+
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $fieldsToUpdate) . " WHERE id_agendamento = :id_agendamento";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+
+            // Vincula os parâmetros existentes no array $params
+            foreach ($params as $key => &$value) {
+                // Determina o tipo do parâmetro (assume INT para IDs)
+                 $paramType = (str_contains($key, '_id')) ? PDO::PARAM_INT : PDO::PARAM_STR;
+                 if ($key === ':id_agendamento') $paramType = PDO::PARAM_INT;
+
+                 $stmt->bindParam($key, $value, $paramType);
+            }
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            // Log do erro para depuração
+            error_log("Erro ao atualizar agendamento {$id_agendamento}: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
@@ -189,16 +225,17 @@ class Agendamento {
     public function buscarAgendamentosPorUsuario(int $id_usuario): array {
         $sql = "
             SELECT
-                a.id_agendamento,
-                a.data_agendamento,
-                a.status_consulta,
-                prof_usuario.nome_usuario AS nome_profissional
-            FROM {$this->table} a
-            JOIN profissional p ON a.id_profissional = p.id_profissional
-            JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
-            WHERE a.id_usuario = :id_usuario
-            AND a.excluido_em IS NULL
-            ORDER BY a.data_agendamento DESC
+    a.id_agendamento,
+    a.data_agendamento,
+    a.status_consulta,
+    p.id_profissional, -- Adicione esta linha
+    prof_usuario.nome_usuario AS nome_profissional
+FROM agendamento a -- Use alias para a tabela
+JOIN profissional p ON a.id_profissional = p.id_profissional
+JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
+WHERE a.id_usuario = :id_usuario
+AND a.excluido_em IS NULL
+ORDER BY a.data_agendamento DESC
         ";
         
         $stmt = $this->db->prepare($sql);

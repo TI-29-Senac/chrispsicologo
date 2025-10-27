@@ -172,4 +172,80 @@ class AvaliacaoController
         echo json_encode($avaliacoes);
         return;
     }
+
+    public function salvarAvaliacaoCliente()
+    {
+        header('Content-Type: application/json');
+
+        // 1. Verificar se o cliente está logado
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || ($_SESSION['usuario_tipo'] ?? '') !== 'cliente') {
+            http_response_code(401); // Não autorizado
+            echo json_encode(['success' => false, 'message' => 'Acesso não autorizado. Faça login como cliente.']);
+            return;
+        }
+        $id_cliente = $_SESSION['usuario_id'];
+
+        // 2. Obter dados do POST
+        $id_profissional = $_POST['id_profissional'] ?? null;
+        $nota_avaliacao = $_POST['nota_avaliacao'] ?? null;
+        $descricao_avaliacao = $_POST['descricao_avaliacao'] ?? '';
+        // Opcional: Pegar id_agendamento se quiser marcar como avaliado
+        // $id_agendamento = $_POST['id_agendamento'] ?? null;
+
+        // 3. Validar os dados
+        $dadosParaValidar = [
+            'id_cliente' => $id_cliente, // Adiciona o id_cliente para validação
+            'id_profissional' => $id_profissional,
+            'nota_avaliacao' => $nota_avaliacao,
+            'descricao_avaliacao' => $descricao_avaliacao
+        ];
+        $erros = AvaliacaoValidador::ValidarEntradas($dadosParaValidar);
+
+        if (!empty($erros)) {
+            http_response_code(400); // Bad Request
+            echo json_encode(['success' => false, 'message' => implode("\n", $erros)]);
+            return;
+        }
+
+        
+        $avaliacaoExistente = $this->avaliacao->buscarAvaliacaoPorClienteEProfissional($id_cliente, (int)$id_profissional);
+        if ($avaliacaoExistente) {
+             http_response_code(409); // Conflict
+             echo json_encode(['success' => false, 'message' => 'Você já avaliou este profissional.']);
+             return;
+        }
+
+        // Nota: O método buscarAvaliacaoPorClienteEProfissional precisaria ser criado no Model.
+
+        // 4. Inserir no banco de dados
+        try {
+            $id_inserido = $this->avaliacao->inserirAvaliacao(
+                (int)$id_cliente,
+                (int)$id_profissional,
+                $descricao_avaliacao,
+                (int)$nota_avaliacao
+            );
+
+            if ($id_inserido) {
+                // Opcional: Marcar o agendamento como avaliado no banco, se necessário
+                // if ($id_agendamento) { /* Lógica para atualizar agendamento */ }
+
+                http_response_code(201); // Created
+                echo json_encode(['success' => true, 'message' => 'Avaliação enviada com sucesso! Obrigado pelo seu feedback.']);
+            } else {
+                throw new \Exception("Erro desconhecido ao salvar avaliação no banco de dados.");
+            }
+        } catch (\PDOException $e) {
+            error_log("Erro PDO ao salvar avaliação cliente: " . $e->getMessage());
+            http_response_code(500); // Internal Server Error
+            echo json_encode(['success' => false, 'message' => 'Erro interno [DB] ao salvar sua avaliação. Tente novamente mais tarde.']);
+        } catch (\Exception $e) {
+            error_log("Erro geral ao salvar avaliação cliente: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
 }
