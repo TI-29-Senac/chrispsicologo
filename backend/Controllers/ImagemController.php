@@ -138,29 +138,41 @@ class ImagemController extends AuthenticatedController { // Ajuste a classe base
                 throw new \Exception("Erro ao atualizar dados da imagem.");
             }
 
-            // 3. Atualiza ou Insere na tabela conteudo_site
-            $id_secao = (int)($_POST['id_secao'] ?? $imagemAtual->id_secao);
+            // 3. Atualiza o conteúdo na tabela conteudo_site USANDO o ID específico
+            $id_secao = (int)($_POST['id_secao'] ?? $imagemAtual->id_secao); // Pega a seção (para caso de inserção)
             $titulo = $_POST['titulo_secao'];
             $subtitulo = !empty($_POST['subtitulo']) ? $_POST['subtitulo'] : null;
             $texto = $_POST['texto'];
-            $id_conteudo = isset($_POST['id_conteudo']) ? (int)$_POST['id_conteudo'] : null;
+            // Garante que $id_conteudo seja inteiro ou null
+            $id_conteudo = isset($_POST['id_conteudo']) && $_POST['id_conteudo'] !== '' ? (int)$_POST['id_conteudo'] : null;
 
             $sucessoConteudo = false;
             if ($id_conteudo) {
-                 // Tenta atualizar pelo ID do conteúdo
-                 $sucessoConteudo = $this->imagemModel->atualizarConteudoPorId($id_conteudo, $titulo, $subtitulo, $texto, $ordem);
+                // Prioriza atualizar pelo ID do conteúdo específico
+                $sucessoConteudo = $this->imagemModel->atualizarConteudoPorId($id_conteudo, $titulo, $subtitulo, $texto, $ordem);
+                if (!$sucessoConteudo) {
+                    // Log: O ID foi passado, mas a atualização falhou (talvez ID inválido?)
+                    error_log("Aviso: Falha ao atualizar conteudo_site com id_conteudo = {$id_conteudo}. Verifique se o ID existe.");
+                    // Não vamos cair para atualizar pela seção aqui. Lançamos erro.
+                    throw new \Exception("Erro ao atualizar o registro de conteúdo específico (ID: {$id_conteudo}).");
+                }
             } else {
-                 // Tenta atualizar pelo ID da seção
-                 $sucessoConteudo = $this->imagemModel->atualizarConteudoPorSecaoId($id_secao, $titulo, $subtitulo, $texto, $ordem);
-                 // Se não atualizou (não existia), insere
-                 if (!$sucessoConteudo) {
-                     $id_novo_conteudo = $this->imagemModel->inserirConteudo($id_secao, $titulo, $subtitulo, $texto, $ordem);
-                     $sucessoConteudo = ($id_novo_conteudo !== false);
-                 }
+                // Se NÃO veio um id_conteudo (pode ser um item antigo ou erro no form)
+                // Vamos tentar INSERIR um novo conteúdo para esta seção/ordem.
+                // É importante que o formulário de edição SEMPRE envie o id_conteudo se ele existir.
+                // Se não existe, significa que precisa ser criado.
+                $id_novo_conteudo = $this->imagemModel->inserirConteudo($id_secao, $titulo, $subtitulo, $texto, $ordem);
+                $sucessoConteudo = ($id_novo_conteudo !== false);
+                if (!$sucessoConteudo) {
+                    throw new \Exception("Erro ao tentar inserir novo conteúdo associado.");
+                } else {
+                    // Log opcional para saber que um novo conteúdo foi inserido durante uma edição
+                     error_log("Info: Novo conteúdo inserido (ID: {$id_novo_conteudo}) para seção {$id_secao} durante a edição da imagem ID {$id}.");
+                }
             }
-            if (!$sucessoConteudo) {
-                throw new \Exception("Erro ao salvar dados do conteúdo.");
-            }
+            // A exceção já foi lançada acima se $sucessoConteudo for false
+
+            
 
             // Confirma transação
             $this->db->commit();

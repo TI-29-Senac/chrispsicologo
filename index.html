@@ -329,7 +329,7 @@
         servicosContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; padding: 20px;">Carregando serviços...</p>';
 
         // Usaremos o mesmo endpoint que você já tem para a página de serviços
-        fetch('/backend/api/servicos') // <<< Seu endpoint existente
+        fetch('/backend/api/imagens/servicos') // <<< Seu endpoint existente
             .then(response =>{
                 if(!response.ok){
                     throw new Error('Falha ao carregar dados dos serviços. Status: ' + response.status);

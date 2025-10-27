@@ -52,18 +52,20 @@ class ImagemSite {
                     i.id_imagem,
                     i.url_imagem,
                     i.ordem,
-                    c.titulo_secao AS nome_servico,
-                    c.texto AS descricao_servico
+                    -- Pega o primeiro título/texto encontrado para a imagem (caso haja múltiplos conteúdos com mesma ordem)
+                    MIN(c.titulo_secao) AS nome_servico,
+                    MIN(c.texto) AS descricao_servico
                 FROM
                     {$this->imagemTable} i
-                INNER JOIN
-                    {$this->conteudoTable} c ON i.id_secao = c.id_secao
+                LEFT JOIN /* Alterado para LEFT JOIN */
+                    {$this->conteudoTable} c ON i.id_secao = c.id_secao AND i.ordem = c.ordem_secao /* Condição de ordem mantida no JOIN */
+                                            AND c.excluido_em IS NULL /* Garante que o conteúdo não foi excluído */
                 WHERE
                     i.id_secao = :id_secao
-                    AND i.excluido_em IS NULL
-                    AND c.excluido_em IS NULL
+                    AND i.excluido_em IS NULL /* Garante que a imagem não foi excluída */
+                GROUP BY i.id_imagem /* Agrupa por imagem para evitar duplicatas de imagem */
                 ORDER BY
-                    i.ordem ASC, i.criado_em DESC";
+                    i.ordem ASC"; /* Ordena o resultado final pela ordem da imagem */
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_secao', $id_secao, PDO::PARAM_INT);
