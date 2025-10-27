@@ -139,36 +139,26 @@ class ImagemController extends AuthenticatedController { // Ajuste a classe base
             }
 
             // 3. Atualiza o conteúdo na tabela conteudo_site USANDO o ID específico
-            $id_secao = (int)($_POST['id_secao'] ?? $imagemAtual->id_secao); // Pega a seção (para caso de inserção)
-            $titulo = $_POST['titulo_secao'];
-            $subtitulo = !empty($_POST['subtitulo']) ? $_POST['subtitulo'] : null;
-            $texto = $_POST['texto'];
-            // Garante que $id_conteudo seja inteiro ou null
-            $id_conteudo = isset($_POST['id_conteudo']) && $_POST['id_conteudo'] !== '' ? (int)$_POST['id_conteudo'] : null;
+            $id_secao = (int)($_POST['id_secao'] ?? $imagemAtual->id_secao); // Pega id_secao do POST ou da imagem atual
+$titulo = $_POST['titulo_secao'];
+$subtitulo = !empty($_POST['subtitulo']) ? $_POST['subtitulo'] : null;
+$texto = $_POST['texto'];
+$id_conteudo = isset($_POST['id_conteudo']) ? (int)$_POST['id_conteudo'] : null; // Pega o id_conteudo DO FORMULÁRIO
 
-            $sucessoConteudo = false;
-            if ($id_conteudo) {
-                // Prioriza atualizar pelo ID do conteúdo específico
-                $sucessoConteudo = $this->imagemModel->atualizarConteudoPorId($id_conteudo, $titulo, $subtitulo, $texto, $ordem);
-                if (!$sucessoConteudo) {
-                    // Log: O ID foi passado, mas a atualização falhou (talvez ID inválido?)
-                    error_log("Aviso: Falha ao atualizar conteudo_site com id_conteudo = {$id_conteudo}. Verifique se o ID existe.");
-                    // Não vamos cair para atualizar pela seção aqui. Lançamos erro.
-                    throw new \Exception("Erro ao atualizar o registro de conteúdo específico (ID: {$id_conteudo}).");
-                }
-            } else {
-                // Se NÃO veio um id_conteudo (pode ser um item antigo ou erro no form)
-                // Vamos tentar INSERIR um novo conteúdo para esta seção/ordem.
-                // É importante que o formulário de edição SEMPRE envie o id_conteudo se ele existir.
-                // Se não existe, significa que precisa ser criado.
-                $id_novo_conteudo = $this->imagemModel->inserirConteudo($id_secao, $titulo, $subtitulo, $texto, $ordem);
-                $sucessoConteudo = ($id_novo_conteudo !== false);
-                if (!$sucessoConteudo) {
-                    throw new \Exception("Erro ao tentar inserir novo conteúdo associado.");
-                } else {
-                    // Log opcional para saber que um novo conteúdo foi inserido durante uma edição
-                     error_log("Info: Novo conteúdo inserido (ID: {$id_novo_conteudo}) para seção {$id_secao} durante a edição da imagem ID {$id}.");
-                }
+$sucessoConteudo = false;
+if ($id_conteudo) {
+     // Tenta atualizar pelo ID do conteúdo específico que veio do formulário
+     $sucessoConteudo = $this->imagemModel->atualizarConteudoPorId($id_conteudo, $titulo, $subtitulo, $texto, $ordem);
+} else {
+     // Se não veio id_conteudo (porque não existia para essa imagem/ordem antes)
+     // Tenta INSERIR um novo conteúdo para esta seção e ordem
+     $id_novo_conteudo = $this->imagemModel->inserirConteudo($id_secao, $titulo, $subtitulo, $texto, $ordem);
+     $sucessoConteudo = ($id_novo_conteudo !== false);
+     // REMOVIDO o else que chamava atualizarConteudoPorSecaoId
+}
+if (!$sucessoConteudo) {
+    throw new \Exception("Erro ao salvar dados do conteúdo.");
+
             }
             // A exceção já foi lançada acima se $sucessoConteudo for false
 
@@ -195,23 +185,23 @@ class ImagemController extends AuthenticatedController { // Ajuste a classe base
     }
 
      // --- Método viewEditarImagem MODIFICADO ---
-     public function viewEditarImagem(int $id) {
-        $imagem = $this->imagemModel->buscarImagemPorId($id);
-        if (!$imagem) {
-            Redirect::redirecionarComMensagem("imagens/listar", "error", "Imagem não encontrada.");
-            return;
-        }
-
-        // Busca o conteúdo associado usando o id_secao da imagem
-        $conteudo = null;
-        if (isset($imagem->id_secao)) {
-             // Usando buscarConteudoPorSecaoId que retorna o PRIMEIRO conteúdo da seção (ou false)
-            $conteudo = $this->imagemModel->buscarConteudoPorSecaoId((int)$imagem->id_secao);
-        }
-
-        // Passa ambos para a view
-        View::render('imagem/edit', ['imagem' => $imagem, 'conteudo' => $conteudo]);
+    public function viewEditarImagem(int $id) {
+    $imagem = $this->imagemModel->buscarImagemPorId($id);
+    if (!$imagem) {
+        Redirect::redirecionarComMensagem("imagens/listar", "error", "Imagem não encontrada.");
+        return;
     }
+
+    // Busca o conteúdo associado usando id_secao E ordem da imagem
+    $conteudo = null;
+    if (isset($imagem->id_secao) && isset($imagem->ordem)) {
+         // Chama o novo método de busca
+        $conteudo = $this->imagemModel->buscarConteudoPorSecaoIdEOrdem((int)$imagem->id_secao, (int)$imagem->ordem);
+    }
+
+    // Passa ambos para a view (imagem e o conteúdo específico dela)
+    View::render('imagem/edit', ['imagem' => $imagem, 'conteudo' => $conteudo]);
+}
 
     public function viewExcluirImagem(int $id) {
         $imagem = $this->imagemModel->buscarImagemPorId($id);

@@ -209,6 +209,16 @@ class ImagemSite {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
+    public function buscarConteudoPorSecaoIdEOrdem(int $id_secao, int $ordem): object|false {
+    $sql = "SELECT * FROM {$this->conteudoTable}
+            WHERE id_secao = :id_secao AND ordem_secao = :ordem AND excluido_em IS NULL
+            LIMIT 1"; // Busca pelo ID da seção E pela ordem
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':id_secao', $id_secao, PDO::PARAM_INT);
+    $stmt->bindParam(':ordem', $ordem, PDO::PARAM_INT); // Adiciona o bind da ordem
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_OBJ);
+}
     
     /**
      * ATUALIZA um registro na tabela conteudo_site pelo ID da SEÇÃO.
