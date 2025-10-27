@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Chris Psicologia</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <section class="contato-hero">
+            <div class="foia">
+                <img src="img/icons/folha.svg" class="folha f1" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f2" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f3" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f4" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f5" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f6" alt="folhas caindo">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-esquerdo" alt="">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-direito" alt="">
+            </div>
+
+            <section class="contato-section">
+                <div class="formulario-registro-container">
+                    <div class="formulario-registro">
+                        <h3>Redefinir Senha</h3>
+                        <p class="subtitulo-registro" id="subtitulo-redefinir">Digite sua nova senha abaixo.</p>
+
+                        <form id="form-redefinir-senha" action="/backend/recuperar-senha/processar" method="POST">
+                            <input type="hidden" id="token_reset" name="token">
+
+                            <label for="nova_senha">Nova Senha *</label>
+                            <input type="password" id="nova_senha" name="nova_senha" required minlength="6">
+
+                            <label for="confirma_nova_senha">Confirmar Nova Senha *</label>
+                            <input type="password" id="confirma_nova_senha" name="confirma_nova_senha" required minlength="6">
+
+                            <button type="submit" id="btn-redefinir-senha">Salvar Nova Senha</button>
+                            <p id="status-mensagem-redefinicao" style="margin-top: 15px; text-align: center;"></p>
+                        </form>
+
+                        <div style="margin-top: 20px; text-align: center;">
+                           <a href="index.html" style="color: #5D6D68; text-decoration: underline;">Voltar para o Login.</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
+    <footer id="footer"></footer>
+
+    <script src="js/header.js" defer></script>
+    <script src="js/footer.js" defer></script>
+    <script src="js/login-modal-injector.js" defer></script>
+    <script src="js/login.js" defer></script>
+    <script src="js/redefinir-senha.js" defer></script>
+</body>
+</html>

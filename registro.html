@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuário - Chris Psicologia</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <section class="contato-hero">
+            <div class="foia">
+                <img src="img/icons/folha.svg" class="folha f1" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f2" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f3" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f4" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f5" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f6" alt="folhas caindo">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-esquerdo" alt="">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-direito" alt="">
+            </div>
+
+            <section class="contato-section">
+                <div class="formulario-registro-container">
+                    <div class="formulario-registro">
+                        <h3>Crie sua conta</h3>
+                        <p class="subtitulo-registro">Rápido e fácil. Você está a um passo de iniciar sua jornada.</p>
+
+                        <form id="form-registro" action="/backend/usuario/salvar" method="POST">
+                            <label for="nome_usuario">Nome Completo *</label>
+                            <input type="text" id="nome_usuario" name="nome_usuario" required>
+                            
+                            <label for="email_usuario">E-mail *</label>
+                            <input type="email" id="email_usuario" name="email_usuario" required>
+
+                            <label for="senha_usuario">Senha *</label>
+                            <input type="password" id="senha_usuario" name="senha_usuario" required>
+
+                            <label for="confirma_senha">Confirmar Senha *</label>
+                            <input type="password" id="confirma_senha" name="confirma_senha" required>
+
+                            <input type="hidden" name="tipo_usuario" value="user">
+
+                            <button type="submit" id="btn-registro">Registrar</button>
+                            <p id="status-mensagem-registro" style="margin-top: 15px; text-align: center;"></p>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
+    <footer id="footer"></footer>
+
+    <script src="js/header.js" defer></script>
+    <script src="js/footer.js" defer></script>
+    <script src="js/registro.js" defer></script>
+    <script src="js/login-modal-injector.js" defer></script> 
+    <script src="js/login.js" defer></script>
+    <script src="js/esqueci-senha.js" defer></script>
+     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</body>
+</html>
