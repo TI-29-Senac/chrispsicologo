@@ -3383,7 +3383,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .profissional-info-coluna h3 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin-bottom: 20px;
     margin-left: 30px;
 }
@@ -3450,13 +3450,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 .valor-consulta-box {
     margin-top: 10px;
-    padding:  20px 10px;
+    padding:  15px 10px;
     background-color: #d6e3d6;
     border-radius: 8px;
     text-align: center;
     font-size: 1.2rem;
-    margin-left: 30px; 
-    margin-right: 30px;
+    margin-left: 20px;
+    margin-right: 10px;
     border: 1px solid #5D6D68;
 }
 
@@ -3789,7 +3789,7 @@ body::-webkit-scrollbar-thumb:hover {
 /* #region Estilos para Avaliações na Página de Detalhe */
 
 .profissional-bio-coluna h4 { 
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     margin-top: 333px;
     margin-bottom: 10px;
     border-bottom: 1px solid #d6e3d6;
