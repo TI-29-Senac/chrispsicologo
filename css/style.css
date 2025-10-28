@@ -4500,12 +4500,44 @@ body::-webkit-scrollbar-thumb:hover {
 #secao-agendamentos {
     padding: 20px 0;
     text-align: center;
+    height: auto;
 }
 
 #secao-agendamentos h4 {
     font-size: 1.4rem;
     color: #5D6D68;
     margin-bottom: 15px;
+}
+
+#agendamentos-lista {
+    max-height: 350px; 
+    overflow-y: auto; 
+    padding-right: 15px; 
+    border: 1px solid #d6e3d6;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Opcional: Estilização da barra de rolagem (melhora visual em navegadores WebKit/Blink) */
+#agendamentos-lista::-webkit-scrollbar {
+  width: 8px;
+}
+
+#agendamentos-lista::-webkit-scrollbar-track {
+  background: #eefaea; /* Cor de fundo da trilha */
+  border-radius: 4px;
+}
+
+#agendamentos-lista::-webkit-scrollbar-thumb {
+  background-color: #5D6D68; /* Cor da barra */
+  border-radius: 4px;
+  border: 2px solid #eefaea; /* Espaço em volta da barra */
+}
+
+#agendamentos-lista::-webkit-scrollbar-thumb:hover {
+  background-color: #7C8F88; /* Cor da barra ao passar o mouse */
 }
 
 .agendamento-card {
@@ -4519,6 +4551,10 @@ body::-webkit-scrollbar-thumb:hover {
     align-items: center;
     font-size: 1.1rem;
     line-height: 1.6;
+}
+#agendamentos-lista p[style*="text-align: center"] {
+    padding-right: 15px; 
+    box-sizing: border-box;
 }
 
 .agendamento-card a {

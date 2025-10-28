@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.success && Array.isArray(result.agendamentos)) { // Verifica se é array
                 if (result.agendamentos.length > 0) {
-                    agendamentosLista.innerHTML = '<h4>Seus Próximos e Anteriores Agendamentos:</h4>';
+                    agendamentosLista.innerHTML = '<h4>Seus Agendamentos:</h4>';
 
                     result.agendamentos.forEach(agendamento => {
                         // Validação básica dos dados do agendamento
