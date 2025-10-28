@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         const dataFormatada = dataHora.toLocaleDateString('pt-BR', { timeZone: 'UTC' }); // Adiciona UTC para evitar problemas de fuso
-                        const horaFormatada = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+                        const horaFormatada = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                         const statusClass = agendamento.status_consulta.toLowerCase(); // Garante minúsculas
                         const statusTexto = agendamento.status_consulta.charAt(0).toUpperCase() + agendamento.status_consulta.slice(1);
 
