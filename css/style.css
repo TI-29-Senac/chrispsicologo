@@ -5,8 +5,18 @@
   box-sizing: border-box;
 }
 
-html{
-  overflow-x: hidden;
+html {
+  height: 100%; 
+  overflow-x: hidden; 
+}
+body {
+  display: flex; 
+  flex-direction: column; 
+  min-height: 100vh;
+  margin: 0; 
+}
+main {
+  flex-grow: 1;
 }
 
 img, svg {
@@ -14,7 +24,15 @@ img, svg {
   height: auto;
   display: block;
 }
+footer {
+  flex-shrink: 0;
+}
 
+@media (max-width: 768px) {
+  main {
+    margin-top: 80px; 
+  }
+}
 header {
   position: fixed;
   top: 0;
@@ -2279,7 +2297,7 @@ header {
 
 .timeline-planta {
   position: absolute;
-  width: 550px;
+  width: 650px;
   opacity: 0.8;
 }
 
@@ -2369,7 +2387,7 @@ header {
 
 .timeline-content {
   background: #fff;
-  padding: 20px;
+  padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: inline-block;
@@ -2379,12 +2397,13 @@ header {
 .timeline-content h3 {
   color: #5D6D68;
   margin-bottom: 8px;
+  font-size: 1.6rem;
   font-family: 'Questrial', sans-serif;
 }
 
 .timeline-content p {
   color: #5D6D68;
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1.2;
   font-family: 'Questrial', sans-serif;
 }
@@ -3412,7 +3431,7 @@ body::-webkit-scrollbar-thumb:hover {
     border-bottom: 1px solid #d6e3d6;
     padding-bottom: 5px;
     text-align: left;
-    margin-left: 10px;
+    margin-left: -15px;
     margin-right: 10px;
 }
 
@@ -3629,16 +3648,18 @@ body::-webkit-scrollbar-thumb:hover {
 /* #region Estilo Discreto para Saudação no Menu Lateral */
 
 .links-menu-lateral .welcome-user-side {
-    padding: 8px 12px; /* Mesmo padding dos links */
+    padding: 8px 0px; /* Mesmo padding dos links */
     margin-bottom: -5px; /* Reduz um pouco o espaço abaixo */
-    margin-top: 50px; /* Reduz um pouco o espaço acima */
+    margin-top: 50px;
+
 }
 
 .links-menu-lateral .welcome-user-side span {
     font-family: questrial, sans-serif;
     color: #fff; 
     font-weight: normal;
-    display: block; 
+    display: flex;
+    text-align: left;
 }
 
 /* Ajusta o link Sair para combinar */
@@ -3905,7 +3926,395 @@ body::-webkit-scrollbar-thumb:hover {
     }
 }
 
+/* ===== Media Queries para Responsividade (Adicionar/Modificar no final de style.css) ===== */
+
+/* Telas Médias (Ex: Tablets em modo retrato e celulares grandes em paisagem) - Ajusta o grid */
+@media (max-width: 992px) {
+  .profissionais .container {
+    max-width: 90%; /* Permite que o container ocupe mais largura */
+    padding: 0 15px; /* Reduz padding lateral */
+  }
+
+  .profissional {
+    /* Mantém o grid, mas ajusta o padding e talvez a largura da coluna da foto */
+    grid-template-columns: minmax(auto, 200px) 1fr; /* Coluna da foto um pouco menor */
+    padding: 30px; /* Reduz o padding interno do card */
+    gap: 25px; /* Reduz o espaçamento entre colunas */
+    width: 100%; /* Ocupa a largura do container */
+    max-width: 700px; /* Limita um pouco a largura máxima */
+    margin: 0 auto 30px auto; /* Centraliza e adiciona espaço inferior */
+    height: auto; /* Altura automática */
+  }
+
+  .card-prof .foto {
+    width: 180px; /* Foto um pouco menor */
+    height: 225px;
+  }
+
+  .card-prof .valor {
+    position: static; /* Remove posicionamento absoluto */
+    margin: 20px auto; /* Espaçamento normal */
+    max-width: 100%; /* Ocupa a largura disponível */
+    padding: 15px 10px;
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    margin: 20px auto; /* Centraliza o botão */
+    padding: 15px 50px; /* Ajusta padding */
+    width: auto; /* Largura automática */
+    display: table; /* Truque para centralizar inline-block */
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+  }
+
+  .detalhes h4 {
+    font-size: 1.3rem;
+  }
+
+  .detalhes p,
+  .detalhes li,
+  .especialidades,
+  .tipos {
+    font-size: 1.1rem; /* Reduz um pouco a fonte dos detalhes */
+  }
+}
+
+/* Telas Pequenas (Ex: Celulares em modo retrato) - Desfaz o grid */
+@media (max-width: 767px) {
+  .hero-profissionais-aba{
+    margin-top: 80px; /* Ajusta margem superior por causa do header menor */
+  }
+
+  .section-header {
+    margin-bottom: 30px;
+  }
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+  .section-header p {
+    font-size: 1rem;
+  }
+
+  .profissionais .container {
+    gap: 25px; /* Reduz espaço entre cards empilhados */
+  }
+
+  .profissional {
+    grid-template-columns: 1fr; /* Coluna única, foto e detalhes empilhados */
+    padding: 20px; /* Mais redução de padding */
+    gap: 20px; /* Espaço entre a foto/card-prof e os detalhes */
+    max-width: 95%; /* Ocupa quase toda a largura */
+  }
+
+  .card-prof {
+    padding: 0; /* Remove padding extra do card-prof */
+    border: none; /* Remove borda se houver */
+    box-shadow: none; /* Remove sombra se houver */
+  }
+
+  .card-prof .foto {
+    width: 150px; /* Foto menor e centralizada */
+    height: 187px; /* Mantém proporção */
+    margin-bottom: 10px;
+  }
+
+  .card-prof h3 {
+    font-size: 1.3rem; /* Título um pouco menor */
+  }
+
+    .card-prof .avaliacoes-prof{
+        justify-content: center; /* Centraliza as avaliações */
+        margin-bottom: 15px;
+    }
+
+  .card-prof .valor {
+    font-size: 1rem;
+    padding: 12px 8px;
+    margin-top: 15px;
+  }
+
+  .card-prof .btn {
+    width: 100%; /* Botão ocupa toda a largura */
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    margin-left: 0; /* Reseta margem */
+    margin-right: 0;
+  }
+
+  .detalhes {
+    text-align: center; /* Centraliza os textos dos detalhes */
+  }
+
+  .detalhes h4 {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 15px; /* Adiciona espaço acima dos títulos */
+  }
+    .detalhes .espaco-prof { /* Reduz o espaço extra acima do "Duração e Tipo" */
+      margin-top: 25px !important;
+    }
+
+  .detalhes p,
+  .detalhes li,
+  .especialidades,
+  .tipos {
+    font-size: 1rem; /* Fonte menor para detalhes */
+  }
+  .especialidades-lista {
+     margin-left: 0; /* Remove margem da lista */
+     padding-left: 20px; /* Adiciona padding para os marcadores */
+     text-align: left; /* Alinha o texto da lista à esquerda */
+  }
+
+  .tipos ul {
+    display: inline-block; /* Permite centralizar a lista */
+    text-align: left; /* Alinha o texto dentro da lista */
+    margin-top: 10px;
+  }
+  .tipos li {
+    justify-content: flex-start; /* Alinha ícone e texto à esquerda */
+  }
+}
+
+/* Ajustes finos opcionais para telas muito pequenas */
+@media (max-width: 480px) {
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+  .profissional {
+    padding: 15px;
+  }
+  .card-prof .foto {
+    width: 120px;
+    height: 150px;
+  }
+  .card-prof h3 {
+    font-size: 1.2rem;
+  }
+  .detalhes h4 {
+    font-size: 1.1rem;
+  }
+    .detalhes p,
+  .detalhes li,
+  .especialidades,
+  .tipos {
+    font-size: 0.95rem; /* Fonte ainda menor */
+  }
+}
+
+/* Estilos existentes do .modal-avaliacoes e .modal-conteudo */
+/* Adicione media queries aqui se precisar ajustar o modal */
+@media (max-width: 767px) {
+    .modal-conteudo {
+        width: 90%; /* Modal ocupa mais espaço na tela */
+        margin: 20px auto; /* Menos margem vertical */
+        height: auto; /* Altura automática */
+        max-height: 80vh; /* Limita a altura máxima */
+        padding: 15px;
+    }
+    .modal-conteudo h4 {
+        font-size: 1.2rem; /* Título do modal menor */
+    }
+    .linha-nota .numero-1,
+    .linha-nota .qtd-nota {
+        font-size: 1rem; /* Textos menores nas barras */
+    }
+    .comentario p {
+        font-size: 1rem; /* Texto do comentário menor */
+    }
+}
+
 /* #endregion */
+
+/* ===== Media Queries para Responsividade (agendamento-detalhe.html) ===== */
+
+/* Telas Médias (Ex: Tablets) */
+@media (max-width: 992px) {
+    .agendamento-detalhe-grid {
+        grid-template-columns: minmax(auto, 280px) 1fr; /* Coluna da foto um pouco menor */
+        gap: 30px; /* Reduz espaçamento */
+        width: 95%; /* Container um pouco mais largo */
+        padding: 25px; /* Reduz padding interno */
+    }
+
+    .profissional-info-foto {
+        width: 90%; /* Ajusta tamanho da foto */
+        margin-left: auto; /* Centraliza */
+        margin-right: auto;
+    }
+
+    .profissional-bio-coluna p {
+        font-size: 1.1rem; /* Reduz um pouco a fonte da bio */
+        margin-left: 0; /* Remove margem extra */
+    }
+
+    .profissional-bio-coluna .avaliacoes-detalhe {
+        margin-left: 0; /* Remove margem extra */
+        margin-right: 0;
+    }
+
+
+    .agenda-container,
+    .confirmacao-container {
+        width: 95%; /* Containers ocupam mais largura */
+        padding: 25px;
+    }
+
+    .agenda-body {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); /* Mais colunas se couber */
+    }
+
+    .form-grupo-duplo {
+        gap: 15px; /* Menos espaço entre campos duplos */
+    }
+}
+
+/* Telas Pequenas (Ex: Celulares) */
+@media (max-width: 767px) {
+    .hero-profissionais-aba { /* Ajusta margem superior se o header for menor */
+        margin-top: 80px;
+    }
+
+    .titulo-aba-prof {
+        font-size: 1.6rem; /* Título menor */
+        margin-top: 20px;
+        margin-bottom: 20px; /* Adiciona espaço abaixo */
+    }
+
+    .agendamento-detalhe-grid {
+        grid-template-columns: 1fr; /* Empilha as colunas */
+        gap: 20px;
+        width: 95%;
+        padding: 20px;
+    }
+
+    .profissional-info-coluna {
+        text-align: center; /* Centraliza conteúdo da primeira coluna */
+    }
+
+    .profissional-info-foto {
+        width: 150px; /* Foto menor */
+        height: 187px;
+        margin-bottom: 10px;
+    }
+
+    .profissional-info-coluna h3 {
+        font-size: 1.4rem;
+        margin-left: 0; /* Remove margem */
+    }
+     .profissional-info-coluna h4 {
+        text-align: center; /* Centraliza subtítulos */
+     }
+
+    .profissional-info-coluna .tipos-lista {
+        justify-content: center; /* Centraliza itens da lista */
+        margin-left: 0;
+    }
+     .profissional-info-coluna .tipos-lista li {
+        justify-content: center;
+     }
+
+    .profissional-bio-coluna h4 {
+        font-size: 1.3rem;
+        text-align: center; /* Centraliza subtítulos */
+        margin-left: 0;
+    }
+    /* Remove margem superior extra das avaliações */
+    .profissional-bio-coluna h4:not(:first-of-type) {
+        margin-top: 25px;
+    }
+
+
+    .profissional-bio-coluna p {
+        text-align: center; /* Centraliza texto da bio */
+        font-size: 1rem;
+    }
+
+        .profissional-bio-coluna .avaliacoes-detalhe {
+        margin-left: auto; /* Centraliza caixa de avaliação */
+        margin-right: auto;
+    }
+
+    .agenda-container,
+    .confirmacao-container {
+        width: 95%;
+        padding: 20px;
+        margin-bottom: 30px; /* Adiciona espaço abaixo de cada bloco */
+    }
+
+    .agenda-container h3,
+    .confirmacao-container h3 {
+        font-size: 1.5rem; /* Títulos menores */
+        margin-bottom: 20px;
+    }
+
+    #data-consulta {
+        font-size: 1.1rem; /* Input de data menor */
+        padding: 10px 15px;
+    }
+
+    #agenda-feedback {
+        font-size: 1rem; /* Texto de feedback menor */
+    }
+
+    .agenda-body {
+        grid-template-columns: repeat(3, 1fr); /* 3 colunas de horários */
+        gap: 8px;
+        max-width: 100%;
+    }
+
+    .horario-btn {
+        font-size: 0.9rem; /* Botões de horário menores */
+        padding: 10px 5px;
+        width: 100%; /* Ocupa toda a coluna */
+    }
+
+    .form-grupo-duplo {
+        grid-template-columns: 1fr; /* Empilha campos duplos */
+        gap: 15px;
+    }
+
+    .form-rodape {
+        flex-direction: column; /* Empilha valor do sinal e botão */
+        gap: 15px;
+        align-items: stretch; /* Estica os itens */
+    }
+
+    .btn-pagamento {
+        width: 100%; /* Botão ocupa toda a largura */
+        padding: 12px 20px;
+    }
+}
+
+/* Ajustes finos opcionais para telas muito pequenas */
+@media (max-width: 480px) {
+    .titulo-aba-prof {
+        font-size: 1.4rem;
+    }
+    .agendamento-detalhe-grid,
+    .agenda-container,
+    .confirmacao-container {
+        padding: 15px;
+    }
+
+    .profissional-info-foto {
+        width: 120px;
+        height: 150px;
+    }
+     .agenda-body {
+        grid-template-columns: repeat(2, 1fr); /* 2 colunas de horários */
+    }
+    .form-grupo label,
+    .form-grupo input,
+    .form-grupo select,
+    .valor-sinal,
+    .btn-pagamento {
+        font-size: 0.95rem; /* Reduz fontes do formulário */
+    }
+}
 
 
 /* ===== ESTILOS DA TELA DE CARREGAMENTO ===== */
@@ -3971,6 +4380,9 @@ body::-webkit-scrollbar-thumb:hover {
     color: #5D6D68;
     z-index: 10;
     position: relative;
+    height: auto;
+   min-height: auto;
+   max-height: none;
 
 }
 
