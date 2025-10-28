@@ -41,7 +41,7 @@
         <a href="profissionais.html" class="consulta-botao">Agendar Consulta</a>
       </div>
       </div>
-   
+
 
         <div class="cerebro-carrossel">
   <img src="img/icons/cerebro.png" class="active" />
@@ -53,7 +53,7 @@
       <div class="barra-banner">
         <p>Você não veio até aqui por acaso. Algo em você, silencioso, cansado ou esperançoso já quer mudar. E isso
           merece ser ouvido.</p></div>
-          
+
     </section>
 
     <div class="fundo">
@@ -69,14 +69,14 @@
           <div class="card-content">
             A ansiedade é uma resposta natural ao estresse, mas quando acontece com muita frequência ou intensidade, pode causar preocupação constante, inquietação e sintomas físicos como palpitações e dificuldade para respirar. Entender como ela surge e como lidar ajuda a recuperar o controle e a tranquilidade no dia a dia.
           </div>
-          
+
           <div class="card-sentimento" onclick="toggleCard(this)">
             <input type="radio" name="sentimento" /> Depressão
           </div>
           <div class="card-content">
             A depressão vai além da tristeza passageira. É uma condição que afeta o humor, os pensamentos e as atitudes, gerando falta de interesse pelas atividades diárias, cansaço e sensação de vazio. Saber que é uma doença tratável pode ajudar a buscar apoio e recuperar a vontade de viver.
           </div>
-          
+
           <div class="card-sentimento" onclick="toggleCard(this)">
             <input type="radio" name="sentimento" /> Fobia Social
           </div>
@@ -90,7 +90,7 @@
           <div class="card-content">
             O luto é o processo natural de adaptação à perda de alguém ou algo importante. Ele pode trazer uma mistura intensa de emoções como tristeza, raiva, culpa e confusão. Entender que cada pessoa vive o luto de forma única ajuda a aceitar o tempo necessário para a recuperação e a buscar apoio quando necessário.
           </div>
-          
+
           <div class="card-sentimento" onclick="toggleCard(this)">
             <input type="radio" name="sentimento" /> Trauma
           </div>
@@ -122,7 +122,7 @@
           <button class="seta esquerda" aria-label="Anterior" onclick="moverCarrossel(-1)">&#10094;</button>
 
           <div class="cards" id="cards-carrossel">
-          </div>
+             </div>
 
         <button class="seta direita" aria-label="Próximo" onclick="moverCarrossel(1)">&#10095;</button>
 
@@ -131,7 +131,7 @@
       <div class="btn-ver-profissionais">
         <a href="profissionais.html" class="botao-link">Ver nossos profissionais</a>
       </div>
-      
+
       </div>
     </div>
 
@@ -144,7 +144,7 @@
         <p class="quem-somos-descricao">
           Somos uma clínica dedicada ao cuidado emocional e psicológico, oferecendo um ambiente acolhedor e seguro para nossos pacientes.
         </p>
-      
+
         <div class="carrossel-imagens">
           <div class="faixa-imagens" id="faixa-imagens-quem-somos">
           </div>
@@ -171,101 +171,14 @@
     <a href="servicos.html" class="btn-saiba-mais-centralizado">Saiba mais</a>
     </div>
   </section>
-    
-    
-    
+
+
+
     </div>
   </main>
   <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
 
   <footer id="footer"></footer>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Seleciona o container onde os cards dos profissionais serão inseridos
-    const container = document.getElementById('cards-carrossel');
-    if (!container) {
-      console.error('Elemento com ID "cards-carrossel" não encontrado.');
-      return;
-    }
-
-    container.innerHTML = '<p style="text-align: center; color: #5D6D68;">Carregando profissionais...</p>'; // Mensagem de carregamento
-
-    // Faz a requisição para buscar os dados dos profissionais públicos
-    fetch('/backend/profissionais/listar-publico')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Falha ao carregar dados da rede. Status: ' + response.status);
-        }
-        return response.json();
-      })
-      .then(profissionais => {
-        // Verifica se a resposta contém os dados esperados
-        if (!profissionais || !Array.isArray(profissionais)) {
-          throw new Error('API retornou dados em formato inválido ou vazio.');
-        }
-
-        container.innerHTML = ''; // Limpa a mensagem de carregamento
-
-        if (profissionais.length === 0) {
-           container.innerHTML = '<p style="text-align: center; color: #5D6D68;">Nenhum profissional disponível no momento.</p>';
-           return;
-        }
-
-        // --- Lógica para Duplicação (para carrossel infinito) ---
-        // Cria uma lista maior repetindo os profissionais para o efeito de loop
-        const profissionaisParaCarrossel = [];
-        // Repete a lista algumas vezes (ex: 3 vezes para ter blocos antes e depois)
-        for (let i = 0; i < 3; i++) {
-            profissionais.forEach(prof => profissionaisParaCarrossel.push(prof));
-        }
-        // --- Fim da Lógica para Duplicação ---
-
-
-        // Itera sobre a lista DUPLICADA para criar os cards
-        profissionaisParaCarrossel.forEach(profissional => {
-          // Lógica para definir a imagem (igual ao profissionais.js)
-          const nomeBase = profissional.nome_usuario.split(' ')[0].toLowerCase();
-          const fotoUrlPadrao = `img/profissionais/${nomeBase}.png`;
-          const fotoFinal = profissional.img_profissional || fotoUrlPadrao;
-
-          // Cria o HTML do card para cada profissional
-          const cardHtml = `
-            <div class="card" data-id-profissional="${profissional.id_profissional}">
-              <a href="profissionais.html" class="card-link">
-                <div class="foto" style="background-image: url('${fotoFinal}'); background-size: cover; background-position: center;">
-                </div>
-                <h3>${profissional.nome_usuario}</h3>
-                <div class="avaliacoes">
-                  <h4>Psicólogo(a)</h4>
-                  <p>${profissional.especialidade || 'Clínica Geral'}</p>
-                </div>
-              </a>
-            </div>
-          `;
-          // Insere o HTML do card no container
-          container.insertAdjacentHTML('beforeend', cardHtml);
-        });
-
-        // Após adicionar todos os cards, inicializa a lógica de destaque do carrossel (se existir)
-        if (typeof destacarCardCentral === 'function') {
-            destacarCardCentral();
-             // --- Ajuste Inicial do Scroll para o Meio (após duplicar) ---
-             const cardWidth = 300 + 60; // Largura do card + gap
-             const totalOriginalCards = profissionais.length;
-             // Começa no início do segundo bloco de cards
-             container.scrollLeft = totalOriginalCards * cardWidth;
-             // --- Fim do Ajuste Inicial ---
-        }
-
-
-      })
-      .catch(error => {
-        console.error('Erro ao buscar profissionais:', error);
-        container.innerHTML = '<p style="color: red; text-align: center;">Não foi possível carregar os profissionais no momento. Tente novamente mais tarde.</p>';
-      });
-  });
-</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -275,11 +188,6 @@
     if (quemSomosContainer) {
         quemSomosContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; padding: 20px;">Carregando imagens...</p>';
 
-        // !!! IMPORTANTE: Endpoint Hipotético !!!
-        // Você precisa criar este endpoint no seu backend (Rotas.php, um novo Controller ou método)
-        // Ele deve retornar um JSON com a lista de URLs das imagens para o carrossel "Quem Somos".
-        // Exemplo de JSON esperado: ["img/quem-somos/corredor.png", "img/quem-somos/recepcao.png", ...]
-        // OU [{ "url_imagem": "img/quem-somos/corredor.png" }, { "url_imagem": "img/quem-somos/recepcao.png" }, ...]
         fetch('/backend/api/imagens/quem-somos') // <<< SUBSTITUA PELO SEU ENDPOINT REAL
             .then(response => {
                 if (!response.ok) {
@@ -288,25 +196,19 @@
                 return response.json();
             })
             .then(imagens => {
-                 // Adapte a validação conforme a estrutura do seu JSON real
                 if (!Array.isArray(imagens) || imagens.length === 0) {
                      throw new Error('Nenhuma imagem da clínica encontrada ou formato inválido.');
                 }
 
-                quemSomosContainer.innerHTML = ''; // Limpa o "Carregando..."
+                quemSomosContainer.innerHTML = '';
 
-                // --- Lógica para Duplicação (para animação infinita) ---
                 const imagensParaCarrossel = [];
-                 // Repete a lista pelo menos duas vezes para o efeito funcionar
-                 const repeticoes = Math.max(2, Math.ceil(8 / imagens.length)); // Garante pelo menos umas 8 imagens
+                 const repeticoes = Math.max(2, Math.ceil(8 / imagens.length));
                  for (let i = 0; i < repeticoes; i++) {
                      imagens.forEach(imgData => imagensParaCarrossel.push(imgData));
                  }
-                // --- Fim da Lógica para Duplicação ---
 
-                // Itera sobre a lista DUPLICADA
                 imagensParaCarrossel.forEach(imgData => {
-                    // Adapte 'imgData.url_imagem' ou apenas 'imgData' se a API retornar só a string URL
                     const imageUrl = typeof imgData === 'string' ? imgData : imgData.url_imagem;
                      if (imageUrl) {
                         const imgHtml = `<img src="${imageUrl}" alt="Imagem da clínica">`;
@@ -328,7 +230,6 @@
     if (servicosContainer) {
         servicosContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; padding: 20px;">Carregando serviços...</p>';
 
-        // Usaremos o mesmo endpoint que você já tem para a página de serviços
         fetch('/backend/api/imagens/servicos') // <<< Seu endpoint existente
             .then(response =>{
                 if(!response.ok){
@@ -337,15 +238,13 @@
                 return response.json();
             })
             .then(json => {
-                // Validação baseada na estrutura que você mostrou no primeiro script
                 if (json.status !== 'success' || !Array.isArray(json.data) || json.data.length === 0){
                     throw new Error('Nenhum serviço encontrado ou formato de dados inválido.');
                 }
 
-                servicosContainer.innerHTML = ''; // Limpa o "Carregando..."
+                servicosContainer.innerHTML = '';
 
                 json.data.forEach(servico => {
-                    // Cria o HTML do card exatamente como estava no seu index.html estático
                     const cardHtml = `
                         <div class="card-servico">
                           <img src="${servico.caminho_imagem}" alt="${servico.nome_servico}">
@@ -367,7 +266,7 @@
 
   });
 </script>
-  
+
   <script src="js/header.js" defer></script>
   <script src="js/cards.js" defer></script>
   <script src="js/cerebro.js" defer></script>
@@ -379,10 +278,9 @@
       const cardsContainer = document.getElementById('cards-carrossel');
 
       if (cardsContainer) {
-        // Adiciona mensagem de carregamento inicial
         cardsContainer.innerHTML = '<p style="text-align: center; color: #5D6D68; width: 100%; padding: 20px 0;">Carregando profissionais...</p>';
 
-        fetch('/backend/carrossel/cards') // Backend agora envia SÓ os 5 cards
+        fetch('/backend/carrossel/cards')
           .then(response => {
             if (!response.ok) {
               throw new Error('Falha ao carregar cards do carrossel. Status: ' + response.status);
@@ -390,16 +288,14 @@
             return response.text();
           })
           .then(htmlString => {
-            cardsContainer.innerHTML = htmlString; // Injesta os 5 cards recebidos
+            cardsContainer.innerHTML = htmlString;
 
-            // --- CHAMA A INICIALIZAÇÃO DO CARROSSEL QUE AGORA FAZ A DUPLICAÇÃO ---
             if (typeof inicializarCarrosselHome === 'function') {
-                inicializarCarrosselHome(); // Esta função agora duplica e ajusta o scroll
+                inicializarCarrosselHome();
             } else {
                  console.error('Função inicializarCarrosselHome() não encontrada em carrossel.js. O carrossel não funcionará.');
                  cardsContainer.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Erro: Script do carrossel não carregado corretamente.</p>';
             }
-            // --- FIM DA INICIALIZAÇÃO ---
 
           })
           .catch(error => {
@@ -415,7 +311,7 @@
   <script src="js/footer.js" defer></script>
   <script src="js/loading.js" defer></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="js/login-modal-injector.js" defer></script> 
+  <script src="js/login-modal-injector.js" defer></script>
   <script src="js/login.js" defer></script>
   <script src="js/registro.js" defer></script>
     <script src="js/esqueci-senha.js" defer></script>
@@ -425,7 +321,7 @@
     <span class="fechar-lightbox" onclick="fecharLightbox()">×</span>
     <img id="img-ampliada" src="" alt="Imagem ampliada">
   </div>
-  
+
 </body>
 
 </html>

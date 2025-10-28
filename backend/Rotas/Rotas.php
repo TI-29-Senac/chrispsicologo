@@ -103,6 +103,7 @@ class Rotas {
                 "/imagens/deletar/{id}" => "ImagemController@deletarImagem",
                 "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
                 "/api/cliente/avaliar" => "AvaliacaoController@salvarAvaliacaoCliente",
+                "/enviar-contato" => "ContatoController@processarFormulario",
                 
             ],
         ];

@@ -347,29 +347,29 @@ class UsuarioController extends AdminController {
     }
 
      
-     private function verificarAcesso(array $tiposPermitidos) {
+    protected function verificarAcesso(array $tiposPermitidos): void {
           if (session_status() == PHP_SESSION_NONE) {
               session_start();
           }
-          
+
           if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !in_array($_SESSION['usuario_tipo'] ?? '', $tiposPermitidos)) {
               Flash::set('error', 'Acesso não autorizado ou sessão expirada.');
 
-              
+
               if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-                   
-                   session_unset(); 
+
+                   session_unset();
                    session_destroy();
-                   header('Location: /index.html'); 
+                   header('Location: /index.html');
               } else {
-                   
+
                    session_unset();
                    session_destroy();
                    header('Location: /index.html');
               }
               exit();
       }
-}
+    }
 
     // Dentro da classe UsuarioController
     public function meuPerfilApi() {

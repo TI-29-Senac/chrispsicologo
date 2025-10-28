@@ -83,17 +83,22 @@
         </div>
 
         <div class="formulario">
-          <h3>Dúvidas</h3>
-          <form>
-            <label for="nome">Nome *</label>
-            <input type="text" id="nome" name="nome" required>
-            <label for="email">E-mail *</label>
-            <input type="email" id="email" name="email" required>
-            <label for="mensagem">Mensagem</label>
-            <textarea id="mensagem" name="mensagem" rows="8" required></textarea>
-            <button type="submit">Enviar</button>
-          </form>
-        </div>
+  <h3>Dúvidas</h3>
+  <form id="backend-contact-form" action="/backend/enviar-contato" method="POST">
+    <label for="nome">Nome *</label>
+    <input type="text" id="nome" name="nome" required>
+
+    <label for="email">E-mail *</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="mensagem">Mensagem *</label> <textarea id="mensagem" name="mensagem" rows="8" required></textarea>
+
+    <button type="submit" id="btn-enviar-contato">Enviar Mensagem</button>
+    <p id="status-mensagem" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
+  </form>
+</div>
+
+<script src="js/contato-backend.js" defer></script>
       </div>
 
       <div class="col-direita">
