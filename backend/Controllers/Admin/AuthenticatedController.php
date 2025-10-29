@@ -12,12 +12,8 @@ abstract class AuthenticatedController {
     public function __construct(){
         $this->session = new Session();
 
-        // Verifica se está logado
         if(!$this->session->has('usuario_id')){
-            // Limpa a sessão para garantir que não haja dados parciais
             $this->session->destroy();
-            // Redireciona para a página inicial (onde o modal de login pode ser aberto)
-            // Usando Flash para a mensagem
             Flash::set(
                 'error',
                 'Você precisa estar logado para acessar esta área.'
@@ -26,7 +22,6 @@ abstract class AuthenticatedController {
             exit();
         }
 
-        // Guarda o tipo do usuário para verificações futuras
         $this->usuarioTipo = $this->session->get('usuario_tipo') ?? '';
     }
 

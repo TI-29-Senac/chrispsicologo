@@ -3611,6 +3611,7 @@ body::-webkit-scrollbar-thumb:hover {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+    top: -40px;
 }
 
 .form-grupo label {
@@ -3648,11 +3649,14 @@ body::-webkit-scrollbar-thumb:hover {
     color: #5D6D68;
     text-align: center;
     padding: 10px;
+    width: auto;
     border-radius: 6px;
     text-decoration: none;
-    font-weight: bold;
+    font-size: 1rem;
     margin-bottom: 10px;
     font-family: questrial, sans-serif;
+    box-shadow: none;
+    border: none;
 }
 .termos-link:hover {
   background-color: #A3B8A1;
@@ -3664,9 +3668,9 @@ body::-webkit-scrollbar-thumb:hover {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 40px;
+    margin-top: 20px;
     flex-direction: row;
-    justify-content: center;
+
 }
 
 
@@ -3715,7 +3719,7 @@ body::-webkit-scrollbar-thumb:hover {
     overflow-y: auto;  /* Adiciona scroll vertical */
     border: 1px solid #ccc;
     border-radius: 6px;
-    padding: 10px;
+    padding: 10px 40px;
     background-color: #faf6ee; /* Cor de fundo para o scroll */
     color: #5D6D68;
     display: flex;
@@ -3791,6 +3795,267 @@ body::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
     font-size: 1rem;
 }
+
+/* #region Estilos Modal de Termos de Pagamento */
+
+.modal-termos-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10002; 
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease;
+}
+
+.modal-termos-overlay.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-termos-content {
+    background-color: #faf6ee; 
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    font-family: 'Questrial', sans-serif;
+    color: #5D6D68;
+}
+
+.modal-termos-content .modal-title {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    color: #5D6D68;
+    border-bottom: 2px solid #A3B8A1;
+    padding-bottom: 10px;
+}
+
+.modal-termos-body {
+    max-height: 40vh; /* Limite de altura para o conteúdo com scroll */
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-termos-body p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.modal-termos-body ul {
+    list-style: disc;
+    margin: 15px 0 20px 25px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.modal-termos-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+}
+
+.modal-termos-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto;
+    height: auto;
+    transform: scale(1.2);
+}
+
+.modal-termos-content .modal-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #5D6D68;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    font-family: questrial, sans-serif;
+}
+
+.modal-termos-content .modal-button:disabled {
+    background-color: #A3B8A1;
+    cursor: not-allowed;
+}
+
+/* #endregion */
+
+/* #region Estilos Modal de Termos de Pagamento (Agendamento) */
+
+/* Botões específicos do modal de termos */
+.agendamento-termos-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #5D6D68; /* Cor principal */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: questrial, sans-serif;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+
+.agendamento-termos-btn:hover {
+  background: #4a5b5c; 
+}
+
+.agendamento-termos-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.agendamento-termos-btn-secondary {
+  background: #A3B8A1; /* Cor secundária */
+  color: #fff;
+}
+
+.agendamento-termos-btn-secondary:hover {
+  background: #7C8F88; /* Cor secundária hover */
+}
+
+/* Overlay e Modal */
+.agendamento-termos-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10002; /* Z-index alto para ficar sobre tudo */
+  animation: agendamentoTermosFadeIn 0.25s ease-out;
+}
+
+.agendamento-termos-modal {
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #5D6D68;
+  font-family: questrial, sans-serif;
+}
+
+.agendamento-termos-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.agendamento-termos-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #5b6d6e;
+}
+
+.agendamento-termos-body {
+  max-height: 58vh;
+  overflow: auto;
+  padding: 18px 20px;
+  line-height: 1.5;
+  color: #5b6d6e;
+}
+
+.agendamento-termos-body p {
+  margin: 0.5rem 0;
+}
+
+.agendamento-terms-list {
+  margin: 8px 0 0 0;
+  padding-left: 1rem;
+}
+
+.agendamento-terms-list li {
+    margin-bottom: 8px;
+    list-style-position: outside;
+    padding-left: 5px;
+}
+
+.agendamento-termos-footer {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 12px;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #eef2f7;
+}
+
+.agendamento-termos-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #5b6d6e;
+  flex-grow: 1; 
+}
+
+/* Garante que o checkbox do modal não herde estilos estranhos */
+.agendamento-termos-checkbox input[type="checkbox"] {
+    width: auto; 
+    height: auto;
+    margin-bottom: 0;
+    border: initial !important; 
+    box-shadow: none; 
+    padding: 0;
+    transform: scale(1.1);
+}
+
+.agendamento-termos-footer .botoes-container {
+    margin-left: auto;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-shrink: 0; 
+}
+
+/* Animação */
+@keyframes agendamentoTermosFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsivo para o modal */
+@media (max-width: 500px) {
+   .agendamento-termos-footer {
+        flex-direction: column;
+        align-items: stretch; 
+        gap: 15px;
+   }
+   .agendamento-termos-footer .botoes-container {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+   }
+   .agendamento-termos-footer .botoes-container .agendamento-termos-btn {
+        flex-grow: 1;
+        text-align: center;
+   }
+   .agendamento-termos-checkbox {
+        justify-content: center;
+        font-size: 0.85rem;
+   }
+}
+
+/* #endregion */
 
 /* Responsividade para a página de agendamento */
 @media (max-width: 800px) {

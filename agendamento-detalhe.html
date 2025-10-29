@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Consulta - Chris Psicologia</title>
     <link rel="stylesheet" href="css/style.css">
+    
     </head>
 <body>
     <div id="navbar"></div>
@@ -20,6 +21,35 @@
     <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
     <footer id="footer"></footer>
 
+    <div id="termsOverlay" class="agendamento-termos-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+        <div class="agendamento-termos-modal" role="document">
+            <div class="agendamento-termos-header">
+                <h2 id="termsTitle">Termos de Pagamento e Agendamento</h2>
+            </div>
+    
+            <div class="agendamento-termos-body">
+                <ol class="agendamento-terms-list">
+                    <li><strong>Confirmação da consulta:</strong> A reserva do horário é confirmada mediante o pagamento de um <strong>sinal no valor de R$ 50,00</strong>.</li>
+                    <li><strong>Valor total da consulta:</strong> O sinal será abatido do valor total da consulta, no dia do atendimento.</li>
+                    <li><strong>Política de cancelamento:</strong> Em caso de cancelamento ou não comparecimento, o valor do sinal <strong>não será reembolsado</strong>, pois a vaga é bloqueada exclusivamente para o paciente.</li>
+                    <li><strong>Remarcação:</strong> Caso seja necessário remarcar a consulta, o paciente deverá comunicar com <strong>no mínimo 24 horas de antecedência</strong>. A remarcação será analisada conforme disponibilidade da agenda.</li>
+                    <li><strong>Pagamento restante:</strong> O valor restante da consulta deverá ser pago no dia do atendimento, conforme as formas de pagamento aceitas pela clínica.</li>
+                </ol>
+            </div>
+    
+            <div class="agendamento-termos-footer">
+                <label class="agendamento-termos-checkbox" for="acceptCheckbox">
+                    <input id="acceptCheckbox" type="checkbox" aria-describedby="acceptDesc">
+                    <span id="acceptDesc">Li e concordo com os Termos.</span>
+                </label>
+    
+                <div class="botoes-container">
+                    <button id="cancelBtn" class="agendamento-termos-btn agendamento-termos-btn-secondary">Cancelar</button>
+                    <button id="confirmBtn" class="agendamento-termos-btn" disabled>Concordo e continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="js/header.js" defer></script>
     <script src="js/footer.js" defer></script>
     <script src="js/agendamento-detalhe.js" defer></script>
