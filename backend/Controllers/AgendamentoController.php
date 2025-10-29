@@ -5,12 +5,13 @@ use App\Psico\Models\Agendamento;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
+use App\Psico\Controllers\Admin\AuthenticatedController;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\AgendamentoValidador;
 use DateTime;
 
-class AgendamentoController {
+class AgendamentoController extends AuthenticatedController {
     public $agendamento;   
     public $db;
     public $usuario;
@@ -124,6 +125,7 @@ class AgendamentoController {
 
     
     public function viewListarAgendamentos() {
+        $this->verificarAcesso(['admin', 'profissional', 'recepcionista']);
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10);
 
@@ -176,6 +178,7 @@ class AgendamentoController {
     }
 
     public function viewEditarAgendamentos($id) {
+        $this->verificarAcesso(['admin', 'profissional', 'recepcionista']);
         $agendamento = $this->agendamento->buscarAgendamentoPorId((int)$id);
         if (!$agendamento) {
             Redirect::redirecionarComMensagem("agendamentos/listar", "error", "Agendamento não encontrado.");
@@ -185,6 +188,7 @@ class AgendamentoController {
     }
 
         public function viewCriarAgendamentos() {
+        $this->verificarAcesso(['admin', 'profissional', 'recepcionista']);
         $pacientes = $this->usuario->buscarTodosUsuarios();
         $profissionais = $this->profissional->listarProfissionais();
 
@@ -196,6 +200,7 @@ class AgendamentoController {
 
 
     public function viewExcluirAgendamentos($id) {
+        $this->verificarAcesso(['admin', 'profissional', 'recepcionista']);
         $agendamento = $this->agendamento->buscarAgendamentoPorId((int)$id);
         if (!$agendamento) {
             Redirect::redirecionarComMensagem("agendamentos/listar", "error", "Agendamento não encontrado.");
