@@ -4717,3 +4717,147 @@ body::-webkit-scrollbar-thumb:hover {
     color: #ffc107; /* Cor da estrela selecionada e anteriores */
 }
 /* #endregion */
+
+/* Estilos específicos para a página de pagamento */
+        .pagamento-container {
+            max-width: 700px; /* Largura ajustada para o conteúdo */
+            margin: 40px auto; /* Centraliza e adiciona espaço */
+            padding: 30px;
+            background-color: #faf6ee; /* Fundo claro */
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+            color: #5D6D68; /* Cor principal do texto */
+            font-family: 'Questrial', sans-serif;
+        }
+
+        .pagamento-container h3 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #5D6D68;
+        }
+
+        .politica-pagamento-titulo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .pagamento-container hr {
+            border: none;
+            border-top: 1px solid #A3B8A1; /* Linha sutil */
+            margin: 10px auto 20px auto;
+            width: 80%;
+        }
+
+        .pagamento-container .explicacao {
+            font-size: 1.1rem;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .alerta-pagamento {
+            border: 2px solid #e74c3c; /* Vermelho para alerta */
+            background-color: #fdeded; /* Fundo vermelho claro */
+            color: #c0392b; /* Texto vermelho escuro */
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .alerta-pagamento strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+         /* Ícone de Atenção (Exemplo usando pseudo-elemento) */
+        .alerta-pagamento strong::before {
+            content: "⚠️ "; /* Emoji de aviso */
+            margin-right: 5px;
+        }
+
+
+        .pagamento-container ol {
+            margin: 25px 0;
+            padding-left: 25px; /* Recuo para os números */
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+         .pagamento-container ol li {
+            margin-bottom: 10px; /* Espaço entre os itens */
+         }
+
+        .qr-code-section {
+            display: flex;
+            flex-direction: column; /* Empilha QR e valor */
+            align-items: center;
+            gap: 15px; /* Espaço entre QR e valor */
+            margin: 30px 0;
+        }
+
+        .qr-code-section img {
+            max-width: 160px; /* Tamanho do QR code */
+            height: auto;
+            border: 1px solid #ccc;
+        }
+
+        .valor-sinal-box {
+            border: 2px solid #A3B8A1; /* Borda verde clara */
+            background-color: #f0f7f0; /* Fundo verde muito claro */
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #5D6D68;
+        }
+
+        .destinatario-info {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #A3B8A1; /* Linha divisória */
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .destinatario-info p{
+             margin-bottom: 8px;
+        }
+
+         .destinatario-info strong {
+            display: inline-block;
+            width: 100px; /* Alinha os pontos */
+         }
+
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .pagamento-container {
+                padding: 20px;
+                max-width: 95%;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            .pagamento-container h3 {
+                font-size: 1.8rem;
+            }
+
+            .pagamento-container .explicacao,
+            .pagamento-container ol,
+            .destinatario-info {
+                font-size: 1rem;
+            }
+
+             .valor-sinal-box {
+                font-size: 1.1rem;
+             }
+
+             .qr-code-section img {
+                max-width: 140px;
+             }
+        }

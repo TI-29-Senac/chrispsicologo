@@ -3,7 +3,7 @@ namespace App\Psico\Controllers\Admin;
 
 use App\Psico\Core\Session;
 use App\Psico\Core\Redirect;
-use App\Psico\Core\Flash; // Adicionar use para Flash
+use App\Psico\Core\Flash;
 
 abstract class AuthenticatedController {
     protected Session $session;
