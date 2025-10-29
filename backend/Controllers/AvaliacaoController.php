@@ -1,14 +1,14 @@
 <?php
 namespace App\Psico\Controllers;
- 
+
+use App\Psico\Controllers\Admin\AdminController;
 use App\Psico\Core\View;
 use App\Psico\Models\Avaliacao;
 use App\Psico\Database\Database;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\AvaliacaoValidador;
  
-class AvaliacaoController
-{
+class AvaliacaoController extends AdminController{
     public $avaliacao;
     public $db;
  

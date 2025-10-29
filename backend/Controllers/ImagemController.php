@@ -6,10 +6,10 @@ use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Core\FileManager;
-use App\Psico\Controllers\Admin\AuthenticatedController; // Assume que está usando autenticação
+use App\Psico\Controllers\Admin\AdminController; // Assume que está usando autenticação
 use PDO;
 
-class ImagemController extends AuthenticatedController { // Ajuste a classe base se necessário
+class ImagemController extends AdminController { // Ajuste a classe base se necessário
 
     private ImagemSite $imagemModel;
     private FileManager $fileManager;

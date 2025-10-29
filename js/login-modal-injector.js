@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h2>Acesso ao Painel</h2>
                 <form id="login-form" action="/backend/login" method="POST">
                     <label for="login-email">Email:</label>
-                    <input type="email" id="login-email" name="email" required>
+                    <input type="email" id="login-email" name="email" required autocomplete="email">
 
                     <label for="login-senha">Senha:</label>
-                    <input type="password" id="login-senha" name="senha" required>
+                    <input type="password" id="login-senha" name="senha" required autocomplete="current-password">
 
                     <button type="submit">Entrar</button>
                     <p id="login-status-message" style="margin-top: 10px; text-align: center; font-size: 0.9rem;"></p>
