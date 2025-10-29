@@ -11,7 +11,7 @@ use App\Psico\Controllers\Admin\AuthenticatedController;
 use App\Psico\Core\FileManager;
 use PDO;
 
-class ProfissionalController extends AuthenticatedController {
+class ProfissionalController {
     public $profissional;   
     public $db;
     public $usuario;
@@ -25,7 +25,6 @@ class ProfissionalController extends AuthenticatedController {
     }
 
 public function viewCriarProfissionais(){
-        $this->verificarAcesso(['admin', 'profissional']);
         $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
 
         View::render('profissional/create', [
@@ -34,7 +33,6 @@ public function viewCriarProfissionais(){
     }
 
     public function viewListarProfissionais(){
-        $this->verificarAcesso(['admin', 'profissional']);
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->profissional->paginacao((int)$pagina, 10);
         
@@ -70,7 +68,6 @@ public function viewCriarProfissionais(){
     }
 
     public function viewEditarProfissionais($id) {
-        $this->verificarAcesso(['admin', 'profissional']);
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
         if (!$profissional) {
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado.");
@@ -82,7 +79,6 @@ public function viewCriarProfissionais(){
 
 
     public function viewExcluirProfissionais($id) {
-        $this->verificarAcesso(['admin', 'profissional']);
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
         if (!$profissional) {
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado para exclusão.");

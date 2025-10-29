@@ -17,6 +17,7 @@ class AgendamentoController extends AuthenticatedController {
     public $usuario;
     public $profissional;
     public function __construct(){
+        parent::__construct();
         $this->db = Database::getInstance();
         $this->agendamento = new Agendamento($this->db);
         $this->usuario = new Usuario($this->db);

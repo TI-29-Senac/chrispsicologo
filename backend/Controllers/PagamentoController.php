@@ -1,6 +1,7 @@
 <?php
 namespace App\Psico\Controllers;
 
+use App\Psico\Controllers\Admin\AuthenticatedController;
 use App\Psico\Models\Pagamento;
 use App\Psico\Models\Agendamento;
 use App\Psico\Database\Database;
@@ -8,11 +9,12 @@ use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\PagamentoValidador;
 
-class PagamentoController {
+class PagamentoController extends AuthenticatedController{
     public $pagamento;   
     public $db;
     public $agendamento;
     public function __construct(){
+        parent::__construct();
         $this->db = Database::getInstance();
         $this->pagamento = new Pagamento($this->db);
         $this->agendamento = new Agendamento($this->db);
@@ -23,6 +25,7 @@ class PagamentoController {
     }
     
     public function viewListarPagamentos() {
+        $this->verificarAcesso(['admin', 'recepcionista']);
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->pagamento->paginacao((int)$pagina, 10);
 
@@ -57,11 +60,12 @@ class PagamentoController {
     }
 
     public function viewCriarPagamentos(){
+        $this->verificarAcesso(['admin', 'recepcionista']);
         $agendamentos = $this->agendamento->buscarTodosAgendamentos();
         View::render("pagamento/create", ["agendamentos" => $agendamentos]);
     }
 
-public function salvarPagamentos() {
+    public function salvarPagamentos() {
         $erros = PagamentoValidador::ValidarEntradas($_POST);
         if (!empty($erros)) {
             Redirect::redirecionarComMensagem("pagamentos/criar", "error", implode("<br>", $erros));
@@ -84,6 +88,7 @@ public function salvarPagamentos() {
     }
     
 public function viewEditarPagamentos($id){
+        $this->verificarAcesso(['admin', 'recepcionista']);
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id);
         if (!$pagamento) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
