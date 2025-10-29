@@ -38,8 +38,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  height: 157px;
-  z-index: 1001; 
+  z-index: 1001;
 }
 
 .header_menor {
@@ -2277,7 +2276,7 @@ header {
   }
 
   .serv-btn {
-    width: 100%; /* Botão ocupa toda a largura no mobile */
+    width: 100%; 
     text-align: center;
   }
 }
@@ -3593,6 +3592,7 @@ body::-webkit-scrollbar-thumb:hover {
 .horario-btn:hover, .horario-btn.selecionado {
     background-color: #A3B8A1;
     color: white;
+
 }
 
 .confirmacao-container h3 {
@@ -3614,13 +3614,23 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .form-grupo label {
+  margin-top: 10px;
     display: flex;
     margin-bottom: 5px;
 }
 
 .form-grupo input, .form-grupo select {
     width: 100%;
-    padding: 10px;
+    padding: 0px;
+    border: 1px solid #faf6ee;
+    background-color: #faf6ee;
+    color: #5D6D68;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+.leber{
+    width: 10% !important;
+    padding: 0px;
     border: 1px solid #faf6ee;
     background-color: #faf6ee;
     color: #5D6D68;
@@ -3642,19 +3652,21 @@ body::-webkit-scrollbar-thumb:hover {
     text-decoration: none;
     font-weight: bold;
     margin-bottom: 10px;
+    font-family: questrial, sans-serif;
 }
 .termos-link:hover {
   background-color: #A3B8A1;
   color: white;
-
+  font-family: questrial, sans-serif;
 }
 
 .checkbox-container {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 10px;
-    flex-direction: column-reverse;
+    margin-top: 40px;
+    flex-direction: row;
+    justify-content: center;
 }
 
 
@@ -3671,6 +3683,7 @@ body::-webkit-scrollbar-thumb:hover {
 .valor-sinal {
     font-size: 1.2rem;
     color: #5D6D68;
+    font-family: questrial, sans-serif;
 }
 
 .btn-pagamento {
@@ -3682,9 +3695,101 @@ body::-webkit-scrollbar-thumb:hover {
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
+    font-family: questrial, sans-serif;
 }
 .btn-pagamento:hover{
   background-color: #A3B8A1;
+}
+
+/* chrispsicologo/css/style.css (Adicionado no final do arquivo) */
+
+/* Estilos para a lista de especialidades com scroll */
+.lebe{
+  font-family: questrial, sans-serif;
+  font-weight: bold;
+  font-size: 0,8rem;
+}
+.scrolling-checkbox-list {
+    margin-top: -10px !important;
+    max-height: 160px; /* Altura máxima para ativar a scrollbar */
+    overflow-y: auto;  /* Adiciona scroll vertical */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #faf6ee; /* Cor de fundo para o scroll */
+    color: #5D6D68;
+    display: flex;
+    flex-direction: column; /* Coloca os itens em coluna */
+    gap: 5px; /* Espaçamento entre os itens */
+}
+
+.scrolling-checkbox-list label {
+    display: flex; /* Para alinhar o checkbox e o texto */
+    align-items: center;
+    margin-bottom: 0; 
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.scrolling-checkbox-list input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-bottom: 0;
+    border: initial !important; 
+    box-shadow: none; 
+    margin-right: 8px; 
+}
+
+/* Opcional: Estilo da scrollbar em navegadores baseados em WebKit */
+.scrolling-checkbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrolling-checkbox-list::-webkit-scrollbar-thumb {
+    background-color: #5D6D68; 
+    border-radius: 3px;
+}
+
+/* Garante que o container do form-grupo especialidades não quebre o layout */
+.confirmacao-container .form-grupo.especialidades label:not(.scrolling-checkbox-list label) {
+    font-size: 1rem;
+
+}
+
+/* NOVO: Estilos para a seleção de pagamento */
+.pagamento-radio-group {
+    max-height: 160px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #faf6ee;
+    border-radius: 6px;
+    color: #5D6D68;
+}
+
+.pagamento-radio-group .radio-option {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #5D6D68;
+    font-family: questrial, sans-serif;
+}
+
+.pagamento-radio-group input[type="radio"] {
+    /* Garante que o input radio não ocupe 100% da largura */
+    width: auto;
+    margin-right: 8px;
+    filter: brightness(1.5);
+    transform: scale(1.1);
+}
+
+.pagamento-radio-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
 /* Responsividade para a página de agendamento */

@@ -64,8 +64,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`;
         const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao;
         const hojeFormatado = getHojeFormatado(); 
+        
+        // NOVO: Processar a string de especialidades do profissional do BD
+        const especialidadesArray = prof.especialidade ? 
+            prof.especialidade.split(',').map(s => s.trim()).filter(s => s.length > 0) : 
+            ["Psicoterapia Individual", "Terapia de Casal", "Psicoterapia Infantil", "Orientação Profissional"]; // Fallback 
+        
+        // NOVO: Gerar o HTML dos checkboxes de especialidade dinamicamente
+        const especialidadesHtml = especialidadesArray.map(esp => `
+             <label><input type="checkbox" name="especialidade[]" value="${esp}"> ${esp}</label>
+        `).join('');
 
-        const conteudoHTML = `
+ const conteudoHTML = `
             <h2 class="titulo-aba-prof">Seu agendamento com ${prof.nome_usuario.split(' ')[0]}</h2>
 
             <div class="agendamento-detalhe-grid">
@@ -133,23 +143,49 @@ document.addEventListener('DOMContentLoaded', () => {
                             <input type="text" id="cpf" name="cpf" required>
                         </div>
                     </div>
-                     <div class="form-grupo-duplo">
+                    
+                     <div class="form-grupo-duplo" style="margin-top: 10px;">
+                        <div class="form-grupo pagamento-radio-group">
+                            <label style="margin-bottom: 10px;">Forma de Pagamento:</label>
+                            <div class="radio-option">
+                                <input type="radio" id="pag_pix" name="forma_pagamento" value="pix" required checked>
+                                <label for="pag_pix" style="display: inline; font-weight: normal;">Pix (Rápido e Confirmação Imediata)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="pag_cartao" name="forma_pagamento" value="cartao">
+                                <label for="pag_cartao" style="display: inline; font-weight: normal;">Cartão de Crédito/Débito</label>
+                            </div>
+                        </div>
+                        <div class="form-grupo especialidades">
+                            <div class="lista-especialidades scrolling-checkbox-list">
+                             <label class="lebe">Qual tipo de atendimento?</label>
+                                ${especialidadesHtml} </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grupo-duplo" style="margin-top: 10px;">
                         <div class="form-grupo">
                             <label>Leia os Termos</label>
                             <a href="termos.html" target="_blank" class="termos-link">Termos e Condições</a>
                             <div class="checkbox-container">
-                                <input type="checkbox" id="termos" name="termos" required>
+                                <input type="checkbox" id="termos" name="termos" class="leber" required>
                                 <label for="termos">Li e concordo</label>
                             </div>
                         </div>
-                 
+                        <div class="form-grupo" style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100%;">
+                             <p style="text-align: center; font-size: 0.9em; margin: 0; padding: 10px; border: 1px solid #faf6ee; border-radius: 6px; margin-top: -40px;">
+                                O pagamento do sinal é necessário para confirmar a consulta. Você será redirecionado para o método escolhido.
+                             </p>
+                        </div>
                     </div>
+                    <input type="hidden" id="tipo_pagamento_backend" name="tipo_pagamento" value="pix"> 
+                    
                      <div class="form-rodape">
                         <div class="valor-sinal">
                             Valor do sinal: <strong>R$ ${parseFloat(prof.sinal_consulta || 0).toFixed(2).replace('.', ',')}</strong>
                          </div>
                       
-                        <button type="submit" class="btn-pagamento" id="btn-confirmar-agendamento">Solicitar Agendamento</button>
+                        <button type="submit" class="btn-pagamento" id="btn-confirmar-agendamento">Solicitar Agendamento e Pagar</button>
                     </div>
                      <p id="agendamento-status-message" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
                 </form>
@@ -163,6 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dateInput) {
             dateInput.addEventListener('change', buscarHorariosDisponiveis);
         }
+
+        // Listener para atualizar o campo hidden com a forma de pagamento selecionada
+        document.querySelectorAll('input[name="forma_pagamento"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('tipo_pagamento_backend').value = this.value;
+            });
+        });
 
         
         const formConfirmacao = document.getElementById('form-confirmacao');
@@ -290,13 +333,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = event.target;
         const submitButton = document.getElementById('btn-confirmar-agendamento');
         const statusMessage = document.getElementById('agendamento-status-message');
+        
+        const selectedPayment = document.querySelector('input[name="forma_pagamento"]:checked').value; // Obtém o tipo de pagamento selecionado
 
-        statusMessage.textContent = 'Solicitando agendamento...';
+        statusMessage.textContent = 'Solicitando agendamento e pagamento...';
         statusMessage.style.color = '#faf6ee';
         submitButton.disabled = true;
 
         const formData = new FormData(form);
-
+        // O backend espera 'pix', 'credito', 'debito' ou 'dinheiro'. Usamos 'credito' como proxy para 'cartao'.
+        formData.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment); 
+        
         try {
             const response = await fetch('/backend/agendamentos/salvar', {
                 method: 'POST',
@@ -306,16 +353,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.success) {
-                statusMessage.textContent = result.message || 'Agendamento solicitado! Redirecionando...';
+                
+                const agendamentoId = result.agendamentoId;
+                let redirectUrl = '';
+
+                switch (selectedPayment) {
+                    case 'pix':
+                        redirectUrl = `/pagamento-pix.html?id=${agendamentoId}`;
+                        break;
+                    case 'cartao':
+                        redirectUrl = `/pagamento-cartao.html?id=${agendamentoId}`;
+                        break;
+                    case 'boleto':
+                        redirectUrl = `/pagamento-boleto.html?id=${agendamentoId}`;
+                        break;
+                    default:
+                        redirectUrl = `/index.html`; // Fallback
+                }
+
+                statusMessage.textContent = result.message || 'Agendamento solicitado! Redirecionando para o pagamento...';
                 statusMessage.style.color = 'lightgreen';
-                form.reset(); 
-                 document.getElementById('agenda-horarios-container').querySelector('.agenda-body').innerHTML = ''; 
-                 document.getElementById('confirmacao-container').style.display = 'none'; 
                 
                  setTimeout(() => {
-                     
-                     window.location.href = '/index.html'; 
-                 }, 3000);
+                     window.location.href = redirectUrl; 
+                 }, 2000); // Redireciona após 2 segundos
+
             } else {
                 throw new Error(result.message || `Erro ${response.status}`);
             }
@@ -329,12 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
                  buscarHorariosDisponiveis(); 
              }
         } finally {
-            submitButton.disabled = false;
+            if (statusMessage.style.color === 'red') {
+                 submitButton.disabled = false;
+            }
         }
     }
 
-
-    
     carregarDadosIniciais();
 });
 async function carregarAvaliacoesProfissional(idProf) {
