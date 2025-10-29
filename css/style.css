@@ -3622,7 +3622,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 .form-grupo input, .form-grupo select {
     width: 100%;
-    padding: 0px;
+    padding: 5px;
     border: 1px solid #faf6ee;
     background-color: #faf6ee;
     color: #5D6D68;
