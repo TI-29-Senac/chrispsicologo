@@ -147,7 +147,7 @@ class UsuarioController extends AdminController {
                  if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                      Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
                  } else {
-                     Flash::set("success", "Registo realizado com sucesso! Pode fazer login.");
+                     Flash::set("success", "Registro realizado com sucesso! Pode fazer login.");
                      header('Location: /index.html'); 
                      exit();
                  }
