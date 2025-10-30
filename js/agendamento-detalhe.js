@@ -459,11 +459,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'cartao':
                         redirectUrl = `/pagamento-cartao.html?id=${agendamentoId}`;
                         break;
-                    case 'boleto':
-                        redirectUrl = `/pagamento-boleto.html?id=${agendamentoId}`;
-                        break;
                     default:
-                        redirectUrl = `/index.html`; // Fallback
+                        redirectUrl = `/index.html`; 
                 }
 
                 statusMessage.textContent = result.message || 'Agendamento solicitado! Redirecionando para o pagamento...';
@@ -471,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                  setTimeout(() => {
                      window.location.href = redirectUrl; 
-                 }, 2000); // Redireciona após 2 segundos
+                 }, 2000); 
 
             } else {
                 throw new Error(result.message || `Erro ${response.status}`);
