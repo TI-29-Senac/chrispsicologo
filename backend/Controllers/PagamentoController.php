@@ -113,6 +113,7 @@ public function viewEditarPagamentos($id){
     }
 
     public function viewExcluirPagamentos($id){
+        $this->verificarAcesso(['admin']);
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id);
         if (!$pagamento) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
