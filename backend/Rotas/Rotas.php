@@ -16,7 +16,7 @@ class Rotas {
                 "/carrossel/cards" => "ProfissionalController@getCarrosselCardsHtml",
                 
                 // NOVAS ROTAS GET PARA AGENDAMENTOS
-                "/agendamentos/disponibilidade/{id_profissional}/{data}" => "AgendamentoController@buscarDisponibilidade",
+                "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
                 "/agendamentos" => "AgendamentoController@index",
                 "/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
                 "/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
