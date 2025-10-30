@@ -118,8 +118,7 @@ class Usuario {
 
     public function buscarUsuariosNaoProfissionais(): array {
         $sql = "SELECT id_usuario, nome_usuario FROM {$this->table} 
-                WHERE tipo_usuario != 'profissional' 
-                AND id_usuario NOT IN (SELECT id_usuario FROM profissional)";
+                WHERE id_usuario NOT IN (SELECT id_usuario FROM profissional)";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }

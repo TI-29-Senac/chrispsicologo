@@ -27,7 +27,7 @@ class FileManager {
     public function salvarArquivo(
         array $file,
         string $subDiretorio,
-        array $tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'], 
+        array $tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg',  'application/pdf'], 
         int $tamanhoMaximo = 2097152 
     ): string {
 

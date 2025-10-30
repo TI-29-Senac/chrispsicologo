@@ -12,6 +12,7 @@ class Rotas {
                 "/usuario/listar" => "UsuarioController@viewListarUsuarios",
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
+                "/usuarios" => "UsuarioController@meuPerfilApi",
 
                 "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
                 
@@ -63,6 +64,8 @@ class Rotas {
                 // --- ROTAS DE API EXISTENTES ---
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
                 "/api/imagens/servicos" => "ImagemController@listarServicos",
+
+                "/meu-perfil" => "UsuarioController@viewMeuPerfil",
 
             ],
             "POST" => [

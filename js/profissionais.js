@@ -89,26 +89,70 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                // --- NOVO PASSO 1: Criar um mapa de tipos de atendimento por ID ---
+                // Você pode encontrar os IDs de cada profissional no seu painel de admin.
+                const tiposPorProfissional = {
+                    // Exemplo para Chris (ID 6)
+                    6: [ 
+                        { icone: "img/icons/adulto.svg", texto: "Adultos" },
+                        { icone: "img/icons/casais.svg", texto: "Casais" }
+                    ],
+                    // Exemplo para Carla (ID 7)
+                    7: [
+                        { icone: "img/icons/crianca.svg", texto: "Infantil" },
+                        { icone: "img/icons/adolescente.svg", texto: "Adolescentes" }
+                    ],
+                    // Exemplo para Helena (ID 8)
+                    8: [
+                        { icone: "img/icons/idosos.svg", texto: "Idosos" },
+                        { icone: "img/icons/familiar.svg", texto: "Terapia Familiar" }
+                    ],
+                    // Exemplo para Luana (ID 9)
+                    9: [
+                        { icone: "img/icons/publico_feminino.svg", texto: "Mulheres" },
+                        { icone: "img/icons/maternidade.svg", texto: "Maternidade" }
+                    ],
+                    // Exemplo para Yan (ID 10)
+                    10: [
+                        { icone: "img/icons/jovem_adulto.svg", texto: "Jovens Adultos" },
+                        { icone: "img/icons/online.svg", texto: "Atendimento Online" }
+                    ],
+                    // Adicione mais IDs e tipos aqui...
+                    29: [
+                        { icone: "img/icons/jovem_adulto.svg", texto: "Jovens Adultos" },
+                        { icone: "img/icons/online.svg", texto: "Atendimento Online" }
+                    ]
+                };
+                
+                // --- NOVO PASSO 2: Criar um conjunto de tipos padrão ---
+                // Usado para profissionais novos que você ainda não adicionou ao mapa acima.
+                const defaultTipos = [
+                    { icone: "img/icons/adulto.svg", texto: "Adultos" }
+                ];
+
                 // Mapeia os dados da API para o formato esperado pelo frontend
                 const profissionaisMapeado = profissionais.map(prof => {
                     // --- CORREÇÃO APLICADA AQUI ---
                     const nomeBase = prof.nome_usuario.split(' ')[0].toLowerCase();
                     const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`; // Caminho absoluto
                     const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao; // Caminho absoluto
+                    
+                    // --- NOVO PASSO 3: Buscar os tipos corretos ---
+                    const idProf = prof.id_profissional;
+                    const tiposDeAtendimento = tiposPorProfissional[idProf] || defaultTipos; // Usa os tipos do ID ou o padrão
 
                     return {
-                        id_db: prof.id_profissional,
+                        id_db: idProf,
                         nome: prof.nome_usuario,
                         foto: fotoFinal, // Usa o caminho corrigido
                         sobre: prof.sobre || '',
                         valor: parseFloat(prof.valor_consulta || 0).toFixed(2).replace('.', ','),
                         especialidades: prof.especialidade ? prof.especialidade.split(',').map(s => s.trim()) : ["Clínica Geral"],
                         duracao: "Sessão com duração de 50min",
-                        // Tipos de atendimento (pode vir da API no futuro se necessário)
-                        tipos: [
-                            { icone: "img/icons/adulto.svg", texto: "Adultos" },
-                            { icone: "img/icons/casais.svg", texto: "Casais" }
-                        ],
+                        
+                        // --- NOVO PASSO 4: Usar a variável ---
+                        tipos: tiposDeAtendimento, // <-- ANTES ESTAVA FIXO
+                        
                         avaliacoes: [] // Inicializa vazio, será preenchido depois
                     };
                 });
@@ -123,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 });
-
 // Função para renderizar os cards na página profissionais.html
 function renderizarCardsProfissionais(profissionais) {
     const container = document.getElementById("container-profissionais");

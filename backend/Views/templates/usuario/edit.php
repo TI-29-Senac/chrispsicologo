@@ -32,13 +32,26 @@ $usuario = $dados['usuario'];
                     <div class="w3-half">
                          <label for="tipo_usuario"><b>Tipo de Usuário</b></label>
                         
-                        <select class="w3-select w3-border" name="tipo_usuario" id="tipo_usuario" required>
-                            <option value="cliente" <?= ($usuario->tipo_usuario == 'cliente') ? 'selected' : ''; ?>>Cliente</option>
-                            <option value="admin" <?= ($usuario->tipo_usuario == 'admin') ? 'selected' : ''; ?>>Admin</option>
-                            <option value="profissional" <?= ($usuario->tipo_usuario == 'profissional') ? 'selected' : ''; ?>>Profissional</option>
-                            <option value="recepcionista" <?= ($usuario->tipo_usuario == 'recepcionista') ? 'selected' : ''; ?>>Recepcionista</option>
-                        </select>
-                        </div>
+                        <?php 
+                        // Garante que a sessão foi iniciada
+                        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                        
+                        // Verifica se o usuário logado é admin
+                        if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): 
+                        ?>
+                            <select class="w3-select w3-border" name="tipo_usuario" id="tipo_usuario" required>
+                                <option value="cliente" <?= ($usuario->tipo_usuario == 'cliente') ? 'selected' : ''; ?>>Cliente</option>
+                                <option value="admin" <?= ($usuario->tipo_usuario == 'admin') ? 'selected' : ''; ?>>Admin</option>
+                                <option value="profissional" <?= ($usuario->tipo_usuario == 'profissional') ? 'selected' : ''; ?>>Profissional</option>
+                                <option value="recepcionista" <?= ($usuario->tipo_usuario == 'recepcionista') ? 'selected' : ''; ?>>Recepcionista</option>
+                            </select>
+                        
+                        <?php else: ?>
+                            <input class="w3-input w3-border w3-light-grey" type="text" value="<?= htmlspecialchars(ucfirst($usuario->tipo_usuario)) ?>" readonly disabled>
+                            <input type="hidden" name="tipo_usuario" value="<?= htmlspecialchars($usuario->tipo_usuario) ?>">
+                        
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <div class="w3-row-padding w3-section">
                     <div class="w3-half">
@@ -47,10 +60,21 @@ $usuario = $dados['usuario'];
                     </div>
                     <div class="w3-half">
                         <label for="status_usuario"><b>Status</b></label>
-                        <select class="w3-select w3-border" name="status_usuario" id="status_usuario" required>
-                            <option value="ativo" <?= ($usuario->status_usuario == 'ativo') ? 'selected' : '' ?>>Ativo</option>
-                            <option value="inativo" <?= ($usuario->status_usuario == 'inativo') ? 'selected' : '' ?>>Inativo</option>
-                        </select>
+                        
+                        <?php 
+                        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                        if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): 
+                        ?>
+                            <select class="w3-select w3-border" name="status_usuario" id="status_usuario" required>
+                                <option value="ativo" <?= ($usuario->status_usuario == 'ativo') ? 'selected' : '' ?>>Ativo</option>
+                                <option value="inativo" <?= ($usuario->status_usuario == 'inativo') ? 'selected' : '' ?>>Inativo</option>
+                            </select>
+                        
+                        <?php else: ?>
+                            <input class="w3-input w3-border w3-light-grey" type="text" value="<?= htmlspecialchars(ucfirst($usuario->status_usuario)) ?>" readonly disabled>
+                            <input type="hidden" name="status_usuario" value="<?= htmlspecialchars($usuario->status_usuario) ?>">
+                        
+                        <?php endif; ?>
                     </div>
                 </div>
 
