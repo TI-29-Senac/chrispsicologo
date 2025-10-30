@@ -124,13 +124,12 @@ public function viewCriarProfissionais(){
         // --- Processamento do Upload ---
         if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
             try {
-                // Tenta salvar o arquivo na pasta 'img/profissionais/'
-                // Tipos permitidos: jpeg, png, webp. Tamanho máximo: 2MB (2 * 1024 * 1024 bytes)
+            
                 $caminhoImagemSalva = $this->fileManager->salvarArquivo(
                     $_FILES['img_profissional'],
-                    'img/profissionais', // Subdiretório
-                    ['image/jpeg', 'image/png', 'image/webp'], // Tipos permitidos
-                    2 * 1024 * 1024 // Tamanho máximo (2MB)
+                    'img/profissionais', 
+                    ['image/jpeg', 'image/png', 'image/webp'], 
+                    2 * 1024 * 1024 
                 );
             } catch (\Exception $e) {
                 // Se o upload falhar, redireciona com o erro
@@ -162,7 +161,7 @@ public function viewCriarProfissionais(){
             $publico,
             $sobre,
             $ordem_exibicao,
-            $caminhoImagemSalva // <<< Usa o caminho retornado pelo FileManager (ou null)
+            $caminhoImagemSalva 
         );
 
         if ($id_profissional) {
@@ -223,14 +222,9 @@ public function viewCriarProfissionais(){
                 return;
             }
         }
-        // --- Fim do Processamento do Upload ---
-
-        // Define qual caminho de imagem será salvo no banco
-        // Se uma nova imagem foi enviada, usa o caminho dela. Senão, mantém o caminho antigo.
+ 
         $caminhoImagemParaSalvar = $caminhoNovaImagem ?? $imagemAntiga;
 
-        // --- ATUALIZAÇÃO DO PROFISSIONAL ---
-        // (Validação pode ser adicionada)
         $especialidadeInput = $_POST['especialidade'] ?? '';
         $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
         $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0);

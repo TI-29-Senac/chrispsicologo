@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`;
         const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao;
         const hojeFormatado = getHojeFormatado(); 
-        
+        const maxEspecialidades = 1;
         // Processar a string de especialidades do profissional do BD
         const especialidadesArray = prof.especialidade ? 
             prof.especialidade.split(',').map(s => s.trim()).filter(s => s.length > 0) : 
@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const especialidadesHtml = especialidadesArray.map(esp => `
              <label><input type="checkbox" name="especialidade[]" value="${esp}"> ${esp}</label>
         `).join('');
+
+        
 
         const valorSinalFormatado = parseFloat(prof.sinal_consulta || 0).toFixed(2).replace('.', ',');
 
@@ -195,11 +197,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.innerHTML = conteudoHTML;
 
-        
-        const dateInput = document.getElementById('data-consulta');
+        const checkboxesEspecialidade = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]');
+
+
+            function atualizarLimiteCheckboxes() {
+             const checkedCount = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]:checked').length;
+
+            const atingiuLimite = checkedCount >= maxEspecialidades;
+
+            checkboxesEspecialidade.forEach(checkbox => {
+            if (!checkbox.checked) {
+                 checkbox.disabled = atingiuLimite;
+             checkbox.parentElement.classList.toggle('disabled-label', atingiuLimite);
+                 }
+            });
+     }
+
+        checkboxesEspecialidade.forEach(checkbox => {
+         checkbox.addEventListener('change', atualizarLimiteCheckboxes);
+        });
+
+        atualizarLimiteCheckboxes();
+
+         const dateInput = document.getElementById('data-consulta');
         if (dateInput) {
             dateInput.addEventListener('change', buscarHorariosDisponiveis);
         }
+        atualizarLimiteCheckboxes();
 
         // Listener para atualizar o campo hidden com a forma de pagamento selecionada
         document.querySelectorAll('input[name="forma_pagamento"]').forEach(radio => {

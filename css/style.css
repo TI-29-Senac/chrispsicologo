@@ -5088,146 +5088,224 @@ body::-webkit-scrollbar-thumb:hover {
 }
 /* #endregion */
 
-/* Estilos específicos para a página de pagamento */
-        .pagamento-container {
-            max-width: 700px; /* Largura ajustada para o conteúdo */
-            margin: 40px auto; /* Centraliza e adiciona espaço */
-            padding: 30px;
-            background-color: #faf6ee; /* Fundo claro */
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 10;
-            color: #5D6D68; /* Cor principal do texto */
-            font-family: 'Questrial', sans-serif;
-        }
+/* ==========================================================
+   ESTILOS PÁGINAS DE PAGAMENTO (PIX E CARTÃO) - SEM VARIÁVEIS
+   ========================================================== */
 
-        .pagamento-container h3 {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #5D6D68;
-        }
+.pagamento-container {
+    background-color: #faf6ee; /* --verde-escuro-transparente */
+    border-radius: 12px;
+    padding: 30px 40px;
+    max-width: 600px;
+    width: 90%;
+    margin: 40px auto;
+    color: #5D6D68;
+    border: 1px solid #faf6ee80;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-family: 'Questrial', sans-serif;
+}
 
-        .politica-pagamento-titulo {
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 5px;
-        }
+/* Título (1.6rem) */
+.pagamento-container h3 {
+    text-align: center;
+    color: #5D6D68;
+    font-family: 'Questrial', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+}
 
-        .pagamento-container hr {
-            border: none;
-            border-top: 1px solid #A3B8A1; /* Linha sutil */
-            margin: 10px auto 20px auto;
-            width: 80%;
-        }
+/* Textos de explicação (1.1rem) */
+.pagamento-container .explicacao {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #5D6D68;
+    line-height: 1.5;
+}
 
-        .pagamento-container .explicacao {
-            font-size: 1.1rem;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
+.pagamento-container .explicacao-pequena {
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 15px;
+    color: #5D6D68;
+    opacity: 0.9;
+}
 
-        .alerta-pagamento {
-            border: 2px solid #e74c3c; /* Vermelho para alerta */
-            background-color: #fdeded; /* Fundo vermelho claro */
-            color: #c0392b; /* Texto vermelho escuro */
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-            text-align: center;
-        }
+/* Resumo do agendamento (1.1rem) */
+.resumo-agendamento {
+    background-color: rgba(250, 246, 238, 0.05); /* (Bege com 5% de opacidade) */
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border: 1px dashed #faf6ee80; /* --bege-claro-transparente */
+}
 
-        .alerta-pagamento strong {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 1.2rem;
-        }
-         /* Ícone de Atenção (Exemplo usando pseudo-elemento) */
-        .alerta-pagamento strong::before {
-            content: "⚠️ "; /* Emoji de aviso */
-            margin-right: 5px;
-        }
+.resumo-agendamento p {
+    font-size: 1.1rem;
+    margin: 5px 0;
+    color: #5D6D68;
+}
 
+.resumo-agendamento p strong {
+    color: #5D6D68;
+    margin-right: 8px;
+    font-weight: bold;
+}
 
-        .pagamento-container ol {
-            margin: 25px 0;
-            padding-left: 25px; /* Recuo para os números */
-            font-size: 1.1rem;
-            line-height: 1.7;
-        }
+/* Caixa de valor (Título 1.2rem, Valor 1.6rem) */
+.valor-sinal-box-grande {
+    text-align: center;
+    font-size: 1.2rem;
+    background-color: #5D6D68; /* --bege-claro */
+    color: #faf6ee;/* --verde-escuro */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
 
-         .pagamento-container ol li {
-            margin-bottom: 10px; /* Espaço entre os itens */
-         }
+.valor-sinal-box-grande strong {
+    font-size: 1.6rem;
+    display: block;
+    margin-top: 5px;
+}
 
-        .qr-code-section {
-            display: flex;
-            flex-direction: column; /* Empilha QR e valor */
-            align-items: center;
-            gap: 15px; /* Espaço entre QR e valor */
-            margin: 30px 0;
-        }
+/* QR Code */
+.qr-code-section {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
 
-        .qr-code-section img {
-            max-width: 160px; /* Tamanho do QR code */
-            height: auto;
-            border: 1px solid #ccc;
-        }
+.qr-code-section img {
+    width: 250px;
+    height: 250px;
+    border-radius: 8px;
+    background-color: white;
+    padding: 10px;
+}
 
-        .valor-sinal-box {
-            border: 2px solid #A3B8A1; /* Borda verde clara */
-            background-color: #f0f7f0; /* Fundo verde muito claro */
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #5D6D68;
-        }
+/* Pix Copia e Cola (1.0rem) */
+.pix-copia-cola {
+    display: flex;
+    margin-bottom: 25px;
+}
 
-        .destinatario-info {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid #A3B8A1; /* Linha divisória */
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        .destinatario-info p{
-             margin-bottom: 8px;
-        }
+.pix-copia-cola input[type="text"] {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #faf6ee; /* --bege-claro */
+    background-color: #ffffff; /* --branco */
+    color: #5D6D68; /* --verde-escuro */
+    border-radius: 6px 0 0 6px;
+    font-size: 1rem;
+    outline: none;
+    font-family: 'Questrial', sans-serif;
+}
 
-         .destinatario-info strong {
-            display: inline-block;
-            width: 100px; /* Alinha os pontos */
-         }
+.pix-copia-cola button {
+    padding: 12px 15px;
+    border: none;
+    background-color: #A3B8A1; /* --verde-medio */
+    color: #ffffff; /* --branco */
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: background-color 0.3s ease;
+    font-family: 'Questrial', sans-serif;
+    font-size: 1rem;
+}
 
+.pix-copia-cola button:hover {
+    background-color: #A3B8A1; /* --verde-claro */
+    color: #5D6D68; /* --verde-escuro */
+}
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .pagamento-container {
-                padding: 20px;
-                max-width: 95%;
-                margin-top: 20px;
-                margin-bottom: 20px;
-            }
+/* Botão Final (1.2rem) */
+.btn-pagamento-final {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #5D6D68; 
+    color: #faf6ee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Questrial', sans-serif;
+    text-transform: uppercase;
+}
 
-            .pagamento-container h3 {
-                font-size: 1.8rem;
-            }
+.btn-pagamento-final:hover {
+    background-color: #A3B8A1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
 
-            .pagamento-container .explicacao,
-            .pagamento-container ol,
-            .destinatario-info {
-                font-size: 1rem;
-            }
+.btn-pagamento-final:disabled {
+    background-color: #999;
+    color: #eee;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
 
-             .valor-sinal-box {
-                font-size: 1.1rem;
-             }
+/* Formulário de Cartão (Label 1.0rem, Input 1.1rem) */
+.form-cartao {
+    width: 100%;
+    margin-top: 20px;
+}
 
-             .qr-code-section img {
-                max-width: 140px;
-             }
-        }
+.form-cartao .form-grupo {
+    margin-bottom: 15px;
+}
+
+.form-cartao .form-grupo label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #5D6D68;
+    font-size: 1rem;
+}
+
+.form-cartao .form-grupo input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #5D6D68;
+    background-color: #faf6ee; /* --bege-claro */
+    color: #5D6D68; /* --verde-escuro */
+    border-radius: 6px;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+    font-family: 'Questrial', sans-serif;
+}
+
+.form-cartao .form-grupo input[type="text"]::placeholder {
+    color: #5d6d68ea; /* --verde-escuro-transparente */
+}
+
+.form-cartao .form-grupo-duplo {
+    display: flex;
+    gap: 15px;
+}
+
+.form-cartao .form-grupo-duplo .form-grupo {
+    width: 50%;
+}
+
+/* Mensagem de Status (1.1rem) */
+#pagamento-status-message {
+    margin-top: 15px; 
+    text-align: center; 
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.lista-especialidades label.disabled-label {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}

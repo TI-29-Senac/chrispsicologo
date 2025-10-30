@@ -28,6 +28,43 @@ class AgendamentoController extends AuthenticatedController {
         $agendamentos = $this->agendamento->buscarAgendamentos();
     }
 
+    public function getDetalhesPagamento($id) {
+        header('Content-Type: application/json');
+        
+        try {
+            $detalhes = Agendamento::getDetalhesPagamento($id); // Agora usa o Model 100% correto
+
+            if (!$detalhes) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Agendamento não encontrado.']);
+                return;
+            }
+
+            $response = [
+                'success' => true,
+                'agendamento' => [
+                    'id_agendamento' => $detalhes['id_agendamento'],
+                    'data_agendamento' => $detalhes['data_agendamento'], // Campo DATETIME
+                    'valor_sinal' => $detalhes['sinal_consulta']
+                ],
+                'profissional' => [
+                    'id_profissional' => $detalhes['id_profissional'],
+                    'nome_usuario' => $detalhes['profissional_nome']
+                ],
+                'cliente' => [
+                    'id_usuario' => $detalhes['id_usuario'],
+                    'nome_completo' => $detalhes['cliente_nome']
+                ]
+            ];
+
+            echo json_encode($response);
+
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro interno ao buscar detalhes: ' . $e->getMessage()]);
+        }
+    }
+
     public function viewListarAgendamentos() {
         $this->verificarAcesso(['admin', 'profissional', 'recepcionista']);
         $pagina = $_GET['pagina'] ?? 1;

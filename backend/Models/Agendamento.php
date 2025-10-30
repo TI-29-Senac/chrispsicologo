@@ -3,6 +3,8 @@ namespace App\Psico\Models;
 use PDO;
 use DateTime;
 use PDOException;
+use Exception;
+use App\Psico\Database\Database;
 
 class Agendamento {
     private PDO $db;
@@ -297,4 +299,72 @@ ORDER BY a.data_agendamento DESC
         return $mesesFormatados;
     }
 
+    public static function marcarSinalComoPago($id_agendamento) {
+        $db = Database::getInstance();
+        
+        try {
+            $db->beginTransaction();
+
+            // 1. Atualiza a tabela 'agendamento' para 'Confirmado'
+            $stmtAg = $db->prepare(
+                "UPDATE agendamento
+                 SET status_consulta = 'Confirmado' -- CORRETO: Atualiza 'status_consulta'
+                 WHERE id_agendamento = :id"
+            );
+            $stmtAg->execute(['id' => $id_agendamento]);
+
+            // 2. Atualiza a tabela 'pagamento' com a data do pagamento
+            //    (A tabela pagamento NÃO tem status, apenas registra a data)
+            $stmtPg = $db->prepare(
+                "UPDATE pagamento 
+                 SET data_pagamento = NOW() 
+                 WHERE id_agendamento = :id"
+            );
+            $stmtPg->execute(['id' => $id_agendamento]);
+
+            // Confirma a transação
+            $db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $db->rollBack();
+            // error_log("Erro ao marcar sinal como pago: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function getDetalhesPagamento($id) {
+        $db = Database::getInstance();
+        
+        // CORREÇÃO FINAL:
+        // - Usa 'nome_usuario' e 'email_usuario' (da tabela 'usuario')
+        // - Usa 'status_consulta' (da tabela 'agendamento' [alias 'a'])
+        // - Remove o JOIN com 'pagamento' (não é necessário para buscar os detalhes)
+        $sql = "SELECT 
+                    a.id_agendamento, a.id_profissional, a.id_usuario, 
+                    a.data_agendamento, 
+                    a.status_consulta as status_pagamento, -- CORRETO: Pega de 'agendamento' (a)
+                    
+                    p.sinal_consulta, 
+                    
+                    up.nome_usuario as profissional_nome, -- CORRETO: 'nome_usuario'
+                    
+                    uc.nome_usuario as cliente_nome,      -- CORRETO: 'nome_usuario'
+                    uc.email_usuario as cliente_email     -- CORRETO: 'email_usuario'
+                FROM 
+                    agendamento a
+                JOIN 
+                    profissional p ON a.id_profissional = p.id_profissional
+                JOIN 
+                    usuario uc ON a.id_usuario = uc.id_usuario -- 'uc' = Usuario Cliente
+                JOIN 
+                    usuario up ON p.id_usuario = up.id_usuario -- 'up' = Usuario Profissional
+                -- O JOIN com 'pagamento' foi removido daqui pois não era necessário
+                WHERE 
+                    a.id_agendamento = :id";
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
