@@ -87,18 +87,17 @@ class PagamentoController extends AuthenticatedController{
         }
     }
     
-public function viewEditarPagamentos($id){
+    public function viewEditarPagamentos($id){
         $this->verificarAcesso(['admin', 'recepcionista']);
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id);
-        if (!$pagamento) {
-            Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
-            return;
-        }
+            if (!$pagamento) {
+                Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
+                return;
+            }
         View::render("pagamento/edit", ["pagamento" => $pagamento]);
     }
 
-    public function atualizarPagamento($id)
-    {
+    public function atualizarPagamento($id){
         $sucesso = $this->pagamento->atualizarPagamento(
             (int)$id,
             $_POST['tipo_pagamento'] ?? 'pix',
@@ -113,6 +112,7 @@ public function viewEditarPagamentos($id){
     }
 
     public function viewExcluirPagamentos($id){
+        $this->verificarAcesso(['admin']);
         $pagamento = $this->pagamento->buscarPagamentoPorId((int)$id);
         if (!$pagamento) {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Pagamento não encontrado.");
@@ -121,8 +121,7 @@ public function viewEditarPagamentos($id){
         View::render("pagamento/delete", ["pagamento" => $pagamento]);
     }
 
-    public function deletarPagamento($id)
-    {
+    public function deletarPagamento($id){
         $sucesso = $this->pagamento->deletarPagamento((int)$id);
 
         if ($sucesso) {

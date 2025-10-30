@@ -63,9 +63,16 @@
         <a href="/backend/dashboard" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/dashboard') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
     <?php endif; ?>
 
+    <?php // --- LINK "MEU PERFIL" ADICIONADO --- ?>
+    <?php // Visível para todos os tipos logados ?>
+    <?php if (in_array($userType, ['admin', 'profissional', 'recepcionista'])): ?>
+        <a href="/backend/meu-perfil" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/meu-perfil') !== false || strpos($_SERVER['REQUEST_URI'], '/backend/usuario/editar/' . ($_SESSION['usuario_id'] ?? '')) !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user fa-fw"></i> Meu Perfil</a>
+    <?php endif; ?>
+
+
     <?php // Usuários: Visível apenas para admin ?>
     <?php if ($userType === 'admin'): ?>
-        <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/usuario') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-users fa-fw"></i> Usuários</a>
+        <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/usuario/listar') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-users fa-fw"></i> Usuários</a>
     <?php endif; ?>
 
     <?php // Agendamentos: Visível para admin, profissional e recepcionista ?>
@@ -84,7 +91,7 @@
     <?php endif; ?>
 
     <?php // Profissionais: Visível para admin e profissional ?>
-    <?php if (in_array($userType, ['admin', 'profissional'])): ?>
+    <?php if (in_array($userType, ['admin'])): ?>
         <a href="/backend/profissionais/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/profissionais') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user-md fa-fw"></i> Profissionais</a>
     <?php endif; ?>
 
