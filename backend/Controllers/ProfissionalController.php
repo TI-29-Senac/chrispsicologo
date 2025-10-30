@@ -11,13 +11,14 @@ use App\Psico\Controllers\Admin\AuthenticatedController;
 use App\Psico\Core\FileManager;
 use PDO;
 
-class ProfissionalController {
+class ProfissionalController extends AuthenticatedController {
     public $profissional;   
     public $db;
     public $usuario;
     public $fileManager;
 
     public function __construct(){
+        parent::__construct();
         $this->db = Database::getInstance();
         $this->profissional = new Profissional($this->db);
         $this->usuario = new Usuario($this->db);
@@ -25,14 +26,16 @@ class ProfissionalController {
     }
 
 public function viewCriarProfissionais(){
-        $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
+    $this->verificarAcesso(['admin', 'profissional']);
+    $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
 
-        View::render('profissional/create', [
-            'usuariosDisponiveis' => $usuariosDisponiveis
-        ]);
+    View::render('profissional/create', [
+        'usuariosDisponiveis' => $usuariosDisponiveis
+    ]);
     }
 
     public function viewListarProfissionais(){
+        $this->verificarAcesso(['admin', 'profissional']);
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->profissional->paginacao((int)$pagina, 10);
         
@@ -68,6 +71,7 @@ public function viewCriarProfissionais(){
     }
 
     public function viewEditarProfissionais($id) {
+        $this->verificarAcesso(['admin']);
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
         if (!$profissional) {
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado.");
@@ -79,6 +83,7 @@ public function viewCriarProfissionais(){
 
 
     public function viewExcluirProfissionais($id) {
+        $this->verificarAcesso(['admin']);
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
         if (!$profissional) {
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado para exclusão.");
@@ -270,115 +275,5 @@ public function viewCriarProfissionais(){
 
             Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", $mensagemErro);
         }
-    }
-
-
-     public function listarPublico() {
-        header('Content-Type: application/json');
-        try {
-            // Alterado para usar o novo método com o filtro de visibilidade
-            $profissionais = $this->profissional->listarProfissionaisPublicos();
-
-            http_response_code(200);
-            echo json_encode($profissionais);
-
-        } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Erro interno ao buscar profissionais.', 'details' => $e->getMessage()]);
-        }
-    }
-
-    // Removido horáriosPublico estático
-
-    public function detalhePublico($id) {
-        header('Content-Type: application/json');
-        try {
-            // Alterado para usar o novo método seguro
-            $profissional = $this->profissional->buscarProfissionalPublicoPorId((int)$id);
-
-            if (!$profissional) {
-                http_response_code(404);
-                echo json_encode(['error' => 'Profissional não encontrado ou não está disponível.']);
-                return;
-            }
-
-            // Se encontrou, retorna os dados com sucesso
-            http_response_code(200);
-            echo json_encode($profissional);
-
-        } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Erro interno ao buscar detalhes do profissional.', 'details' => $e->getMessage()]);
-        }
-    }
-    
-    public function getCarrosselCardsHtml() {
-        // Define os IDs corretos
-        $idsProfissionaisCarrossel = [6, 7, 8, 9, 10]; // IDs corretos que funcionaram
-
-        $htmlCards = '';
-        $profissionaisParaCarrossel = [];
-
-        foreach ($idsProfissionaisCarrossel as $id) {
-            $prof = $this->profissional->buscarProfissionalPublicoPorId($id);
-            if ($prof) {
-                $profissionaisParaCarrossel[] = $prof;
-            } else {
-                error_log("Aviso: Profissional com ID {$id} não encontrado para o carrossel.");
-            }
-        }
-
-        // --- Gera o HTML ---
-        foreach ($profissionaisParaCarrossel as $profissional) {
-
-            // ===== INÍCIO DA LÓGICA CORRETA PARA PEGAR A PRIMEIRA ESPECIALIDADE =====
-            $especialidadeExibida = 'Clínica Geral'; // Define um padrão
-            if (!empty($profissional->especialidade)) {
-                // Remove espaços em branco do início e fim da string completa
-                $especialidadesString = trim($profissional->especialidade);
-
-                // Divide a string na PRIMEIRA vírgula encontrada, limitando a 2 partes
-                $partes = explode(',', $especialidadesString, 2);
-
-                // Pega a primeira parte (índice 0) ou uma string vazia se não houver nada
-                $primeiraEspecialidade = $partes[0] ?? '';
-
-                // Remove espaços em branco extras da primeira parte
-                $primeiraEspecialidadeLimpa = trim($primeiraEspecialidade);
-
-                // Usa a especialidade limpa APENAS se ela não ficou vazia após a limpeza
-                if ($primeiraEspecialidadeLimpa !== '') {
-                    $especialidadeExibida = $primeiraEspecialidadeLimpa;
-                }
-            }
-            // ===== FIM DA LÓGICA CORRETA PARA PEGAR A PRIMEIRA ESPECIALIDADE =====
-
-
-            // Define a URL da foto (sem alterações)
-            $nomeBase = explode(' ', $profissional->nome_usuario)[0];
-            $fotoUrlPadrao = "/img/profissionais/" . strtolower($nomeBase) . ".png";
-            $fotoFinal = (!empty($profissional->img_profissional)) ? "/" . ltrim($profissional->img_profissional, '/') : $fotoUrlPadrao;
-
-            // Gera o HTML do card (sem alterações)
-            $htmlCards .= '
-            <div class="card" data-id-profissional="'.htmlspecialchars($profissional->id_profissional).'">
-              <a href="profissionais.html?id='.htmlspecialchars($profissional->id_profissional).'" class="card-link">
-                <div class="foto" style="background-image: url(\''.htmlspecialchars($fotoFinal).'\'); background-size: cover; background-position: center;">
-                </div>
-                <h3>'.htmlspecialchars($profissional->nome_usuario).'</h3>
-                <div class="avaliacoes">
-                  <h4>Psicólogo(a)</h4>
-                  <p>'.htmlspecialchars($especialidadeExibida).'</p> </div>
-              </a>
-            </div>
-            ';
-        }
-
-        // Envia apenas o HTML dos 5 cards (sem duplicação no PHP)
-        $htmlCompleto = $htmlCards;
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo $htmlCompleto;
-        exit;
     }
 }

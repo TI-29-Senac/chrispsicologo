@@ -13,7 +13,7 @@ class Rotas {
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
 
-                "/carrossel/cards" => "ProfissionalController@getCarrosselCardsHtml",
+                "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
                 
                 // NOVAS ROTAS GET PARA AGENDAMENTOS
                 "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
@@ -44,9 +44,8 @@ class Rotas {
                 "/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
                 "/profissionais/editar/{id}" => "ProfissionalController@viewEditarProfissionais",
                 "/profissionais/excluir/{id}" => "ProfissionalController@viewExcluirProfissionais",
-                "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
-                "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
-                "/profissionais/detalhe/{id}" => "ProfissionalController@detalhePublico",
+                "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
+                "/profissionais/detalhe/{id}" => "PublicProfissionalController@detalhePublico",
                 
                 "/logout" => "UsuarioController@logout",
                 "/dashboard" => "UsuarioController@dashboard",
