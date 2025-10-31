@@ -47,6 +47,8 @@ class Rotas {
                 "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
                 "/profissionais/detalhe/{id}" => "PublicProfissionalController@detalhePublico",
                 "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
+                "/profissional/meu-perfil" => "ProfissionalController@viewMeuPerfilProfissional",
+                "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
 
                 // --- IMAGENS (Admin & API Pública) ---
                 "/imagens/listar" => "ImagemController@viewListarImagens",
@@ -97,6 +99,7 @@ class Rotas {
                 "/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
                 "/profissionais/atualizar/{id}" => "ProfissionalController@atualizarProfissionais",
                 "/profissionais/deletar/{id}" => "ProfissionalController@deletarProfissionais",
+                "/profissional/atualizar-meu-perfil" => "ProfissionalController@atualizarMeuPerfilProfissional",
 
                 // --- IMAGENS ---
                 "/imagens/salvar" => "ImagemController@salvarImagem",

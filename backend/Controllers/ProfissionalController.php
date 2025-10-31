@@ -270,4 +270,96 @@ public function viewCriarProfissionais(){
             Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", $mensagemErro);
         }
     }
+
+    public function viewMeuPerfilProfissional() {
+        // 1. Garante que apenas um profissional logado acesse
+        $this->verificarAcesso(['profissional']);
+
+        // 2. Pega o ID do usuário da SESSÃO
+        $id_usuario_logado = $_SESSION['usuario_id'] ?? null;
+
+        // 3. Busca os dados de profissional associados a esse usuário
+        $profissional = $this->profissional->buscarProfissionalPorUsuarioId((int)$id_usuario_logado);
+
+        // --- INÍCIO DA VERIFICAÇÃO IMPORTANTE ---
+        // Se $profissional for falso (não encontrado), redireciona para o dashboard
+        // com uma mensagem de erro.
+        if (!$profissional) {
+            Redirect::redirecionarComMensagem("dashboard", "error", "Perfil profissional não encontrado ou incompleto. Contacte o administrador.");
+            return; // Impede a renderização da página
+        }
+        // --- FIM DA VERIFICAÇÃO IMPORTANTE ---
+
+        // 4. Renderiza a nova view (só chega aqui se $profissional for encontrado)
+        View::render("profissional/meu-perfil", ["profissional" => $profissional]);
+    }
+
+    public function atualizarMeuPerfilProfissional() {
+        // 1. Garante que apenas um profissional logado acesse
+        $this->verificarAcesso(['profissional']);
+
+        // 2. Pega o ID do usuário da SESSÃO (Fonte segura)
+        $id_usuario_logado = $_SESSION['usuario_id'] ?? null;
+        $profissionalAtual = $this->profissional->buscarProfissionalPorUsuarioId((int)$id_usuario_logado);
+
+        // 3. Verifica se o profissional existe
+        if (!$profissionalAtual) {
+            Redirect::redirecionarComMensagem("dashboard", "error", "Não foi possível atualizar. Perfil profissional não encontrado.");
+            return;
+        }
+        $id_profissional = $profissionalAtual->id_profissional;
+
+        // 4. Processamento do Upload da Nova Imagem (se houver)
+        $caminhoNovaImagem = null;
+        $imagemAntiga = $profissionalAtual->img_profissional ?? null; 
+
+        if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
+             try {
+                $caminhoNovaImagem = $this->fileManager->salvarArquivo(
+                    $_FILES['img_profissional'],
+                    'img/profissionais',
+                    ['image/jpeg', 'image/png', 'image/webp'],
+                    2 * 1024 * 1024 // 2MB Max
+                );
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("profissional/meu-perfil", "error", "Erro no upload da nova imagem: " . $e->getMessage());
+                return;
+            }
+        }
+ 
+        // 5. Decide qual caminho de imagem salvar no banco
+        $caminhoImagemParaSalvar = $caminhoNovaImagem ?? $imagemAntiga;
+
+        // 6. Pega os dados do formulário
+        $valor_consulta = (float)($_POST['valor_consulta'] ?? $profissionalAtual->valor_consulta);
+        $sinal_consulta = (float)($_POST['sinal_consulta'] ?? $profissionalAtual->sinal_consulta);
+        $sobre = $_POST['sobre'] ?? $profissionalAtual->sobre;
+        $especialidade = $_POST['especialidade'] ?? $profissionalAtual->especialidade;
+
+        // 7. Atualiza usando o novo método seguro do Model
+        $sucesso_profissional = $this->profissional->atualizarPerfilProfissional(
+            (int)$id_profissional,
+            $especialidade,
+            $valor_consulta,
+            $sinal_consulta,
+            $sobre,
+            $caminhoImagemParaSalvar
+        );
+
+        // 8. VERIFICAÇÃO E REDIRECIONAMENTO
+        if ($sucesso_profissional) {
+             // Se a atualização foi bem-sucedida E uma nova imagem foi enviada, deleta a antiga
+             if ($caminhoNovaImagem && !empty($imagemAntiga) && $imagemAntiga !== $caminhoNovaImagem) {
+                 $this->fileManager->delete($imagemAntiga);
+             }
+            Redirect::redirecionarComMensagem("profissional/meu-perfil", "success", "Perfil profissional atualizado com sucesso!");
+        } else {
+             // Se a atualização falhou, remove a nova imagem que pode ter sido salva
+             if ($caminhoNovaImagem) {
+                 $this->fileManager->delete($caminhoNovaImagem);
+             }
+            Redirect::redirecionarComMensagem("profissional/meu-perfil", "error", "Erro ao atualizar dados do profissional.");
+        }
+    }
+    
 }

@@ -69,7 +69,6 @@
         <a href="/backend/meu-perfil" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/meu-perfil') !== false || strpos($_SERVER['REQUEST_URI'], '/backend/usuario/editar/' . ($_SESSION['usuario_id'] ?? '')) !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user fa-fw"></i> Meu Perfil</a>
     <?php endif; ?>
 
-
     <?php // Usuários: Visível apenas para admin ?>
     <?php if ($userType === 'admin'): ?>
         <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/usuario/listar') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-users fa-fw"></i> Usuários</a>
@@ -80,6 +79,12 @@
         <a href="/backend/agendamentos/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/agendamentos') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-calendar fa-fw"></i> Agendamentos</a>
     <?php endif; ?>
 
+    <?php // --- LINK "MEU PERFIL PROFISSIONAL" (NOVO) --- ?>
+    <?php // Visível apenas para Profissional ?>
+    <?php if ($userType === 'profissional'): ?>
+        <a href="/backend/profissional/meu-perfil" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/profissional/meu-perfil') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user-md fa-fw"></i> Meu Perfil Profissional</a>
+    <?php endif; ?>
+    
     <?php // Avaliações: Visível apenas para admin ?>
     <?php if ($userType === 'admin'): ?>
         <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/avaliacoes') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-star fa-fw"></i> Avaliações</a>
