@@ -279,9 +279,10 @@ class Profissional {
         ";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->bindParam(':id_usuario', $id_usuario, \PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_OBJ);
+
+        return $stmt->fetch(\PDO::FETCH_OBJ);
     }
 
     public function buscarTodosTiposAtendimento(): array {
