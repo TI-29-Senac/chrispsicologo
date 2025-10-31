@@ -23,7 +23,7 @@ class Rotas {
                 "/agendamentos/editar/{id}" => "AgendamentoController@viewEditarAgendamentos",
                 "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
                 "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
-                "/agendamentos/detalhe-pagamento/{id}" => "AgendamentoController@getDetalhesPagamento", // Rota p/ pág. pagamento
+                "/agendamentos/detalhe-pagamento/{id}" => "AgendamentoController@getDetalhesPagamento", 
 
                 // --- AVALIAÇÕES (Admin & API Pública) ---
                 "/avaliacoes" => "AvaliacaoController@buscarPorProfissional", // API pública
