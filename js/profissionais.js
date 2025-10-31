@@ -121,6 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     29: [
                         { icone: "img/icons/jovem_adulto.svg", texto: "Jovens Adultos" },
                         { icone: "img/icons/online.svg", texto: "Atendimento Online" }
+                    ],
+                    31: [
+                        { icone: "img/icons/jovem_adulto.svg", texto: "Jovens Adultos" },
+                        { icone: "img/icons/online.svg", texto: "Atendimento Offline" }
                     ]
                 };
                 

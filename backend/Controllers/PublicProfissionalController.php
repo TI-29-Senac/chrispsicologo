@@ -58,19 +58,23 @@ class PublicProfissionalController {
      * Método público para o carrossel do 'index.html'
      */
     public function getCarrosselCardsHtml() {
-        $idsProfissionaisCarrossel = [6, 7, 8, 9, 10];
+        // $idsProfissionaisCarrossel = [6, 7, 8, 9, 10]; // <-- REMOVIDO
         $htmlCards = '';
-        $profissionaisParaCarrossel = [];
-
-        foreach ($idsProfissionaisCarrossel as $id) {
-            $prof = $this->profissional->buscarProfissionalPublicoPorId($id);
-            if ($prof) {
-                $profissionaisParaCarrossel[] = $prof;
-            } else {
-                error_log("Aviso: Profissional com ID {$id} não encontrado para o carrossel.");
-            }
+        // $profissionaisParaCarrossel = []; // <-- REMOVIDO
+        
+        // <<< INÍCIO DA ALTERAÇÃO >>>
+        // Busca todos os profissionais marcados como "público = 1" e "status = 'ativo'"
+        // O método listarProfissionaisPublicos() já faz isso e ordena por 'ordem_exibicao'.
+        try {
+            $profissionaisParaCarrossel = $this->profissional->listarProfissionaisPublicos();
+        } catch (\Exception $e) {
+            error_log("Erro ao buscar profissionais para o carrossel: " . $e->getMessage());
+            $profissionaisParaCarrossel = []; // Define como vazio em caso de erro
         }
+        // <<< FIM DA ALTERAÇÃO >>>
 
+
+        // Este loop agora irá iterar sobre a lista dinâmica vinda do banco
         foreach ($profissionaisParaCarrossel as $profissional) {
             $especialidadeExibida = 'Clínica Geral'; 
             if (!empty($profissional->especialidade)) {
@@ -83,10 +87,12 @@ class PublicProfissionalController {
                 }
             }
 
+            // (O código para definir a foto ($fotoFinal) permanece o mesmo)
             $nomeBase = explode(' ', $profissional->nome_usuario)[0];
             $fotoUrlPadrao = "/img/profissionais/" . strtolower($nomeBase) . ".png";
             $fotoFinal = (!empty($profissional->img_profissional)) ? "/" . ltrim($profissional->img_profissional, '/') : $fotoUrlPadrao;
 
+            // (O código para construir o HTML do card permanece o mesmo)
             $htmlCards .= '
             <div class="card" data-id-profissional="'.htmlspecialchars($profissional->id_profissional).'">
               <a href="profissionais.html?id='.htmlspecialchars($profissional->id_profissional).'" class="card-link">
