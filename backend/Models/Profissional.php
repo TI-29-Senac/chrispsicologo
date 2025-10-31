@@ -205,4 +205,51 @@ class Profissional {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function atualizarPerfilProfissional(
+        int $id_profissional,
+        string $especialidade,
+        float $valor,
+        float $sinal,
+        ?string $sobre,
+        ?string $img_profissional
+    ): bool {
+        $sql = "UPDATE {$this->table}
+                SET especialidade = :especialidade, sobre = :sobre, valor_consulta = :valor,
+                    sinal_consulta = :sinal, img_profissional = :img_profissional,
+                    atualizado_em = NOW()
+                WHERE id_profissional = :id_profissional";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->bindParam(':especialidade', $especialidade);
+        $stmt->bindParam(':sobre', $sobre);
+        $stmt->bindParam(':valor', $valor);
+        $stmt->bindParam(':sinal', $sinal);
+        $stmt->bindParam(':img_profissional', $img_profissional);
+
+        return $stmt->execute();
+    }
+
+    public function buscarProfissionalPorUsuarioId(int $id_usuario) {
+        $sql = "
+            SELECT
+                p.*,
+                u.nome_usuario,
+                u.email_usuario,
+                u.tipo_usuario,
+                u.status_usuario
+            FROM
+                {$this->table} p
+            JOIN
+                usuario u ON p.id_usuario = u.id_usuario
+            WHERE
+                p.id_usuario = :id_usuario
+            LIMIT 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
 }
