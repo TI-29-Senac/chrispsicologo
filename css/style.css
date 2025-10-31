@@ -5312,13 +5312,13 @@ body::-webkit-scrollbar-thumb:hover {
 /* Adicionado para a função "Ler Mais" da biografia */
 .read-more-container {
     position: relative;
-    max-height: 450px; /* Altura máxima inicial (ajuste conforme necessário) */
+    max-height: 450px;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
 }
 
 .read-more-container.expanded {
-    max-height: 2000px; /* Altura grande para mostrar tudo */
+    max-height: 2000px; 
     transition: max-height 0.5s ease-in;
 }
 
@@ -5330,8 +5330,7 @@ body::-webkit-scrollbar-thumb:hover {
     left: 0;
     right: 0;
     height: 50px;
-    /* Usa a cor de fundo do card: #faf6ee */
-    background: linear-gradient(to bottom, transparent, #faf6ee 100%);
+    background: linear-gradient(to bottom, transparent, #faf6ee 180%);
     pointer-events: none;
 }
 
@@ -5343,7 +5342,7 @@ body::-webkit-scrollbar-thumb:hover {
     border-radius: 6px;
     cursor: pointer;
     display: block;
-    margin: 15px auto 0; /* Centraliza o botão */
+    margin: 15px auto 0;
     font-family: 'Questrial', sans-serif;
     font-weight: bold;
     font-size: 0.9rem;
