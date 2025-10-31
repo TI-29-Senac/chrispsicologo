@@ -278,19 +278,16 @@ public function viewCriarProfissionais(){
         // 2. Pega o ID do usuário da SESSÃO
         $id_usuario_logado = $_SESSION['usuario_id'] ?? null;
 
+
         // 3. Busca os dados de profissional associados a esse usuário
         $profissional = $this->profissional->buscarProfissionalPorUsuarioId((int)$id_usuario_logado);
 
-        // --- INÍCIO DA VERIFICAÇÃO IMPORTANTE ---
-        // Se $profissional for falso (não encontrado), redireciona para o dashboard
-        // com uma mensagem de erro.
         if (!$profissional) {
-            Redirect::redirecionarComMensagem("dashboard", "error", "Perfil profissional não encontrado ou incompleto. Contacte o administrador.");
-            return; // Impede a renderização da página
+            // Se não encontrar (ex: um profissional que não completou o cadastro), redireciona
+            Redirect::redirecionarComMensagem("dashboard", "error", "Perfil profissional não encontrado ou incompleto.");
+            return;
         }
-        // --- FIM DA VERIFICAÇÃO IMPORTANTE ---
 
-        // 4. Renderiza a nova view (só chega aqui se $profissional for encontrado)
         View::render("profissional/meu-perfil", ["profissional" => $profissional]);
     }
 
