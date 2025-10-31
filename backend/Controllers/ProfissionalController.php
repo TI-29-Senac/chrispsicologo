@@ -25,13 +25,15 @@ class ProfissionalController extends AuthenticatedController {
         $this->fileManager = new FileManager(__DIR__ . '/../../');
     }
 
-public function viewCriarProfissionais(){
-    $this->verificarAcesso(['admin', 'profissional']);
-    $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
+    public function viewCriarProfissionais(){
+        $this->verificarAcesso(['admin', 'profissional']);
+        $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
+        $tiposAtendimento = $this->profissional->buscarTodosTiposAtendimento(); // <<< NOVO
 
-    View::render('profissional/create', [
-        'usuariosDisponiveis' => $usuariosDisponiveis
-    ]);
+        View::render('profissional/create', [
+            'usuariosDisponiveis' => $usuariosDisponiveis,
+            'tiposAtendimento' => $tiposAtendimento // <<< NOVO
+        ]);
     }
 
     public function viewListarProfissionais(){
@@ -77,7 +79,17 @@ public function viewCriarProfissionais(){
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado.");
             return;
         }
-        View::render("profissional/edit", ["usuario" => $profissional]);
+
+        // --- INÍCIO DAS NOVAS LINHAS ---
+        $todosTiposAtendimento = $this->profissional->buscarTodosTiposAtendimento();
+        $tiposSelecionadosIds = $this->profissional->buscarTiposPorProfissionalId((int)$id);
+        // --- FIM DAS NOVAS LINHAS ---
+
+        View::render("profissional/edit", [
+            "usuario" => $profissional,
+            "todosTiposAtendimento" => $todosTiposAtendimento, // <<< NOVO
+            "tiposSelecionadosIds" => $tiposSelecionadosIds   // <<< NOVO
+        ]);
     }
 
 
@@ -119,7 +131,7 @@ public function viewCriarProfissionais(){
             return;
         }
 
-        $caminhoImagemSalva = null; // Inicializa como nulo
+        $caminhoImagemSalva = null; 
 
         // --- Processamento do Upload ---
         if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
@@ -133,6 +145,7 @@ public function viewCriarProfissionais(){
                 );
             } catch (\Exception $e) {
                 // Se o upload falhar, redireciona com o erro
+                // *** LINHA CORRIGIDA ABAIXO ***
                 Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro no upload da imagem: " . $e->getMessage());
                 return;
             }
@@ -146,6 +159,7 @@ public function viewCriarProfissionais(){
         $publico = isset($_POST['publico']) ? 1 : 0;
         $sobre = $_POST['sobre'] ?? null;
         $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 99);
+        $tipos_ids = $_POST['tipos_atendimento'] ?? []; // <<< NOVO
 
         $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
         if (!$usuarioExistente) {
@@ -161,7 +175,8 @@ public function viewCriarProfissionais(){
             $publico,
             $sobre,
             $ordem_exibicao,
-            $caminhoImagemSalva 
+            $caminhoImagemSalva,
+            $tipos_ids // <<< NOVO
         );
 
         if ($id_profissional) {
@@ -194,20 +209,19 @@ public function viewCriarProfissionais(){
         }
 
         // --- ATUALIZAÇÃO DO USUÁRIO ---
-        // (Validação pode ser adicionada)
         $sucesso_usuario = $this->usuario->atualizarUsuario(
             (int)$_POST['id_usuario'],
             $_POST['nome_usuario'],
             $_POST['email_usuario'],
             $_POST['senha_usuario'] ?? null,
             'profissional',
-            $profissional->cpf ?? '', // Mantém CPF
+            $profissional->cpf ?? '',
             $_POST['status_usuario'] ?? 'ativo'
         );
 
         // --- Processamento do Upload da Nova Imagem (se houver) ---
         $caminhoNovaImagem = null;
-        $imagemAntiga = $_POST['imagem_atual'] ?? null; // Pega do campo hidden
+        $imagemAntiga = $_POST['imagem_atual'] ?? null; 
 
         if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
              try {
@@ -218,6 +232,7 @@ public function viewCriarProfissionais(){
                     2 * 1024 * 1024
                 );
             } catch (\Exception $e) {
+                // *** LINHA CORRIGIDA ABAIXO ***
                 Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", "Erro no upload da nova imagem: " . $e->getMessage());
                 return;
             }
@@ -231,6 +246,7 @@ public function viewCriarProfissionais(){
         $publico = isset($_POST['publico']) ? 1 : 0;
         $sobre = $_POST['sobre'] ?? null;
         $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 99);
+        $tipos_ids = $_POST['tipos_atendimento'] ?? []; // <<< NOVO
 
         // Processamento da Especialidade (igual ao anterior)
         $especialidadeTrimmed = trim($especialidadeInput);
@@ -246,18 +262,17 @@ public function viewCriarProfissionais(){
             $publico,
             $sobre,
             $ordem_exibicao,
-            $caminhoImagemParaSalvar // <<< Passa o caminho final (novo ou antigo)
+            $caminhoImagemParaSalvar, 
+            $tipos_ids // <<< NOVO
         );
 
         // --- VERIFICAÇÃO E REDIRECIONAMENTO ---
         if ($sucesso_usuario && $sucesso_profissional) {
-             // Se a atualização foi bem-sucedida E uma nova imagem foi enviada, deleta a antiga (se existir)
              if ($caminhoNovaImagem && !empty($imagemAntiga) && $imagemAntiga !== $caminhoNovaImagem) {
                  $this->fileManager->delete($imagemAntiga);
              }
             Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
         } else {
-             // Se a atualização falhou, remove a nova imagem que pode ter sido salva
              if ($caminhoNovaImagem) {
                  $this->fileManager->delete($caminhoNovaImagem);
              }

@@ -76,6 +76,32 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
 
         
+        // --- (INÍCIO) CORREÇÃO APLICADA AQUI ---
+        const defaultTipos = [
+            { icone: "img/icons/adulto.svg", texto: "Adultos" }
+        ];
+        
+        let tiposDeAtendimento = null;
+        if (prof.tipos_atendimento) { // Verifica se não é nulo
+            try {
+                // Converte a string JSON (ex: "[{...}]") em um array de objetos
+                tiposDeAtendimento = JSON.parse(prof.tipos_atendimento);
+            } catch (e) {
+                console.error("Erro ao parsear tipos_atendimento:", e);
+            }
+        }
+        // --- (FIM) CORREÇÃO APLICADA AQUI ---
+
+        // Se falhou ou estava vazio, usa o fallback
+        if (!tiposDeAtendimento || !Array.isArray(tiposDeAtendimento) || tiposDeAtendimento.length === 0) {
+            tiposDeAtendimento = defaultTipos;
+        }
+
+        // Mapeia os tipos de atendimento para HTML
+        const tiposAtendimentoHtml = tiposDeAtendimento.map(t => 
+            `<li><img src="/${t.icone}" class="icon-prof" alt=""> ${t.texto}</li>`
+        ).join("");
+
 
         const valorSinalFormatado = parseFloat(prof.sinal_consulta || 0).toFixed(2).replace('.', ',');
 
@@ -90,9 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4>Duração e Tipo de Atendimento</h4>
                     <ul class="tipos-lista">
                         <li><img src="img/icons/relogio.svg" class="icon-prof"> Sessão com duração de 50min</li>
-                        <li><img src="img/icons/adulto.svg" class="icon-prof"> Adultos</li>
-                        <li><img src="img/icons/casais.svg" class="icon-prof"> Casais</li>
-                    </ul>
+                        ${tiposAtendimentoHtml} </ul>
                     <div class="valor-consulta-box">
                         Valor da Consulta: <strong>R$ ${parseFloat(prof.valor_consulta || 0).toFixed(2).replace('.', ',')}</strong>
                     </div>

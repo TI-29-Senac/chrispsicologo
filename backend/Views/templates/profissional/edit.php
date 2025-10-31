@@ -49,6 +49,29 @@ $profissional = $dados['usuario'];
                         <label for="ordem_exibicao"><b>Ordem de Exibição</b></label>
                         <input class="w3-input w3-border" type="number" id="ordem_exibicao" name="ordem_exibicao" value="<?= htmlspecialchars($profissional->ordem_exibicao ?? 99) ?>">
                     </div>
+                    <div class="w3-row-padding w3-section">
+    <div class="w3-full">
+        <label><b>Tipos de Atendimento (Público)</b></label>
+        <div class="w3-border w3-padding" style="border-radius: 8px; max-height: 150px; overflow-y: auto;">
+            <div class="w3-row-padding">
+                <?php if (!empty($todosTiposAtendimento)): ?>
+                    <?php foreach ($todosTiposAtendimento as $tipo): ?>
+                        <?php
+                        // Verifica se o ID deste tipo está na lista de IDs selecionados
+                        $checked = in_array($tipo->id_tipo, $tiposSelecionadosIds ?? []) ? 'checked' : '';
+                        ?>
+                        <div class="w3-col m4 l3">
+                            <input class="w3-check" type="checkbox" id="tipo_<?= htmlspecialchars($tipo->id_tipo) ?>" name="tipos_atendimento[]" value="<?= htmlspecialchars($tipo->id_tipo) ?>" <?= $checked ?>>
+                            <label for="tipo_<?= htmlspecialchars($tipo->id_tipo) ?>"><?= htmlspecialchars($tipo->nome) ?></label>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Nenhum tipo de atendimento cadastrado no banco de dados.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
 
 
