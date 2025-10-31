@@ -12,10 +12,10 @@ class Rotas {
                 "/usuario/listar" => "UsuarioController@viewListarUsuarios",
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
+                "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
+                "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
 
-                "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
-                
-                // NOVAS ROTAS GET PARA AGENDAMENTOS
+                // --- AGENDAMENTOS (Admin & API Pública) ---
                 "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
                 "/agendamentos" => "AgendamentoController@index",
                 "/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
@@ -57,10 +57,16 @@ class Rotas {
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
                 "/api/imagens/servicos" => "ImagemController@listarServicos",
 
+                // --- GERAL (Admin) ---
+                "/logout" => "UsuarioController@logout",
+                "/dashboard" => "UsuarioController@dashboard",
+                "/meu-perfil" => "UsuarioController@viewMeuPerfil",
+                "/usuarios" => "UsuarioController@meuPerfilApi",
             ],
             
             "POST" => [
                 // --- USUARIOS ---
+                
                 "/usuario/salvar" => "UsuarioController@salvarUsuarios", // Usado pelo Admin e Registro público
                 "/usuario/atualizar/{id}" => "UsuarioController@atualizarUsuarios",
                 "/usuario/deletar/{id}" => "UsuarioController@deletarUsuarios",
