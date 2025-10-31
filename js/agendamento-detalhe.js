@@ -123,7 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="profissional-bio-coluna">
                     <h4>Um pouco sobre ${prof.nome_usuario.split(' ')[0]}</h4>
-                    <p>${prof.sobre || 'Biografia não disponível.'}</p>
+                    
+                    <div id="bioContainer" class="read-more-container">
+                        <p style="white-space: pre-wrap;">${prof.sobre || 'Biografia não disponível.'}</p>
+                    </div>
+                    <button id="bioReadMoreBtn" class="read-more-btn" style="display: none;">Ler Mais</button>
                     
                 </div>
             </div>
@@ -220,6 +224,29 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         container.innerHTML = conteudoHTML;
+
+        const bioContainer = document.getElementById('bioContainer');
+        const bioBtn = document.getElementById('bioReadMoreBtn');
+        const bioText = bioContainer.querySelector('p');
+        
+        // 1. Define a altura padrão (deve ser a mesma do CSS: 150px)
+        const alturaContraida = 450; 
+
+        // 2. Verifica se o texto realmente transborda
+        if (bioText.scrollHeight > alturaContraida) {
+            bioBtn.style.display = 'block'; // Mostra o botão
+
+            // 3. Adiciona o evento de clique
+            bioBtn.addEventListener('click', () => {
+                if (bioContainer.classList.toggle('expanded')) {
+                    bioBtn.textContent = 'Ler Menos';
+                } else {
+                    bioBtn.textContent = 'Ler Mais';
+                    // Opcional: rola para o topo da bio ao fechar
+                    // bioContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        }
 
         const checkboxesEspecialidade = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]');
 
