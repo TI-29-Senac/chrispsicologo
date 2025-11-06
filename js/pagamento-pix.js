@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Este endpoint irá atualizar o status do agendamento/pagamento no DB
-            const response = await fetch(`/backend/agendamentos/confirmar-sinal/${agendamentoId}`, {
+            const response = await fetch(`backend/agendamentos/confirmar-sinal/${agendamentoId}`, {
                 method: 'POST'
             });
 

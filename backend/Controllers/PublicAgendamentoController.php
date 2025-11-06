@@ -129,4 +129,51 @@ class PublicAgendamentoController {
             echo json_encode(['success' => false, 'message' => 'Erro ao salvar o agendamento no banco de dados.']);
         }
     }
+
+    public function getDetalhesPagamento($id) {
+        
+        while (ob_get_level() > 0) { 
+             ob_end_clean(); 
+        }
+
+        header('Content-Type: application/json'); 
+        
+        try {
+            $detalhes = Agendamento::getDetalhesPagamento($id); 
+
+            if (!$detalhes) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Agendamento não encontrado.']);
+                exit; 
+            }
+
+            $response = [
+                'success' => true,
+                'agendamento' => [
+                    'id_agendamento' => $detalhes['id_agendamento'],
+                    'data_agendamento' => $detalhes['data_agendamento'], // Campo DATETIME
+                    'valor_sinal' => $detalhes['sinal_consulta']
+                ],
+                'profissional' => [
+                    'id_profissional' => $detalhes['id_profissional'],
+                    'nome_usuario' => $detalhes['profissional_nome']
+                ],
+                'cliente' => [
+                    'id_usuario' => $detalhes['id_usuario'],
+                    'nome_completo' => $detalhes['cliente_nome']
+                ]
+            ];
+
+            http_response_code(200);
+            echo json_encode($response);
+            
+        } catch (\Exception $e) {
+            error_log("Erro ao buscar detalhes de pagamento: " . $e->getMessage()); 
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro interno ao buscar detalhes: ' . $e->getMessage()]);
+        } finally {
+            // Garante que a execução do script para imediatamente após a resposta.
+            exit;
+        }
+    }
 }

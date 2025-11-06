@@ -1,8 +1,14 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    
-    RewriteRule ^(.*)$ index.php [L,QSA]
-</IfModule>
+# Ativa o motor de reescrita
+RewriteEngine On
+
+# Define o diretório base para as regras de reescrita
+# (Ajuste se o seu projeto não estiver em /chrispsicologo/)
+RewriteBase /chrispsicologo/backend/
+
+# Se o pedido NÃO for um ficheiro real...
+RewriteCond %{REQUEST_FILENAME} !-f
+# E se o pedido NÃO for um diretório real...
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redireciona o pedido para o index.php (o seu router)
+RewriteRule . index.php [L]
