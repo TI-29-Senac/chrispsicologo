@@ -64,6 +64,13 @@ class Rotas {
                 "/dashboard" => "UsuarioController@dashboard",
                 "/meu-perfil" => "UsuarioController@viewMeuPerfil",
                 "/usuarios" => "UsuarioController@meuPerfilApi",
+
+                // --- SERVIÇOS (Admin & API Pública) --- (NOVO BLOCO)
+                "/api/servicos/listar" => "PublicServicoController@listarServicosPublicos", // API p/ servicos.html
+                "/servicos/listar" => "ServicoController@viewListarServicos", // Admin: Listar
+                "/servicos/criar" => "ServicoController@viewCriarServicos", // Admin: Mostrar formulário de criar
+                "/servicos/editar/{id}" => "ServicoController@viewEditarServicos", // Admin: Mostrar formulário de editar
+                "/servicos/excluir/{id}" => "ServicoController@viewExcluirServicos", // Admin: Mostrar confirmação de excluir
             ],
             
             "POST" => [
@@ -108,6 +115,11 @@ class Rotas {
                 
                 // --- CONTATO ---
                 "/enviar-contato" => "ContatoController@processarFormulario",
+
+                // --- SERVIÇOS --- (NOVO BLOCO)
+                "/servicos/salvar" => "ServicoController@salvarServicos",
+                "/servicos/atualizar/{id}" => "ServicoController@atualizarServicos",
+                "/servicos/deletar/{id}" => "ServicoController@deletarServicos",
             ],
         ];
     }

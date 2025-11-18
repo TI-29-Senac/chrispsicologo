@@ -105,6 +105,12 @@
         <a href="/backend/imagens/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/imagens') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-picture-o fa-fw"></i> Imagens do Site</a>
     <?php endif; ?>
 
+    <?php // --- SERVIÇOS (NOVO) --- ?>
+    <?php // Visível apenas para admin ?>
+    <?php if ($userType === 'admin'): ?>
+        <a href="/backend/servicos/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/servicos') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-briefcase fa-fw"></i> Serviços</a>
+    <?php endif; ?>
+
     <?php // Sair: Visível para todos os tipos logados no backend ?>
     <?php if (in_array($userType, ['admin', 'profissional', 'recepcionista', 'cliente'])): ?>
         <a href="/backend/logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
