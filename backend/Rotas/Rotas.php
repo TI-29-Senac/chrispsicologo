@@ -14,6 +14,8 @@ class Rotas {
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
                 "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
                 "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
+                '/api/usuarios/{pagina}' => 'APIUsuarioController@getUsuarios',
+                '/api/usuarios' => 'APIUsuarioController@getUsuarios',
 
                 // --- AGENDAMENTOS (Admin & API Pública) ---
                 "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
