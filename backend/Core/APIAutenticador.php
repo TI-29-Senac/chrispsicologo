@@ -2,15 +2,20 @@
 
 namespace App\Psico\Core;
 
-class APIAutenticador {
-    // Idealmente, isto viria do .env ou Config.php, mas para centralizar agora:
-    private static $chaveAPI = "73C60B2A5B23B2300B235AF6EE616F46167F2B830E78F0A8DDCBDF5C9598BCAD";
+use App\Psico\Database\Config;
 
-    /**
-     * Verifica se a requisição atual possui um Token Bearer válido.
-     * * @return bool Retorna true se autenticado, false caso contrário.
-     */
+class APIAutenticador {
+
     public static function validar(): bool {
+        Config::get(); 
+        
+        $chaveEsperada = getenv('API_TOKEN');
+
+        if (!$chaveEsperada) {
+            error_log("ERRO DE SEGURANÇA: API_TOKEN não configurado no arquivo .env");
+            return false;
+        }
+
         $headers = function_exists('getallheaders') ? getallheaders() : [];
         $authHeader = null;
 
@@ -32,7 +37,7 @@ class APIAutenticador {
             $token = $authHeader;
         }
 
-        return $token === self::$chaveAPI;
+        return $token === $chaveEsperada;
     }
 
     public static function enviarErroNaoAutorizado() {
