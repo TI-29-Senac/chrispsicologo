@@ -4,73 +4,32 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Usuario;
 use App\Psico\Database\Database;
+use App\Psico\Core\APIAutenticador;
 
 class APIUsuarioController {
     private $usuarioModel;
-    // Recomendado: Mover para variáveis de ambiente (.env) em produção
-    private $chaveAPI = "73C60B2A5B23B2300B235AF6EE616F46167F2B830E78F0A8DDCBDF5C9598BCAD";
 
     public function __construct(){
         $db = Database::getInstance();
         $this->usuarioModel = new Usuario($db);
     }
 
-    /**
-     * Verifica se o Token Bearer enviado é válido.
-     */
-    private function buscaChaveAPI(){
-        // 1. Tenta obter todos os headers
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
-        $authHeader = null;
-
-        // 2. Procura pelo header Authorization (case-insensitive e fallback para $_SERVER)
-        if (isset($headers['Authorization'])) {
-            $authHeader = $headers['Authorization'];
-        } elseif (isset($headers['authorization'])) {
-            $authHeader = $headers['authorization'];
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-        }
-
-        // 3. Se o cabeçalho não existe, retorna falso
-        if (!$authHeader) {
-            return false;
-        }
-
-        // 4. Separa "Bearer" do "TOKEN" com segurança usando Regex
-        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            $token = $matches[1];
-        } else {
-            // Fallback caso tenha enviado apenas o token sem "Bearer"
-            $token = $authHeader;
-        }
-
-        return $token === $this->chaveAPI;
-    }
-
-    /**
-     * Lista usuários com paginação (GET)
-     */
     public function getUsuarios($pagina = 0){
-        // Validação de segurança
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401); // 401 = Unauthorized (Não 500)
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida ou ausente.']);
-            exit;
+        // Validação Centralizada em uma linha
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
         $pagina = $pagina === 0 ? 1 : (int)$pagina;
 
-        // Busca dados no Model
         $resultado = $this->usuarioModel->paginacaoAPI($pagina, $registros_por_pagina);
         
-        // Remove senhas do retorno (Segurança)
         if (isset($resultado['data']) && is_array($resultado['data'])) {
             foreach($resultado['data'] as &$usuario){
                 unset($usuario['senha_usuario']);
             }
-            unset($usuario); // Quebra a referência do último item
+            unset($usuario);
         }
 
         header('Content-Type: application/json');
@@ -82,67 +41,46 @@ class APIUsuarioController {
         exit;
     }
 
-    /**
-     * Cria um novo usuário via JSON (POST)
-     */
     public function salvarUsuario(){
-        // Validação de segurança
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida.']);
-            exit;
+        // Validação Centralizada
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         header('Content-Type: application/json');
-        
-        // Recebe o JSON
         $input = json_decode(file_get_contents('php://input'), true);
 
-        // Validação básica de entrada
         if (empty($input) || !is_array($input)) {
-            http_response_code(400); // Bad Request
-            echo json_encode(['status' => 'error', 'message' => 'Nenhum dado recebido ou JSON inválido.']);
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'JSON inválido ou vazio.']);
             exit;
         }
 
-        // Verifica campos obrigatórios
         if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Campos obrigatórios: nome_usuario, email_usuario, senha_usuario.']);
+            echo json_encode(['status' => 'error', 'message' => 'Campos obrigatórios faltando.']);
             exit;
         }
 
         try {
-            // Tenta inserir
             $novoId = $this->usuarioModel->inserirUsuario(
                 $input["nome_usuario"],
                 $input["email_usuario"],
                 $input["senha_usuario"],
-                $input["tipo_usuario"] ?? 'cliente', // Padrão 'cliente' se não enviado
-                $input["cpf"] ?? '' // Corrigido de 'cpf_usuario' para 'cpf' conforme o Model
+                $input["tipo_usuario"] ?? 'cliente',
+                $input["cpf"] ?? ''
             );
 
             if ($novoId) {
-                http_response_code(201); // Created
-                echo json_encode([
-                    'status' => 'success', 
-                    'message' => 'Usuário cadastrado com sucesso.', 
-                    'id_usuario' => $novoId // Corrigido de 'id_pedido' para 'id_usuario'
-                ]);
+                http_response_code(201);
+                echo json_encode(['status' => 'success', 'message' => 'Usuário criado.', 'id_usuario' => $novoId]);
             } else {
                 http_response_code(500);
-                echo json_encode([
-                    'status' => 'error', 
-                    'message' => 'Erro ao salvar no banco de dados.'
-                ]);
+                echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar no banco.']);
             }
         } catch (\Exception $e) {
-            // Captura erro de e-mail duplicado ou erro de banco
             http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Erro interno: ' . $e->getMessage()
-            ]);
+            echo json_encode(['status' => 'error', 'message' => 'Erro interno: ' . $e->getMessage()]);
         }
         exit;
     }

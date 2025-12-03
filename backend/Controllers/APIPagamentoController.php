@@ -4,59 +4,21 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Pagamento;
 use App\Psico\Database\Database;
+use App\Psico\Core\APIAutenticador;
 
 class APIPagamentoController {
     private $pagamentoModel;
     // Mantenha a mesma chave de API
-    private $chaveAPI = "73C60B2A5B23B2300B235AF6EE616F46167F2B830E78F0A8DDCBDF5C9598BCAD";
 
     public function __construct() {
         $db = Database::getInstance();
         $this->pagamentoModel = new Pagamento($db);
     }
 
-    /**
-     * Verifica se o Token Bearer enviado é válido.
-     */
-    private function buscaChaveAPI() {
-        // 1. Tenta obter todos os headers
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
-        $authHeader = null;
-
-        // 2. Procura pelo header Authorization (case-insensitive e fallback para $_SERVER)
-        if (isset($headers['Authorization'])) {
-            $authHeader = $headers['Authorization'];
-        } elseif (isset($headers['authorization'])) {
-            $authHeader = $headers['authorization'];
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-        }
-
-        // 3. Se o cabeçalho não existe, retorna falso
-        if (!$authHeader) {
-            return false;
-        }
-
-        // 4. Separa "Bearer" do "TOKEN" com segurança
-        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            $token = $matches[1];
-        } else {
-            $token = $authHeader;
-        }
-
-        return $token === $this->chaveAPI;
-    }
-
-    /**
-     * Lista os pagamentos (GET)
-     * URL: /api/pagamentos ou /api/pagamentos/{pagina}
-     */
     public function getPagamentos($pagina = 0) {
         // Validação de segurança
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida ou ausente.']);
-            exit;
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
@@ -79,16 +41,10 @@ class APIPagamentoController {
         exit;
     }
 
-    /**
-     * Cria um novo pagamento (POST)
-     * URL: /api/pagamentos/salvar
-     */
     public function salvarPagamento() {
         // Validação de segurança
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida.']);
-            exit;
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         header('Content-Type: application/json');

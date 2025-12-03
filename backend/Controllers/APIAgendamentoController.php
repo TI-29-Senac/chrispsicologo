@@ -4,60 +4,21 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Agendamento;
 use App\Psico\Database\Database;
+use App\Psico\Core\APIAutenticador;
 
 class APIAgendamentoController {
     private $agendamentoModel;
     // Mantenha a mesma chave ou use variáveis de ambiente para maior segurança
-    private $chaveAPI = "73C60B2A5B23B2300B235AF6EE616F46167F2B830E78F0A8DDCBDF5C9598BCAD";
 
     public function __construct() {
         $db = Database::getInstance();
         $this->agendamentoModel = new Agendamento($db);
     }
 
-    /**
-     * Verifica se o Token Bearer enviado é válido.
-     * Versão corrigida para compatibilidade com Apache/Nginx e Headers.
-     */
-    private function buscaChaveAPI() {
-        // 1. Tenta obter todos os headers
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
-        $authHeader = null;
-
-        // 2. Procura pelo header Authorization (case-insensitive e fallback para $_SERVER)
-        if (isset($headers['Authorization'])) {
-            $authHeader = $headers['Authorization'];
-        } elseif (isset($headers['authorization'])) {
-            $authHeader = $headers['authorization'];
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-        }
-
-        // 3. Se o cabeçalho não existe, retorna falso
-        if (!$authHeader) {
-            return false;
-        }
-
-        // 4. Separa "Bearer" do "TOKEN" com segurança
-        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            $token = $matches[1];
-        } else {
-            // Fallback caso tenha enviado apenas o token sem "Bearer"
-            $token = $authHeader;
-        }
-
-        return $token === $this->chaveAPI;
-    }
-
-    /**
-     * Lista os agendamentos (GET)
-     */
     public function getAgendamentos($pagina = 0) {
         // Verifica autenticação
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401); // Unauthorized
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida ou ausente.']);
-            exit;
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         // Lógica de paginação igual ao UsuarioController
@@ -82,15 +43,10 @@ class APIAgendamentoController {
         exit;
     }
 
-    /**
-     * Cria um novo agendamento (POST)
-     */
     public function salvarAgendamento() {
         // Verifica autenticação (Recomendado proteger a criação também)
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida.']);
-            exit;
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         header('Content-Type: application/json');

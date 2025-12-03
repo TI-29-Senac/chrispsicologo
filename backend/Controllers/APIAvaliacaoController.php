@@ -4,59 +4,21 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Avaliacao;
 use App\Psico\Database\Database;
+use App\Psico\Core\APIAutenticador;
 
 class APIAvaliacaoController {
     private $avaliacaoModel;
     // Mantenha a mesma chave de API para consistência
-    private $chaveAPI = "73C60B2A5B23B2300B235AF6EE616F46167F2B830E78F0A8DDCBDF5C9598BCAD";
 
     public function __construct() {
         $db = Database::getInstance();
         $this->avaliacaoModel = new Avaliacao($db);
     }
 
-    /**
-     * Verifica se o Token Bearer enviado é válido.
-     */
-    private function buscaChaveAPI() {
-        // 1. Tenta obter todos os headers
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
-        $authHeader = null;
-
-        // 2. Procura pelo header Authorization (case-insensitive e fallback para $_SERVER)
-        if (isset($headers['Authorization'])) {
-            $authHeader = $headers['Authorization'];
-        } elseif (isset($headers['authorization'])) {
-            $authHeader = $headers['authorization'];
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-        }
-
-        // 3. Se o cabeçalho não existe, retorna falso
-        if (!$authHeader) {
-            return false;
-        }
-
-        // 4. Separa "Bearer" do "TOKEN" com segurança
-        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            $token = $matches[1];
-        } else {
-            $token = $authHeader;
-        }
-
-        return $token === $this->chaveAPI;
-    }
-
-    /**
-     * Lista as avaliações (GET)
-     * URL: /api/avaliacoes ou /api/avaliacoes/{pagina}
-     */
     public function getAvaliacoes($pagina = 0) {
         // Validação de segurança
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida ou ausente.']);
-            exit;
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         $registros_por_pagina = $pagina === 0 ? 200 : 10; // 200 para "todos" ou 10 por página
@@ -85,10 +47,8 @@ class APIAvaliacaoController {
      */
     public function salvarAvaliacao() {
         // Validação de segurança
-        if (!$this->buscaChaveAPI()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida.']);
-            exit;
+        if (!APIAutenticador::validar()) {
+            APIAutenticador::enviarErroNaoAutorizado();
         }
 
         header('Content-Type: application/json');
