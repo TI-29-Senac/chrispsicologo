@@ -36,9 +36,9 @@ class Database {
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         } catch(PDOException $exception) {
-            echo "Erro de conexão (PDO): " . $exception->getMessage();
+            throw new PDOException("Erro ao conectar ao banco de dados.", 0, $exception);
         } catch(Exception $exception) {
-            echo "Erro de conexão (Geral): " . $exception->getMessage();
+            throw new Exception("Erro de configuração geral do banco de dados.", 0, $exception);
         }
     }
 
