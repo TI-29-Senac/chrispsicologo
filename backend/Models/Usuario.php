@@ -215,11 +215,11 @@ class Usuario {
     }
 
     public function paginacaoAPI(int $pagina = 1, int $por_pagina = 10): array{
-        $totalQuery = "SELECT COUNT(*) FROM `usuario`";
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}";
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
         $offset = ($pagina - 1) * $por_pagina;
-        $dataQuery = "SELECT * FROM `usuario` LIMIT :limit OFFSET :offset";
+        $dataQuery = "SELECT * FROM {$this->table} LIMIT :limit OFFSET :offset";
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
         $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
