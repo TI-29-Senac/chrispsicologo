@@ -26,6 +26,8 @@ class Rotas {
                 "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
                 "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
                 "/agendamentos/detalhe-pagamento/{id}" => "PublicAgendamentoController@getDetalhesPagamento",
+                '/api/agendamentos/{pagina}' => 'APIAgendamentoController@getAgendamentos',
+                '/api/agendamentos' => 'APIAgendamentoController@getAgendamentos',
 
                 // --- AVALIAÇÕES (Admin & API Pública) ---
                 "/avaliacoes" => "AvaliacaoController@buscarPorProfissional", // API pública
@@ -84,6 +86,7 @@ class Rotas {
                 "/agendamentos/salvar" => "PublicAgendamentoController@salvarAgendamentos", 
                 "/agendamentos/atualizar/{id}" => "AgendamentoController@atualizarAgendamentos",
                 "/agendamentos/deletar/{id}" => "AgendamentoController@deletarAgendamentos",
+                '/api/agendamentos/salvar'   => 'APIAgendamentoController@salvarAgendamento',
 
                 // --- PAGAMENTOS ---
                 "/pagamentos/salvar" => "PagamentoController@salvarPagamentos",

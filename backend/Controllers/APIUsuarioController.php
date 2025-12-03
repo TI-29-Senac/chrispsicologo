@@ -15,6 +15,8 @@ use App\Psico\Database\Database;
         }
 
     private function buscaChaveAPI(){
+        file_put_contents(__DIR__ . '/../../debug_headers.txt', print_r(getallheaders(), true));
+        file_put_contents(__DIR__ . '/../../debug_server.txt', print_r($_SERVER, true));
         $headers = function_exists('getallheaders') ? getallheaders() : [];
         $authHeader = null;
 
