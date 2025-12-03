@@ -2,23 +2,23 @@
 
 namespace App\Psico\Controllers;
 
-use App\Psico\Models\Usuario;
+use App\Psico\Models\Pagamento;
 use App\Psico\Database\Database;
 
-class APIUsuarioController {
-    private $usuarioModel;
-    // Recomendado: Mover para variáveis de ambiente (.env) em produção
+class APIPagamentoController {
+    private $pagamentoModel;
+    // Mantenha a mesma chave de API
     private $chaveAPI = "73C60B2A5B23B2300B235AF6EE616F46167F2B830E78F0A8DDCBDF5C9598BCAD";
 
-    public function __construct(){
+    public function __construct() {
         $db = Database::getInstance();
-        $this->usuarioModel = new Usuario($db);
+        $this->pagamentoModel = new Pagamento($db);
     }
 
     /**
      * Verifica se o Token Bearer enviado é válido.
      */
-    private function buscaChaveAPI(){
+    private function buscaChaveAPI() {
         // 1. Tenta obter todos os headers
         $headers = function_exists('getallheaders') ? getallheaders() : [];
         $authHeader = null;
@@ -37,11 +37,10 @@ class APIUsuarioController {
             return false;
         }
 
-        // 4. Separa "Bearer" do "TOKEN" com segurança usando Regex
+        // 4. Separa "Bearer" do "TOKEN" com segurança
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $token = $matches[1];
         } else {
-            // Fallback caso tenha enviado apenas o token sem "Bearer"
             $token = $authHeader;
         }
 
@@ -49,12 +48,13 @@ class APIUsuarioController {
     }
 
     /**
-     * Lista usuários com paginação (GET)
+     * Lista os pagamentos (GET)
+     * URL: /api/pagamentos ou /api/pagamentos/{pagina}
      */
-    public function getUsuarios($pagina = 0){
+    public function getPagamentos($pagina = 0) {
         // Validação de segurança
         if (!$this->buscaChaveAPI()) {
-            http_response_code(401); // 401 = Unauthorized (Não 500)
+            http_response_code(401);
             echo json_encode(['status' => 'error', 'message' => 'Chave de API inválida ou ausente.']);
             exit;
         }
@@ -62,30 +62,28 @@ class APIUsuarioController {
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
         $pagina = $pagina === 0 ? 1 : (int)$pagina;
 
-        // Busca dados no Model
-        $resultado = $this->usuarioModel->paginacaoAPI($pagina, $registros_por_pagina);
-        
-        // Remove senhas do retorno (Segurança)
-        if (isset($resultado['data']) && is_array($resultado['data'])) {
-            foreach($resultado['data'] as &$usuario){
-                unset($usuario['senha_usuario']);
-            }
-            unset($usuario); // Quebra a referência do último item
-        }
+        // Chama o método paginacao do Model Pagamento
+        $dados = $this->pagamentoModel->paginacao($pagina, $registros_por_pagina);
 
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
             'status' => 'success',
-            'data' => $resultado['data']
+            'data' => $dados['data'],
+            'meta' => [
+                'total' => $dados['total'],
+                'pagina_atual' => $dados['pagina_atual'],
+                'ultima_pagina' => $dados['ultima_pagina']
+            ]
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
     /**
-     * Cria um novo usuário via JSON (POST)
+     * Cria um novo pagamento (POST)
+     * URL: /api/pagamentos/salvar
      */
-    public function salvarUsuario(){
+    public function salvarPagamento() {
         // Validação de segurança
         if (!$this->buscaChaveAPI()) {
             http_response_code(401);
@@ -95,49 +93,59 @@ class APIUsuarioController {
 
         header('Content-Type: application/json');
         
-        // Recebe o JSON
+        // Lê o JSON do corpo da requisição
         $input = json_decode(file_get_contents('php://input'), true);
 
-        // Validação básica de entrada
+        // Validação básica
         if (empty($input) || !is_array($input)) {
-            http_response_code(400); // Bad Request
-            echo json_encode(['status' => 'error', 'message' => 'Nenhum dado recebido ou JSON inválido.']);
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Nenhum dado recebido ou formato inválido.']);
             exit;
         }
 
         // Verifica campos obrigatórios
-        if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
+        $erros = [];
+        if (empty($input['id_agendamento'])) {
+            $erros[] = "O campo 'id_agendamento' é obrigatório.";
+        }
+        if (empty($input['tipo_pagamento'])) {
+            $erros[] = "O campo 'tipo_pagamento' é obrigatório (pix, credito, debito, dinheiro).";
+        }
+
+        // Validação de tipos permitidos (opcional, mas recomendado)
+        $tiposPermitidos = ['pix', 'credito', 'debito', 'dinheiro'];
+        if (!empty($input['tipo_pagamento']) && !in_array($input['tipo_pagamento'], $tiposPermitidos)) {
+            $erros[] = "Tipo de pagamento inválido. Permitidos: " . implode(', ', $tiposPermitidos);
+        }
+
+        if (!empty($erros)) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Campos obrigatórios: nome_usuario, email_usuario, senha_usuario.']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro de validação.', 'errors' => $erros]);
             exit;
         }
 
+        // Tenta inserir
         try {
-            // Tenta inserir
-            $novoId = $this->usuarioModel->inserirUsuario(
-                $input["nome_usuario"],
-                $input["email_usuario"],
-                $input["senha_usuario"],
-                $input["tipo_usuario"] ?? 'cliente', // Padrão 'cliente' se não enviado
-                $input["cpf"] ?? '' // Corrigido de 'cpf_usuario' para 'cpf' conforme o Model
+            $novoId = $this->pagamentoModel->inserirPagamento(
+                (int)$input['id_agendamento'],
+                $input['tipo_pagamento']
             );
 
             if ($novoId) {
                 http_response_code(201); // Created
                 echo json_encode([
-                    'status' => 'success', 
-                    'message' => 'Usuário cadastrado com sucesso.', 
-                    'id_usuario' => $novoId // Corrigido de 'id_pedido' para 'id_usuario'
+                    'status' => 'success',
+                    'message' => 'Pagamento registrado com sucesso.',
+                    'id_pagamento' => $novoId
                 ]);
             } else {
                 http_response_code(500);
                 echo json_encode([
-                    'status' => 'error', 
-                    'message' => 'Erro ao salvar no banco de dados.'
+                    'status' => 'error',
+                    'message' => 'Erro ao salvar pagamento no banco de dados. Verifique se o ID do agendamento é válido.'
                 ]);
             }
         } catch (\Exception $e) {
-            // Captura erro de e-mail duplicado ou erro de banco
             http_response_code(500);
             echo json_encode([
                 'status' => 'error',

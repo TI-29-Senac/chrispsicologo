@@ -35,12 +35,16 @@ class Rotas {
                 "/avaliacoes/listar" => "AvaliacaoController@viewListarAvaliacoes",
                 "/avaliacoes/editar/{id}" => "AvaliacaoController@viewEditarAvaliacoes",
                 "/avaliacoes/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
+                '/api/avaliacoes/{pagina}' => 'APIAvaliacaoController@getAvaliacoes',
+                '/api/avaliacoes' => 'APIAvaliacaoController@getAvaliacoes',
 
                 // --- PAGAMENTOS (Admin) ---
                 "/pagamentos/criar" => "PagamentoController@viewCriarPagamentos",
                 "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
                 "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
                 "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
+                '/api/pagamentos/{pagina}' => 'APIPagamentoController@getPagamentos',
+                '/api/pagamentos' => 'APIPagamentoController@getPagamentos',
 
                 // --- PROFISSIONAIS (Admin & API Pública) ---
                 "/profissionais" => "ProfissionalController@index",
@@ -53,6 +57,8 @@ class Rotas {
                 "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
                 "/profissional/meu-perfil" => "ProfissionalController@viewMeuPerfilProfissional",
                 "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
+                '/api/profissionais/{pagina}' => 'APIProfissionalController@getProfissionais',
+                '/api/profissionais' => 'APIProfissionalController@getProfissionais',
 
                 // --- IMAGENS (Admin & API Pública) ---
                 "/imagens/listar" => "ImagemController@viewListarImagens",
@@ -80,6 +86,7 @@ class Rotas {
                 "/login" => "UsuarioController@login",
                 "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
                 "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
+                '/api/usuarios/salvar' => 'APIUsuarioController@salvarUsuario',
 
                 // --- AGENDAMENTOS ---
                 // Esta é a rota que o seu formulário está chamando:
@@ -93,18 +100,21 @@ class Rotas {
                 "/pagamentos/atualizar/{id}" =>"PagamentoController@atualizarPagamento",
                 "/pagamentos/deletar/{id}" =>"PagamentoController@deletarPagamento",
                 "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal", // Rota p/ pág. pagamento
+                '/api/pagamentos/salvar'   => 'APIPagamentoController@salvarPagamento',
 
                 // --- AVALIAÇÕES ---
                 "/avaliacoes/salvar" => "AvaliacaoController@salvarAvaliacoes",
                 "/avaliacoes/atualizar/{id}" => "AvaliacaoController@atualizarAvaliacoes",
                 "/avaliacoes/deletar/{id}" => "AvaliacaoController@deletarAvaliacoes",
                 "/api/cliente/avaliar" => "AvaliacaoController@salvarAvaliacaoCliente",
+                '/api/avaliacoes/salvar'   => 'APIAvaliacaoController@salvarAvaliacao',
 
                 // --- PROFISSIONAIS ---
                 "/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
                 "/profissionais/atualizar/{id}" => "ProfissionalController@atualizarProfissionais",
                 "/profissionais/deletar/{id}" => "ProfissionalController@deletarProfissionais",
                 "/profissional/atualizar-meu-perfil" => "ProfissionalController@atualizarMeuPerfilProfissional",
+                '/api/profissionais/salvar'   => 'APIProfissionalController@salvarProfissional',
 
                 // --- IMAGENS ---
                 "/imagens/salvar" => "ImagemController@salvarImagem",
@@ -113,6 +123,7 @@ class Rotas {
                 
                 // --- CONTATO ---
                 "/enviar-contato" => "ContatoController@processarFormulario",
+                '/api/contato/enviar' => 'APIContatoController@enviarMensagem',
             ],
         ];
     }
