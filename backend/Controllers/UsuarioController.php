@@ -138,7 +138,7 @@ class UsuarioController extends AdminController {
                 $_POST['nome_usuario'],
                 $_POST['email_usuario'],
                 $_POST['senha_usuario'],
-                 $tipoUsuario, 
+                $tipoUsuario, 
                 $_POST['cpf'] ?? '' 
             );
 

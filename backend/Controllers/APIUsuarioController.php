@@ -15,8 +15,33 @@ use App\Psico\Database\Database;
         }
 
     private function buscaChaveAPI(){
-        $headers = getallheaders();
-        $token = explode(" ", $headers['Authorization'])[1];
+        // 1. Tenta obter todos os headers
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
+        $authHeader = null;
+
+        // 2. Procura pelo header Authorization (case-insensitive e fallback para $_SERVER)
+        if (isset($headers['Authorization'])) {
+            $authHeader = $headers['Authorization'];
+        } elseif (isset($headers['authorization'])) {
+            $authHeader = $headers['authorization'];
+        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        }
+
+        // 3. Se o cabeçalho não existe, retorna falso (sem gerar Warning)
+        if (!$authHeader) {
+            return false;
+        }
+
+        // 4. Separa "Bearer" do "TOKEN" com segurança
+        $parts = explode(" ", $authHeader);
+        
+        // Verifica se o array tem pelo menos 2 elementos (Bearer + Token)
+        if (count($parts) < 2) {
+            return false;
+        }
+
+        $token = trim($parts[1]); // Remove espaços extras/quebras de linha
         return $token === $this->chaveAPI;
     }
 
@@ -57,7 +82,7 @@ use App\Psico\Database\Database;
             $usuario["email_usuario"],
             $usuario["senha_usuario"],
             $usuario["tipo_usuario"],
-            $usuario["status_usuario"],
+            $usuario["cpf_usuario"],
         );
         if ($novoPedidoId) {
             http_response_code(201);
