@@ -14,12 +14,8 @@ class Rotas {
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
                 "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
                 "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
-<<<<<<< HEAD
-                "/api/desktop/usuarios" => "DesktopApiController@listarUsuarios",
-=======
                 '/api/usuarios/{pagina}' => 'APIUsuarioController@getUsuarios',
                 '/api/usuarios' => 'APIUsuarioController@getUsuarios',
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7
 
                 // --- AGENDAMENTOS (Admin & API Pública) ---
                 "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
@@ -30,12 +26,8 @@ class Rotas {
                 "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
                 "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
                 "/agendamentos/detalhe-pagamento/{id}" => "PublicAgendamentoController@getDetalhesPagamento",
-<<<<<<< HEAD
-                "/api/desktop/agendamentos" => "DesktopApiController@listarAgendamentos",
-=======
                 '/api/agendamentos/{pagina}' => 'APIAgendamentoController@getAgendamentos',
                 '/api/agendamentos' => 'APIAgendamentoController@getAgendamentos',
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7
 
                 // --- AVALIAÇÕES (Admin & API Pública) ---
                 "/avaliacoes" => "AvaliacaoController@buscarPorProfissional", // API pública
@@ -51,12 +43,8 @@ class Rotas {
                 "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
                 "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
                 "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
-<<<<<<< HEAD
-                "/api/desktop/pagamentos" => "DesktopApiController@listarPagamentos",
-=======
                 '/api/pagamentos/{pagina}' => 'APIPagamentoController@getPagamentos',
                 '/api/pagamentos' => 'APIPagamentoController@getPagamentos',
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7
 
                 // --- PROFISSIONAIS (Admin & API Pública) ---
                 "/profissionais" => "ProfissionalController@index",
@@ -98,37 +86,21 @@ class Rotas {
                 "/login" => "UsuarioController@login",
                 "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
                 "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
-<<<<<<< HEAD
-                "/api/desktop/usuarios" => "DesktopApiController@criarUsuario",
-                "/api/desktop/usuarios/editar/{id}" => "DesktopApiController@editarUsuario",
-                "/api/desktop/usuarios/excluir/{id}" => "DesktopApiController@excluirUsuario",
-=======
                 '/api/usuarios/salvar' => 'APIUsuarioController@salvarUsuario',
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7
 
                 // --- AGENDAMENTOS ---
                 // Esta é a rota que o seu formulário está chamando:
                 "/agendamentos/salvar" => "PublicAgendamentoController@salvarAgendamentos", 
                 "/agendamentos/atualizar/{id}" => "AgendamentoController@atualizarAgendamentos",
                 "/agendamentos/deletar/{id}" => "AgendamentoController@deletarAgendamentos",
-<<<<<<< HEAD
-                "/api/desktop/agendamentos/criar" => "DesktopApiController@criarAgendamento",
-                "/api/desktop/agendamentos/excluir/{id}" => "DesktopApiController@excluirAgendamento",
-=======
                 '/api/agendamentos/salvar'   => 'APIAgendamentoController@salvarAgendamento',
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7
 
                 // --- PAGAMENTOS ---
                 "/pagamentos/salvar" => "PagamentoController@salvarPagamentos",
                 "/pagamentos/atualizar/{id}" =>"PagamentoController@atualizarPagamento",
                 "/pagamentos/deletar/{id}" =>"PagamentoController@deletarPagamento",
-<<<<<<< HEAD
-                "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal",
-                "/api/desktop/pagamentos/excluir/{id}" => "DesktopApiController@excluirPagamento",
-=======
                 "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal", // Rota p/ pág. pagamento
                 '/api/pagamentos/salvar'   => 'APIPagamentoController@salvarPagamento',
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7
 
                 // --- AVALIAÇÕES ---
                 "/avaliacoes/salvar" => "AvaliacaoController@salvarAvaliacoes",

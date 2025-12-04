@@ -163,7 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="form-grupo">
                         <label for="email">E-mail:</label>
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" pattern="^[^@]+@[^@]+\.[a-zA-Z]{2,}$" required>
+
                     </div>
                     <div class="form-grupo-duplo">
                         <div class="form-grupo">
@@ -172,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="form-grupo">
                             <label for="cpf">CPF:</label>
-                            <input type="text" id="cpf" name="cpf" required>
+                            <input id="cpf" type="text" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" required>
                         </div>
                     </div>
                     
