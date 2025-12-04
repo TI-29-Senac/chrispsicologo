@@ -8,6 +8,8 @@ use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\PagamentoValidador;
+use Piggly\Pix\Exceptions\InvalidPixKeyException;
+use Piggly\Pix\StaticPayload;
 
 class PagamentoController extends AuthenticatedController{
     public $pagamento;   
@@ -128,6 +130,54 @@ class PagamentoController extends AuthenticatedController{
             Redirect::redirecionarComMensagem("pagamentos/listar", "success", "Pagamento excluído com sucesso!");
         } else {
             Redirect::redirecionarComMensagem("pagamentos/listar", "error", "Erro ao excluir pagamento.");
+        }
+    }
+
+    public function gerarPix()
+    {
+        // Pega os dados enviados pelo aplicativo desktop (ex: valor)
+        $input = json_decode(file_get_contents('php://input'), true);
+        $valor = $input['valor'] ?? 1.00; // Pega o valor ou usa 1.00 como padrão
+
+        try {
+            // --- CONFIGURAÇÃO DO PIX ---
+            // Substitua pelos seus dados reais.
+            // A chave PIX pode ser CPF, CNPJ, E-mail, Telefone ou Chave Aleatória.
+            $chavePix      = 'seu-email@provedor.com'; // <-- IMPORTANTE: TROQUE PELA SUA CHAVE PIX
+            $nomeRecebedor = 'Chris Psicologia';       // Nome que aparecerá para quem paga
+            $cidade        = 'SAO PAULO';              // Cidade do recebedor
+            $txid          = 'AGENDAMENTO123';         // Um identificador único para a transação
+
+            // Cria a estrutura do payload do PIX - Agora com a classe importada
+            $payload = (new StaticPayload())
+                ->setAmount($valor)
+                ->setPixKey('email', $chavePix)
+                ->setDescription('Pagamento de consulta')
+                ->setMerchantName($nomeRecebedor)
+                ->setMerchantCity($cidade)
+                ;
+
+            // Gera o código "copia e cola"
+            $copiaECola = $payload->getPixCode();
+
+            // Gera a imagem do QR Code em formato Base64
+            // CORREÇÃO: O método getQRCode() já retorna a imagem em Base64 por padrão.
+            $qrCodeBase64 = $payload->getQRCode();
+
+            // Envia a resposta em formato JSON para o aplicativo desktop
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'copiaECola' => $copiaECola,
+                'qrCodeBase64' => $qrCodeBase64
+            ]);
+
+        } catch (InvalidPixKeyException $e) {
+            header('Content-Type: application/json', true, 400);
+            echo json_encode(['success' => false, 'message' => 'Chave PIX configurada é inválida.']);
+        } catch (\Exception $e) {
+            header('Content-Type: application/json', true, 500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao gerar o PIX: ' . $e->getMessage()]);
         }
     }
 }

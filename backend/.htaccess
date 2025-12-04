@@ -11,4 +11,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
 # Redireciona o pedido para o index.php (o seu router)
-RewriteRule . index.php [L]
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

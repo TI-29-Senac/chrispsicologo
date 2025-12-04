@@ -14,6 +14,7 @@ class Rotas {
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
                 "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
                 "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
+                "/api/desktop/usuarios" => "DesktopApiController@listarUsuarios",
 
                 // --- AGENDAMENTOS (Admin & API Pública) ---
                 "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
@@ -24,6 +25,7 @@ class Rotas {
                 "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
                 "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
                 "/agendamentos/detalhe-pagamento/{id}" => "PublicAgendamentoController@getDetalhesPagamento",
+                "/api/desktop/agendamentos" => "DesktopApiController@listarAgendamentos",
 
                 // --- AVALIAÇÕES (Admin & API Pública) ---
                 "/avaliacoes" => "AvaliacaoController@buscarPorProfissional", // API pública
@@ -37,6 +39,7 @@ class Rotas {
                 "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
                 "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
                 "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
+                "/api/desktop/pagamentos" => "DesktopApiController@listarPagamentos",
 
                 // --- PROFISSIONAIS (Admin & API Pública) ---
                 "/profissionais" => "ProfissionalController@index",
@@ -76,18 +79,24 @@ class Rotas {
                 "/login" => "UsuarioController@login",
                 "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
                 "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
+                "/api/desktop/usuarios" => "DesktopApiController@criarUsuario",
+                "/api/desktop/usuarios/editar/{id}" => "DesktopApiController@editarUsuario",
+                "/api/desktop/usuarios/excluir/{id}" => "DesktopApiController@excluirUsuario",
 
                 // --- AGENDAMENTOS ---
                 // Esta é a rota que o seu formulário está chamando:
                 "/agendamentos/salvar" => "PublicAgendamentoController@salvarAgendamentos", 
                 "/agendamentos/atualizar/{id}" => "AgendamentoController@atualizarAgendamentos",
                 "/agendamentos/deletar/{id}" => "AgendamentoController@deletarAgendamentos",
+                "/api/desktop/agendamentos/criar" => "DesktopApiController@criarAgendamento",
+                "/api/desktop/agendamentos/excluir/{id}" => "DesktopApiController@excluirAgendamento",
 
                 // --- PAGAMENTOS ---
                 "/pagamentos/salvar" => "PagamentoController@salvarPagamentos",
                 "/pagamentos/atualizar/{id}" =>"PagamentoController@atualizarPagamento",
                 "/pagamentos/deletar/{id}" =>"PagamentoController@deletarPagamento",
-                "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal", // Rota p/ pág. pagamento
+                "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal",
+                "/api/desktop/pagamentos/excluir/{id}" => "DesktopApiController@excluirPagamento",
 
                 // --- AVALIAÇÕES ---
                 "/avaliacoes/salvar" => "AvaliacaoController@salvarAvaliacoes",

@@ -2,6 +2,18 @@
 
 session_start();
 
+// Permitir requisições de qualquer origem (bom para desenvolvimento)
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Intercepta e responde a requisições preflight (OPTIONS)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Psico\Rotas\Rotas;
@@ -20,7 +32,8 @@ try {
 }
 
 $router = new Router();
-$router->setBasePath('/backend');
+// Remova ou comente a linha setBasePath. O .htaccess já está cuidando do roteamento.
+// $router->setBasePath('/chrispsicologo/backend');
 $rotas = Rotas::get();
 
 
@@ -49,6 +62,12 @@ foreach ($rotas['GET'] as $uri => $action) {
         call_user_func_array([$controllerInstance, $method], $params);
     });
 }
+
+// Adicione esta rota para o PIX
+$router->post('/gerar-pix', function() use ($db) {
+    // Usa o novo ApiController que não requer autenticação
+    (new \App\Psico\Controllers\ApiController())->gerarPix();
+});
 
 foreach ($rotas['POST'] as $uri => $action) {
     $uri_parsed = preg_replace('/\{\w+\}/', '(.+)', $uri);
