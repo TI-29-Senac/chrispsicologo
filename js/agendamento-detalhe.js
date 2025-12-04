@@ -65,46 +65,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao;
         const hojeFormatado = getHojeFormatado(); 
         const maxEspecialidades = 1;
-        // Processar a string de especialidades do profissional do BD
+
+        // Processar a string de especialidades
         const especialidadesArray = prof.especialidade ? 
             prof.especialidade.split(',').map(s => s.trim()).filter(s => s.length > 0) : 
-            ["Psicoterapia Individual", "Terapia de Casal", "Psicoterapia Infantil", "Orientação Profissional"]; // Fallback 
+            ["Psicoterapia Individual", "Terapia de Casal", "Psicoterapia Infantil", "Orientação Profissional"]; 
         
-        // Gerar o HTML dos checkboxes de especialidade dinamicamente
         const especialidadesHtml = especialidadesArray.map(esp => `
              <label><input type="checkbox" name="especialidade[]" value="${esp}"> ${esp}</label>
         `).join('');
 
-        
-        // --- (INÍCIO) CORREÇÃO APLICADA AQUI ---
-        const defaultTipos = [
-            { icone: "img/icons/adulto.svg", texto: "Adultos" }
-        ];
-        
+        // Lógica de Tipos de Atendimento (Mantida)
+        const defaultTipos = [{ icone: "img/icons/adulto.svg", texto: "Adultos" }];
         let tiposDeAtendimento = null;
-        if (prof.tipos_atendimento) { // Verifica se não é nulo
+        if (prof.tipos_atendimento) {
             try {
-                // Converte a string JSON (ex: "[{...}]") em um array de objetos
                 tiposDeAtendimento = JSON.parse(prof.tipos_atendimento);
             } catch (e) {
                 console.error("Erro ao parsear tipos_atendimento:", e);
             }
         }
-        // --- (FIM) CORREÇÃO APLICADA AQUI ---
-
-        // Se falhou ou estava vazio, usa o fallback
         if (!tiposDeAtendimento || !Array.isArray(tiposDeAtendimento) || tiposDeAtendimento.length === 0) {
             tiposDeAtendimento = defaultTipos;
         }
-
-        // Mapeia os tipos de atendimento para HTML
         const tiposAtendimentoHtml = tiposDeAtendimento.map(t => 
             `<li><img src="/${t.icone}" class="icon-prof" alt=""> ${t.texto}</li>`
         ).join("");
 
-
         const valorSinalFormatado = parseFloat(prof.sinal_consulta || 0).toFixed(2).replace('.', ',');
 
+        // --- ATUALIZAÇÃO DO FORMULÁRIO COM MENSAGENS DE ERRO ---
         const conteudoHTML = `
             <h2 class="titulo-aba-prof">Seu agendamento com ${prof.nome_usuario.split(' ')[0]}</h2>
 
@@ -123,15 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="profissional-bio-coluna">
                     <h4>Um pouco sobre ${prof.nome_usuario.split(' ')[0]}</h4>
-                    
                     <div id="bioContainer" class="read-more-container">
                         <p style="white-space: pre-wrap;">${prof.sobre || 'Biografia não disponível.'}</p>
                     </div>
                     <button id="bioReadMoreBtn" class="read-more-btn" style="display: none;">Ler Mais</button>
-                    
                 </div>
             </div>
-
 
             <div class="agenda-container">
                 <h3>Escolha a data e o horário</h3>
@@ -141,19 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div id="agenda-horarios-container">
                     <p id="agenda-feedback">Buscando horários para hoje...</p> 
-                    <div class="agenda-body" style="display: none;">
-
-                    </div>
+                    <div class="agenda-body" style="display: none;"></div>
                 </div>
             </div>
-
-
 
             <div class="confirmacao-container" id="confirmacao-container" style="display: none;">
                 <h3>Confirmação</h3>
                 <p id="horario-confirmacao-texto" style="text-align: center; margin-bottom: 20px; font-weight: bold;"></p>
+                
                 <form id="form-confirmacao" class="confirmacao-form">
-                     <input type="hidden" id="id_profissional_hidden" name="id_profissional" value="${profissionalId}">
+                    <input type="hidden" id="id_profissional_hidden" name="id_profissional" value="${profissionalId}">
                     <input type="hidden" id="data_selecionada_hidden" name="data_selecionada">
                     <input type="hidden" id="horario_selecionado_hidden" name="horario_selecionado">
 
@@ -161,19 +145,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label for="nome-completo">Nome completo:</label>
                         <input type="text" id="nome-completo" name="nome-completo" required>
                     </div>
+                    
                     <div class="form-grupo">
                         <label for="email">E-mail:</label>
-                        <input type="email" id="email" pattern="^[^@]+@[^@]+\.[a-zA-Z]{2,}$" required>
-
+                        <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+                        <small id="erro-email" style="color: #ff6b6b; display: none; margin-top: 5px; font-weight: bold;">Formato de e-mail inválido.</small>
                     </div>
+
                     <div class="form-grupo-duplo">
                         <div class="form-grupo">
                             <label for="telefone">Telefone (com DDD):</label>
-                            <input type="tel" id="telefone" name="telefone" required>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
+                            <small id="erro-telefone" style="color: #ff6b6b; display: none; margin-top: 5px; font-weight: bold;">Telefone incompleto.</small>
                         </div>
                         <div class="form-grupo">
                             <label for="cpf">CPF:</label>
-                            <input id="cpf" type="text" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" required>
+                            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                            <small id="erro-cpf" style="color: #ff6b6b; display: none; margin-top: 5px; font-weight: bold;">CPF incompleto.</small>
                         </div>
                     </div>
                     
@@ -191,14 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="form-grupo especialidades">     
                             <div class="lista-especialidades scrolling-checkbox-list">
-                                ${especialidadesHtml} </div>
+                                ${especialidadesHtml} 
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-grupo-duplo" style="margin-top: 10px;">
                         <div class="form-grupo">
                             <button type="button" class="termos-link" id="openTerms">Ler Termos de pagamento</button>
-                            
                             <div class="checkbox-container">
                                 <input type="checkbox" id="termos-aceitos" name="termos_aceitos" required style="position: absolute; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">
                                 <label for="termos-aceitos" id="label-termos-aceitos" style="font-family: questrial, sans-serif; color: white; margin-top: 5px; cursor: pointer;">*É necessário aceitar os termos de pagamento.</label>
@@ -226,147 +214,212 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.innerHTML = conteudoHTML;
 
+        const inputCPF = document.getElementById('cpf');
+        if (inputCPF) {
+            inputCPF.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ""); // Remove não dígitos
+                if (value.length > 11) value = value.slice(0, 11); // Limita a 11 números
+
+                // Aplica a máscara
+                if (value.length > 9) {
+                    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, "$1.$2.$3-$4");
+                } else if (value.length > 6) {
+                    value = value.replace(/^(\d{3})(\d{3})(\d{3}).*/, "$1.$2.$3");
+                } else if (value.length > 3) {
+                    value = value.replace(/^(\d{3})(\d{3}).*/, "$1.$2");
+                }
+                
+                e.target.value = value;
+                
+                // Validação visual (mínimo 14 caracteres com a máscara)
+                const erroCpf = document.getElementById('erro-cpf');
+                if (value.length < 14) { 
+                    erroCpf.style.display = 'block';
+                    e.target.style.border = '2px solid #ff6b6b';
+                } else {
+                    erroCpf.style.display = 'none';
+                    e.target.style.border = '2px solid #99b198'; // Borda verde suave
+                }
+            });
+        }
+
+        // 2. Máscara e Validação de Telefone ( (11) 99999-9999 )
+        const inputTelefone = document.getElementById('telefone');
+        if (inputTelefone) {
+            inputTelefone.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, "");
+                if (value.length > 11) value = value.slice(0, 11);
+
+                // Máscara
+                if (value.length > 10) {
+                    value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+                } else if (value.length > 6) {
+                    value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+                } else if (value.length > 2) {
+                    value = value.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");
+                } else {
+                    value = value.replace(/^(\d*)/, "($1");
+                }
+
+                e.target.value = value;
+
+                // Validação visual (Mínimo 14 chars: (11) 9999-9999)
+                const erroTel = document.getElementById('erro-telefone');
+                if (value.length < 14) {
+                    erroTel.style.display = 'block';
+                    e.target.style.border = '2px solid #ff6b6b';
+                } else {
+                    erroTel.style.display = 'none';
+                    e.target.style.border = '2px solid #99b198';
+                }
+            });
+        }
+
+        // 3. Validação de Email (Regex simples)
+        const inputEmail = document.getElementById('email');
+        if (inputEmail) {
+            inputEmail.addEventListener('blur', function(e) { // Valida ao sair do campo
+                const value = e.target.value;
+                const erroEmail = document.getElementById('erro-email');
+                // Regex padrão para xxx@xxx.xx
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (value && !emailPattern.test(value)) {
+                    erroEmail.style.display = 'block';
+                    e.target.style.border = '2px solid #ff6b6b';
+                } else {
+                    erroEmail.style.display = 'none';
+                    if(value) e.target.style.border = '2px solid #99b198';
+                    else e.target.style.border = '1px solid #ccc'; // Volta ao normal se vazio
+                }
+            });
+        }
+
+        // --- FIM DA LÓGICA DE VALIDAÇÃO ---
+
+        // (O restante do código da função renderizarLayoutBase continua igual:
+        // Lógica do botão "Ler Mais" da bio, checkboxes, etc...)
+        
         const bioContainer = document.getElementById('bioContainer');
         const bioBtn = document.getElementById('bioReadMoreBtn');
         const bioText = bioContainer.querySelector('p');
-        
-        // 1. Define a altura padrão (deve ser a mesma do CSS: 150px)
         const alturaContraida = 450; 
 
-        // 2. Verifica se o texto realmente transborda
         if (bioText.scrollHeight > alturaContraida) {
-            bioBtn.style.display = 'block'; // Mostra o botão
-
-            // 3. Adiciona o evento de clique
+            bioBtn.style.display = 'block'; 
             bioBtn.addEventListener('click', () => {
                 if (bioContainer.classList.toggle('expanded')) {
                     bioBtn.textContent = 'Ler Menos';
                 } else {
                     bioBtn.textContent = 'Ler Mais';
-                    // Opcional: rola para o topo da bio ao fechar
-                    // bioContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             });
         }
 
         const checkboxesEspecialidade = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]');
 
-
-            function atualizarLimiteCheckboxes() {
+        function atualizarLimiteCheckboxes() {
              const checkedCount = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]:checked').length;
-
-            const atingiuLimite = checkedCount >= maxEspecialidades;
-
+             const atingiuLimite = checkedCount >= maxEspecialidades;
             checkboxesEspecialidade.forEach(checkbox => {
-            if (!checkbox.checked) {
-                 checkbox.disabled = atingiuLimite;
-             checkbox.parentElement.classList.toggle('disabled-label', atingiuLimite);
+                if (!checkbox.checked) {
+                     checkbox.disabled = atingiuLimite;
+                     checkbox.parentElement.classList.toggle('disabled-label', atingiuLimite);
                  }
             });
-     }
+        }
 
         checkboxesEspecialidade.forEach(checkbox => {
-         checkbox.addEventListener('change', atualizarLimiteCheckboxes);
+            checkbox.addEventListener('change', atualizarLimiteCheckboxes);
         });
-
         atualizarLimiteCheckboxes();
 
-         const dateInput = document.getElementById('data-consulta');
+        const dateInput = document.getElementById('data-consulta');
         if (dateInput) {
             dateInput.addEventListener('change', buscarHorariosDisponiveis);
         }
-        atualizarLimiteCheckboxes();
 
-        // Listener para atualizar o campo hidden com a forma de pagamento selecionada
         document.querySelectorAll('input[name="forma_pagamento"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 document.getElementById('tipo_pagamento_backend').value = this.value;
             });
         });
 
-        
+        // Modificação no Listener do Submit para bloquear envio se houver erro
         const formConfirmacao = document.getElementById('form-confirmacao');
         if (formConfirmacao) {
-            formConfirmacao.addEventListener('submit', submeterAgendamento);
+            formConfirmacao.addEventListener('submit', function(e) {
+                // Verifica se há mensagens de erro visíveis
+                const erroCpf = document.getElementById('erro-cpf').style.display;
+                const erroTel = document.getElementById('erro-telefone').style.display;
+                const erroEmail = document.getElementById('erro-email').style.display;
+
+                if (erroCpf === 'block' || erroTel === 'block' || erroEmail === 'block') {
+                    e.preventDefault();
+                    const msg = document.getElementById('agendamento-status-message');
+                    msg.textContent = "Por favor, corrija os campos em vermelho antes de continuar.";
+                    msg.style.color = "red";
+                    return;
+                }
+                submeterAgendamento(e);
+            });
         }
         
-        // --- INÍCIO DA LÓGICA DO NOVO MODAL DE TERMOS (Baseado no usuário) ---
-        
-        // Elementos do Formulário Principal (Ponte)
+        // ... (Lógica do Modal de Termos - pode copiar do seu código original ou manter se já estiver lá) ...
+        // Certifique-se de que a lógica do modal de termos (openTerms, termsOverlay, etc) está aqui embaixo também.
+        setupTermosModal(); // Função auxiliar para organizar (veja abaixo)
+    }
+
+    // Função auxiliar para manter a lógica do modal de termos organizada
+    function setupTermosModal() {
         const formTermsCheckbox = document.getElementById('termos-aceitos');
         const formTermsLabel = document.getElementById('label-termos-aceitos');
-
-        // Elementos do Modal (IDs do HTML fornecido)
-        const openBtn = document.getElementById('openTerms'); // ID do botão no form
+        const openBtn = document.getElementById('openTerms');
         const overlay = document.getElementById('termsOverlay');
         const modalCheckbox = document.getElementById('acceptCheckbox');
         const modalConfirmBtn = document.getElementById('confirmBtn');
         const modalCancelBtn = document.getElementById('cancelBtn');
 
         if (openBtn && overlay && modalCheckbox && modalConfirmBtn && modalCancelBtn && formTermsCheckbox && formTermsLabel) {
-            
-            // Abrir modal
             openBtn.addEventListener('click', (e) => {
-                e.preventDefault(); // Impedir que o botão (type="button") submeta o form
+                e.preventDefault();
                 overlay.style.display = 'flex';
-                // Sincroniza o modal com o form
                 modalCheckbox.checked = formTermsCheckbox.checked;
                 modalConfirmBtn.disabled = !formTermsCheckbox.checked;
                 modalCheckbox.focus();
             });
 
-            // Fechar modal (Cancelar)
             modalCancelBtn.addEventListener('click', () => {
                 overlay.style.display = 'none';
-                
-                // Se o usuário fechar, desmarcamos a checkbox do modal
-                // mas mantemos o estado da checkbox principal (ele pode ter aceito antes)
                 modalCheckbox.checked = formTermsCheckbox.checked;
                 modalConfirmBtn.disabled = !formTermsCheckbox.checked;
-                
                 openBtn.focus();
             });
 
-            // Habilitar botão "Concordo"
             modalCheckbox.addEventListener('change', () => {
                 modalConfirmBtn.disabled = !modalCheckbox.checked;
             });
 
-            // Confirmar (Ação principal)
             modalConfirmBtn.addEventListener('click', () => {
                 if (!modalCheckbox.checked) return;
-                
-                // 1. Marca a checkbox oculta do formulário principal
                 formTermsCheckbox.checked = true;
-                
-                // 2. Atualiza o label no formulário principal
                 formTermsLabel.textContent = 'Termos de pagamento aceitos.';
-                formTermsLabel.style.color = 'green';
-                
-                // 3. Fecha o modal
+                formTermsLabel.style.color = 'white';
                 overlay.style.display = 'none';
                 openBtn.focus();
-
-                // Dispara o evento customizado (como no exemplo do user)
                 window.dispatchEvent(new CustomEvent('terms:accepted'));
             });
 
-            // Fechar modal com tecla ESC
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && overlay.style.display === 'flex') {
                     modalCancelBtn.click();
                 }
             });
 
-            // Clicar no label do formulário também abre o modal
             formTermsLabel.addEventListener('click', () => {
                 openBtn.click();
             });
-
-        } else {
-            console.error("Erro: Elementos do modal de termos não foram encontrados. A funcionalidade de aceite de termos está quebrada.");
         }
-        // --- FIM DA LÓGICA DO NOVO MODAL DE TERMOS ---
     }
 
 

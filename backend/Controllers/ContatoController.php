@@ -1,88 +1,79 @@
 <?php
 namespace App\Psico\Controllers;
 
-use App\Psico\Core\EmailService;
-use App\Psico\Database\Config; // Para pegar o email de destino
+use App\Psico\Core\EmailService;     // Para enviar o e-mail para a CLÍNICA
+use App\Psico\Core\EmailNotificar;   // Para avisar o USUÁRIO (Novo)
+use App\Psico\Models\Contato;        // Para salvar no BANCO (Novo)
+use App\Psico\Database\Database;     // Conexão com o banco
+use App\Psico\Database\Config;
 
 class ContatoController {
 
     private $emailService;
+    private $emailNotificar;
+    private $contatoModel;
     private $emailDestino;
 
     public function __construct() {
+        $db = Database::getInstance();
+        $this->contatoModel = new Contato($db);
+        
         $this->emailService = new EmailService();
-        // Pega o email da clínica configurado no .env (usado como 'from_address')
-        $this->emailDestino = Config::get()['mailer']['from_address'] ?? 'email_padrao_da_clinica@exemplo.com';
+        $this->emailNotificar = new EmailNotificar();
+        
+        $this->emailDestino = Config::get()['mailer']['from_address'] ?? 'email_padrao@exemplo.com';
     }
 
     public function processarFormulario() {
-        header('Content-Type: application/json'); // Define que a resposta será JSON
+        header('Content-Type: application/json');
 
-        // 1. Obter e validar os dados do POST
+        // 1. Obter e validar dados
         $nome = trim($_POST['nome'] ?? '');
         $emailRemetente = trim($_POST['email'] ?? '');
         $mensagem = trim($_POST['mensagem'] ?? '');
 
         $erros = [];
-        if (empty($nome)) {
-            $erros[] = 'O campo Nome é obrigatório.';
-        }
-        if (empty($emailRemetente)) {
-            $erros[] = 'O campo E-mail é obrigatório.';
-        } elseif (!filter_var($emailRemetente, FILTER_VALIDATE_EMAIL)) {
-            $erros[] = 'O E-mail fornecido não é válido.';
-        }
-        if (empty($mensagem)) {
-            $erros[] = 'O campo Mensagem é obrigatório.';
-        }
+        if (empty($nome)) $erros[] = 'Nome obrigatório.';
+        if (empty($emailRemetente) || !filter_var($emailRemetente, FILTER_VALIDATE_EMAIL)) $erros[] = 'E-mail inválido.';
+        if (empty($mensagem)) $erros[] = 'Mensagem obrigatória.';
 
-        // Se houver erros, retorna JSON de erro
         if (!empty($erros)) {
-            http_response_code(400); // Bad Request
+            http_response_code(400);
             echo json_encode(['success' => false, 'message' => implode("\n", $erros)]);
-            return; // Interrompe a execução
+            return;
         }
 
-        // 2. Preparar o e-mail
-        $assunto = "Nova Mensagem do Formulário de Contato - " . $nome;
+        // 2. Salvar no Banco de Dados
+        try {
+            $salvo = $this->contatoModel->inserirContato($nome, $emailRemetente, $mensagem);
+            if (!$salvo) {
+                throw new \Exception("Erro ao salvar contato no banco.");
+            }
+        } catch (\Exception $e) {
+            error_log("Erro DB Contato: " . $e->getMessage());
+            // Opcional: Continuar mesmo se falhar o banco, ou parar. Aqui paramos.
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro interno ao salvar sua mensagem.']);
+            return;
+        }
 
-        // Monta o corpo do e-mail (pode ser mais elaborado com HTML)
-        $corpoHtml = "
-            <h2>Nova mensagem recebida pelo site:</h2>
-            <p><strong>Nome:</strong> " . htmlspecialchars($nome) . "</p>
-            <p><strong>E-mail:</strong> " . htmlspecialchars($emailRemetente) . "</p>
-            <hr>
-            <p><strong>Mensagem:</strong></p>
-            <p style='white-space: pre-wrap;'>" . htmlspecialchars($mensagem) . "</p>
-        ";
-        // Corpo em texto puro (opcional, mas bom para compatibilidade)
-        $corpoTexto = "Nova mensagem recebida pelo site:\n\n";
-        $corpoTexto .= "Nome: " . $nome . "\n";
-        $corpoTexto .= "E-mail: " . $emailRemetente . "\n";
-        $corpoTexto .= "------------------------------------\n";
-        $corpoTexto .= "Mensagem:\n" . $mensagem;
+        // 3. Enviar notificação para o USUÁRIO (EmailNotificar)
+        // Isso roda em segundo plano ou silenciamos erros para não travar a resposta principal
+        $this->emailNotificar->notificarRecebimento($emailRemetente, $nome);
 
-        // 3. Enviar o e-mail usando EmailService
-        // O EmailService já está configurado para usar as credenciais do .env
-        $enviado = $this->emailService->enviarEmail(
-            $this->emailDestino,      // Para: Email da clínica
-            'Contato Site Chris Psicologia', // Nome do Destinatário (interno)
-            $assunto,                 // Assunto
-            $corpoHtml,               // Corpo HTML
-            $corpoTexto               // Corpo Texto Puro
-            // Adicional: Configurar Reply-To para o email do remetente (opcional mas útil)
-            // Para isso, precisaria modificar EmailService ou configurar o $mailer diretamente aqui
-            // Ex: $this->emailService->getMailerInstance()->addReplyTo($emailRemetente, $nome);
+        // 4. Enviar e-mail para a CLÍNICA (Aviso de novo lead)
+        $assuntoClinica = "Novo Contato pelo Site - " . $nome;
+        $corpoClinica = "<h2>Novo contato:</h2><p><strong>Nome:</strong> $nome</p><p><strong>Email:</strong> $emailRemetente</p><p><strong>Msg:</strong> $mensagem</p>";
+        
+        $this->emailService->enviarEmail(
+            $this->emailDestino, 
+            'Admin Chris Psicologia', 
+            $assuntoClinica, 
+            $corpoClinica
         );
 
-        // 4. Retornar resposta JSON para o frontend
-        if ($enviado) {
-            http_response_code(200); // OK
-            echo json_encode(['success' => true, 'message' => 'Sua mensagem foi enviada com sucesso! Entraremos em contato em breve.']);
-        } else {
-            http_response_code(500); // Internal Server Error
-            error_log("Falha ao enviar e-mail de contato de: " . $emailRemetente); // Log do erro
-            echo json_encode(['success' => false, 'message' => 'Desculpe, ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.']);
-        }
+        // 5. Resposta Final
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Mensagem enviada e salva com sucesso! Verifique seu e-mail.']);
     }
 }
