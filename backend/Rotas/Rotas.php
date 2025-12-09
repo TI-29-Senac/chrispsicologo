@@ -84,6 +84,7 @@ class Rotas {
                 "/usuario/deletar/{id}" => "UsuarioController@deletarUsuarios",
                 "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
                 "/login" => "UsuarioController@login",
+                "/api/desktop/login" => "DesktopApiController@login",
                 "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
                 "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
                 '/api/usuarios/salvar' => 'APIUsuarioController@salvarUsuario',

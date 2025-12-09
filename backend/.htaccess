@@ -13,10 +13,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 # E se o pedido NÃO for um diretório real...
 RewriteCond %{REQUEST_FILENAME} !-d
 
-<<<<<<< HEAD
 # Redireciona o pedido para o index.php (o seu router)
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
-=======
 # Redireciona o pedido para o index.php
 RewriteRule . index.php [L]
->>>>>>> 6b9fdab28541c495f892fbfe8a280ab134126ed7

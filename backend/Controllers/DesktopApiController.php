@@ -23,6 +23,50 @@ class DesktopApiController {
         $this->db = Database::getInstance();
     }
 
+    public function login() {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+    // Se o Electron mandar uma pergunta de teste (OPTIONS), respondemos OK e paramos aqui.
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        http_response_code(200);
+        exit();
+    }
+    // --- FIM DO BLOCO CORS ---
+
+    $input = $this->getInput();
+
+    // Validação básica
+    if (empty($input['email']) || empty($input['senha'])) {
+        $this->erro("Email e senha são obrigatórios.");
+        return;
+    }
+
+    try {
+        $model = new Usuario($this->db);
+        // O método autenticarUsuario já verifica a hash da senha
+        $usuario = $model->autenticarUsuario($input['email'], $input['senha']);
+
+        if ($usuario) {
+            // Garante que a senha não seja enviada de volta
+            unset($usuario->senha_usuario);
+            
+            // Retorna sucesso e os dados do usuário
+            echo json_encode([
+                'success' => true, 
+                'usuario' => $usuario,
+                'token' => bin2hex(random_bytes(16)) 
+            ]);
+        } else {
+            // Retorna erro genérico
+            $this->erro("Email ou senha incorretos.");
+        }
+    } catch (\Exception $e) { 
+        $this->erro($e->getMessage()); // Dica: use getMessage() para pegar o texto do erro
+    }
+}
+
     // --- USUÁRIOS ---
     public function listarUsuarios() {
         try {
