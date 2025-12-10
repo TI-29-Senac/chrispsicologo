@@ -1,19 +1,18 @@
 RewriteEngine On
 
-# Define o diretório base (mantenha como está no seu original)
-RewriteBase /chrispsicologo/backend/
+# --- CORREÇÃO AQUI ---
+# Ajustado para refletir a URL real do seu site (techlaj.faustinopsy.com/backend)
+RewriteBase /backend/
+# ---------------------
 
-# --- CORREÇÃO: Força o envio do Header Authorization para o PHP ---
+# Força o envio do Header Authorization para o PHP
 RewriteCond %{HTTP:Authorization} .
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-# ------------------------------------------------------------------
 
 # Se o pedido NÃO for um ficheiro real...
 RewriteCond %{REQUEST_FILENAME} !-f
 # E se o pedido NÃO for um diretório real...
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Redireciona o pedido para o index.php (o seu router)
-RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 # Redireciona o pedido para o index.php
-RewriteRule . index.php [L]
+RewriteRule ^(.*)$ index.php [QSA,L]

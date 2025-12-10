@@ -17,7 +17,7 @@ class APIUsuarioController {
     public function getUsuarios($pagina = 0){
         // Validação Centralizada em uma linha
         if (!APIAutenticador::validar()) {
-            APIAutenticador::enviarErroNaoAutorizado();
+           APIAutenticador::enviarErroNaoAutorizado();
         }
 
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
