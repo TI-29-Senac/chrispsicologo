@@ -53,6 +53,25 @@ use App\Psico\Core\Flash;
                     </div>
                 </div>
                 <div class="w3-row-padding w3-section">
+                <div class="w3-full">
+                    <label><b>Tipos de Atendimento (Público)</b></label>
+                    <div class="w3-border w3-padding" style="border-radius: 8px; max-height: 150px; overflow-y: auto;">
+                        <div class="w3-row-padding">
+                            <?php if (!empty($tiposAtendimento)): ?>
+                                <?php foreach ($tiposAtendimento as $tipo): ?>
+                                    <div class="w3-col m4 l3">
+                                        <input class="w3-check" type="checkbox" id="tipo_<?= htmlspecialchars($tipo->id_tipo) ?>" name="tipos_atendimento[]" value="<?= htmlspecialchars($tipo->id_tipo) ?>">
+                                        <label for="tipo_<?= htmlspecialchars($tipo->id_tipo) ?>"><?= htmlspecialchars($tipo->nome) ?></label>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p>Nenhum tipo de atendimento cadastrado no banco de dados.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="w3-row-padding w3-section">
                      <div class="w3-half">
                         <label for="img_profissional"><b>Foto do Profissional</b></label>
                         <input class="w3-input w3-border" type="file" id="img_profissional" name="img_profissional" accept="image/png, image/jpeg, image/webp">

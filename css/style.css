@@ -38,8 +38,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  height: 157px;
-  z-index: 1001; 
+  z-index: 1001;
 }
 
 .header_menor {
@@ -2277,7 +2276,7 @@ header {
   }
 
   .serv-btn {
-    width: 100%; /* Botão ocupa toda a largura no mobile */
+    width: 100%; 
     text-align: center;
   }
 }
@@ -3593,6 +3592,7 @@ body::-webkit-scrollbar-thumb:hover {
 .horario-btn:hover, .horario-btn.selecionado {
     background-color: #A3B8A1;
     color: white;
+
 }
 
 .confirmacao-container h3 {
@@ -3611,16 +3611,27 @@ body::-webkit-scrollbar-thumb:hover {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+    top: -40px;
 }
 
 .form-grupo label {
+  margin-top: 10px;
     display: flex;
     margin-bottom: 5px;
 }
 
 .form-grupo input, .form-grupo select {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
+    border: 1px solid #faf6ee;
+    background-color: #faf6ee;
+    color: #5D6D68;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+.leber{
+    width: 10% !important;
+    padding: 0px;
     border: 1px solid #faf6ee;
     background-color: #faf6ee;
     color: #5D6D68;
@@ -3638,23 +3649,28 @@ body::-webkit-scrollbar-thumb:hover {
     color: #5D6D68;
     text-align: center;
     padding: 10px;
+    width: auto;
     border-radius: 6px;
     text-decoration: none;
-    font-weight: bold;
+    font-size: 1rem;
     margin-bottom: 10px;
+    font-family: questrial, sans-serif;
+    box-shadow: none;
+    border: none;
 }
 .termos-link:hover {
   background-color: #A3B8A1;
   color: white;
-
+  font-family: questrial, sans-serif;
 }
 
 .checkbox-container {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 10px;
-    flex-direction: column-reverse;
+    margin-top: 20px;
+    flex-direction: row;
+
 }
 
 
@@ -3671,6 +3687,7 @@ body::-webkit-scrollbar-thumb:hover {
 .valor-sinal {
     font-size: 1.2rem;
     color: #5D6D68;
+    font-family: questrial, sans-serif;
 }
 
 .btn-pagamento {
@@ -3682,10 +3699,363 @@ body::-webkit-scrollbar-thumb:hover {
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
+    font-family: questrial, sans-serif;
 }
 .btn-pagamento:hover{
   background-color: #A3B8A1;
 }
+
+/* chrispsicologo/css/style.css (Adicionado no final do arquivo) */
+
+/* Estilos para a lista de especialidades com scroll */
+.lebe{
+  font-family: questrial, sans-serif;
+  font-weight: bold;
+  font-size: 0,8rem;
+}
+.scrolling-checkbox-list {
+    margin-top: -10px !important;
+    max-height: 160px; /* Altura máxima para ativar a scrollbar */
+    overflow-y: auto;  /* Adiciona scroll vertical */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 40px;
+    background-color: #faf6ee; /* Cor de fundo para o scroll */
+    color: #5D6D68;
+    display: flex;
+    flex-direction: column; /* Coloca os itens em coluna */
+    gap: 5px; /* Espaçamento entre os itens */
+}
+
+.scrolling-checkbox-list label {
+    display: flex; /* Para alinhar o checkbox e o texto */
+    align-items: center;
+    margin-bottom: 0; 
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.scrolling-checkbox-list input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-bottom: 0;
+    border: initial !important; 
+    box-shadow: none; 
+    margin-right: 8px; 
+}
+
+/* Opcional: Estilo da scrollbar em navegadores baseados em WebKit */
+.scrolling-checkbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrolling-checkbox-list::-webkit-scrollbar-thumb {
+    background-color: #5D6D68; 
+    border-radius: 3px;
+}
+
+/* Garante que o container do form-grupo especialidades não quebre o layout */
+.confirmacao-container .form-grupo.especialidades label:not(.scrolling-checkbox-list label) {
+    font-size: 1rem;
+
+}
+
+/* NOVO: Estilos para a seleção de pagamento */
+.pagamento-radio-group {
+    max-height: 160px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #faf6ee;
+    border-radius: 6px;
+    color: #5D6D68;
+}
+
+.pagamento-radio-group .radio-option {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #5D6D68;
+    font-family: questrial, sans-serif;
+}
+
+.pagamento-radio-group input[type="radio"] {
+    /* Garante que o input radio não ocupe 100% da largura */
+    width: auto;
+    margin-right: 8px;
+    filter: brightness(1.5);
+    transform: scale(1.1);
+}
+
+.pagamento-radio-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* #region Estilos Modal de Termos de Pagamento */
+
+.modal-termos-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10002; 
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease;
+}
+
+.modal-termos-overlay.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-termos-content {
+    background-color: #faf6ee; 
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    font-family: 'Questrial', sans-serif;
+    color: #5D6D68;
+}
+
+.modal-termos-content .modal-title {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    color: #5D6D68;
+    border-bottom: 2px solid #A3B8A1;
+    padding-bottom: 10px;
+}
+
+.modal-termos-body {
+    max-height: 40vh; /* Limite de altura para o conteúdo com scroll */
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-termos-body p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.modal-termos-body ul {
+    list-style: disc;
+    margin: 15px 0 20px 25px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.modal-termos-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+}
+
+.modal-termos-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto;
+    height: auto;
+    transform: scale(1.2);
+}
+
+.modal-termos-content .modal-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #5D6D68;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    font-family: questrial, sans-serif;
+}
+
+.modal-termos-content .modal-button:disabled {
+    background-color: #A3B8A1;
+    cursor: not-allowed;
+}
+
+/* #endregion */
+
+/* #region Estilos Modal de Termos de Pagamento (Agendamento) */
+
+/* Botões específicos do modal de termos */
+.agendamento-termos-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #5D6D68; /* Cor principal */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: questrial, sans-serif;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+
+.agendamento-termos-btn:hover {
+  background: #4a5b5c; 
+}
+
+.agendamento-termos-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.agendamento-termos-btn-secondary {
+  background: #A3B8A1; /* Cor secundária */
+  color: #fff;
+}
+
+.agendamento-termos-btn-secondary:hover {
+  background: #7C8F88; /* Cor secundária hover */
+}
+
+/* Overlay e Modal */
+.agendamento-termos-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10002; /* Z-index alto para ficar sobre tudo */
+  animation: agendamentoTermosFadeIn 0.25s ease-out;
+}
+
+.agendamento-termos-modal {
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #5D6D68;
+  font-family: questrial, sans-serif;
+}
+
+.agendamento-termos-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.agendamento-termos-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #5b6d6e;
+}
+
+.agendamento-termos-body {
+  max-height: 58vh;
+  overflow: auto;
+  padding: 18px 20px;
+  line-height: 1.5;
+  color: #5b6d6e;
+}
+
+.agendamento-termos-body p {
+  margin: 0.5rem 0;
+}
+
+.agendamento-terms-list {
+  margin: 8px 0 0 0;
+  padding-left: 1rem;
+}
+
+.agendamento-terms-list li {
+    margin-bottom: 8px;
+    list-style-position: outside;
+    padding-left: 5px;
+}
+
+.agendamento-termos-footer {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 12px;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #eef2f7;
+}
+
+.agendamento-termos-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #5b6d6e;
+  flex-grow: 1; 
+}
+
+/* Garante que o checkbox do modal não herde estilos estranhos */
+.agendamento-termos-checkbox input[type="checkbox"] {
+    width: auto; 
+    height: auto;
+    margin-bottom: 0;
+    border: initial !important; 
+    box-shadow: none; 
+    padding: 0;
+    transform: scale(1.1);
+}
+
+.agendamento-termos-footer .botoes-container {
+    margin-left: auto;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-shrink: 0; 
+}
+
+/* Animação */
+@keyframes agendamentoTermosFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsivo para o modal */
+@media (max-width: 500px) {
+   .agendamento-termos-footer {
+        flex-direction: column;
+        align-items: stretch; 
+        gap: 15px;
+   }
+   .agendamento-termos-footer .botoes-container {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+   }
+   .agendamento-termos-footer .botoes-container .agendamento-termos-btn {
+        flex-grow: 1;
+        text-align: center;
+   }
+   .agendamento-termos-checkbox {
+        justify-content: center;
+        font-size: 0.85rem;
+   }
+}
+
+/* #endregion */
 
 /* Responsividade para a página de agendamento */
 @media (max-width: 800px) {
@@ -4717,3 +5087,268 @@ body::-webkit-scrollbar-thumb:hover {
     color: #ffc107; /* Cor da estrela selecionada e anteriores */
 }
 /* #endregion */
+
+/* ==========================================================
+   ESTILOS PÁGINAS DE PAGAMENTO (PIX E CARTÃO) - SEM VARIÁVEIS
+   ========================================================== */
+
+.pagamento-container {
+    background-color: #faf6ee; /* --verde-escuro-transparente */
+    border-radius: 12px;
+    padding: 30px 40px;
+    max-width: 600px;
+    width: 90%;
+    margin: 40px auto;
+    color: #5D6D68;
+    border: 1px solid #faf6ee80;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-family: 'Questrial', sans-serif;
+}
+
+/* Título (1.6rem) */
+.pagamento-container h3 {
+    text-align: center;
+    color: #5D6D68;
+    font-family: 'Questrial', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+}
+
+/* Textos de explicação (1.1rem) */
+.pagamento-container .explicacao {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #5D6D68;
+    line-height: 1.5;
+}
+
+.pagamento-container .explicacao-pequena {
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 15px;
+    color: #5D6D68;
+    opacity: 0.9;
+}
+
+/* Resumo do agendamento (1.1rem) */
+.resumo-agendamento {
+    background-color: rgba(250, 246, 238, 0.05); /* (Bege com 5% de opacidade) */
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border: 1px dashed #faf6ee80; /* --bege-claro-transparente */
+}
+
+.resumo-agendamento p {
+    font-size: 1.1rem;
+    margin: 5px 0;
+    color: #5D6D68;
+}
+
+.resumo-agendamento p strong {
+    color: #5D6D68;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+/* Caixa de valor (Título 1.2rem, Valor 1.6rem) */
+.valor-sinal-box-grande {
+    text-align: center;
+    font-size: 1.2rem;
+    background-color: #5D6D68; /* --bege-claro */
+    color: #faf6ee;/* --verde-escuro */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.valor-sinal-box-grande strong {
+    font-size: 1.6rem;
+    display: block;
+    margin-top: 5px;
+}
+
+/* QR Code */
+.qr-code-section {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.qr-code-section img {
+    width: 250px;
+    height: 250px;
+    border-radius: 8px;
+    background-color: white;
+    padding: 10px;
+}
+
+/* Pix Copia e Cola (1.0rem) */
+.pix-copia-cola {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.pix-copia-cola input[type="text"] {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #faf6ee; /* --bege-claro */
+    background-color: #ffffff; /* --branco */
+    color: #5D6D68; /* --verde-escuro */
+    border-radius: 6px 0 0 6px;
+    font-size: 1rem;
+    outline: none;
+    font-family: 'Questrial', sans-serif;
+}
+
+.pix-copia-cola button {
+    padding: 12px 15px;
+    border: none;
+    background-color: #A3B8A1; /* --verde-medio */
+    color: #ffffff; /* --branco */
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: background-color 0.3s ease;
+    font-family: 'Questrial', sans-serif;
+    font-size: 1rem;
+}
+
+.pix-copia-cola button:hover {
+    background-color: #A3B8A1; /* --verde-claro */
+    color: #5D6D68; /* --verde-escuro */
+}
+
+/* Botão Final (1.2rem) */
+.btn-pagamento-final {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #5D6D68; 
+    color: #faf6ee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Questrial', sans-serif;
+    text-transform: uppercase;
+}
+
+.btn-pagamento-final:hover {
+    background-color: #A3B8A1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btn-pagamento-final:disabled {
+    background-color: #999;
+    color: #eee;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Formulário de Cartão (Label 1.0rem, Input 1.1rem) */
+.form-cartao {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.form-cartao .form-grupo {
+    margin-bottom: 15px;
+}
+
+.form-cartao .form-grupo label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #5D6D68;
+    font-size: 1rem;
+}
+
+.form-cartao .form-grupo input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #5D6D68;
+    background-color: #faf6ee; /* --bege-claro */
+    color: #5D6D68; /* --verde-escuro */
+    border-radius: 6px;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+    font-family: 'Questrial', sans-serif;
+}
+
+.form-cartao .form-grupo input[type="text"]::placeholder {
+    color: #5d6d68ea; /* --verde-escuro-transparente */
+}
+
+.form-cartao .form-grupo-duplo {
+    display: flex;
+    gap: 15px;
+}
+
+.form-cartao .form-grupo-duplo .form-grupo {
+    width: 50%;
+}
+
+/* Mensagem de Status (1.1rem) */
+#pagamento-status-message {
+    margin-top: 15px; 
+    text-align: center; 
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.lista-especialidades label.disabled-label {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+/* Adicionado para a função "Ler Mais" da biografia */
+.read-more-container {
+    position: relative;
+    max-height: 450px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.read-more-container.expanded {
+    max-height: 2000px; 
+    transition: max-height 0.5s ease-in;
+}
+
+/* Gradiente para indicar mais texto */
+.read-more-container:not(.expanded)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, #faf6ee 180%);
+    pointer-events: none;
+}
+
+.read-more-btn {
+    background: none;
+    border: 1px solid #5D6D68;
+    color: #5D6D68;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: block;
+    margin: 15px auto 0;
+    font-family: 'Questrial', sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.read-more-btn:hover {
+    background-color: #5D6D68;
+    color: white;
+}

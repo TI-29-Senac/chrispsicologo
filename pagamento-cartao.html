@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento com Cartão - Chris Psicologia</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <section class="contato-hero" style="min-height: 100vh; height: auto;">
+            <div class="foia">
+                <img src="img/icons/folha.svg" class="folha f1" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f2" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f3" alt="folhas caindo">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-esquerdo" alt="">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-direito" alt="">
+            </div>
+
+            <div class="pagamento-container" id="pagamento-container">
+                <h3>PAGAMENTO COM CARTÃO</h3>
+                <p class="explicacao" id="loading-message">Carregando detalhes do seu agendamento...</p>
+
+                <div id="conteudo-pagamento" style="display: none;">
+                    <div class="resumo-agendamento">
+                        <p><strong>Profissional:</strong> <span id="profissional-nome">...</span></p>
+                        <p><strong>Data:</strong> <span id="data-hora">...</span></p>
+                    </div>
+
+                    <div class="valor-sinal-box-grande">
+                        Valor do sinal: <strong id="valor-sinal">R$ 0,00</strong>
+                    </div>
+                    
+                    <p class="explicacao">
+                        Insira os dados do cartão para pagar o sinal.
+                    </p>
+
+                    <form id="form-cartao" class="form-cartao">
+                        <div class="form-grupo">
+                            <label for="nome-cartao">Nome no Cartão:</label>
+                            <input type="text" id="nome-cartao" placeholder="Como está escrito no cartão" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label for="numero-cartao">Número do Cartão:</label>
+                            <input type="text" id="numero-cartao" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                        <div class="form-grupo-duplo">
+                            <div class="form-grupo">
+                                <label for="validade-cartao">Validade (MM/AA):</label>
+                                <input type="text" id="validade-cartao" placeholder="MM/AA" maxlength="5" required>
+                            </div>
+                            <div class="form-grupo">
+                                <label for="cvc-cartao">CVC:</label>
+                                <input type="text" id="cvc-cartao" placeholder="123" maxlength="4" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-pagamento-final" id="btn-pagar-cartao">
+                            Pagar Sinal
+                        </button>
+                    </form>
+                    
+                    <p id="pagamento-status-message" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
+    <footer id="footer"></footer>
+
+    <script src="js/header.js" defer></script>
+    <script src="js/footer.js" defer></script>
+    <script src="js/login-modal-injector.js" defer></script>
+    <script src="js/login.js" defer></script>
+    <script src="js/pagamento-cartao.js" defer></script>
+</body>
+</html>

@@ -51,17 +51,66 @@
     <h5 style="color: white; font-size: 1.5rem">Menu</h5>
   </div>
   <div class="w3-bar-block">
-    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-    <a href="/backend/dashboard" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Dashboard</a>
-    <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Usuários</a>
-    <a href="/backend/agendamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-calendar fa-fw"></i>  Agendamentos</a>
-    <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>
-    <a href="/backend/pagamentos/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-credit-card fa-fw"></i>  Pagamentos</a>
-    <a href="/backend/profissionais/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-md fa-fw"></i>  Profissionais</a>
-    <a href="/backend/imagens/listar" class="w3-bar-item w3-button w3-padding"><i class="fa fa-picture-o fa-fw"></i>  Imagens do Site</a>
-    <a href="/backend/logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i>  Sair</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i> Fechar Menu</a>
+
+    <?php
+    // Pega o tipo de usuário da sessão
+    $userType = $_SESSION['usuario_tipo'] ?? '';
+    ?>
+
+    <?php // Dashboard: Visível para admin, profissional e recepcionista ?>
+    <?php if (in_array($userType, ['admin', 'profissional', 'recepcionista'])): ?>
+        <a href="/backend/dashboard" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/dashboard') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+    <?php endif; ?>
+
+    <?php // --- LINK "MEU PERFIL" ADICIONADO --- ?>
+    <?php // Visível para todos os tipos logados ?>
+    <?php if (in_array($userType, ['admin', 'profissional', 'recepcionista'])): ?>
+        <a href="/backend/meu-perfil" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/meu-perfil') !== false || strpos($_SERVER['REQUEST_URI'], '/backend/usuario/editar/' . ($_SESSION['usuario_id'] ?? '')) !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user fa-fw"></i> Meu Perfil</a>
+    <?php endif; ?>
+
+    <?php // Usuários: Visível apenas para admin ?>
+    <?php if ($userType === 'admin'): ?>
+        <a href="/backend/usuario/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/usuario/listar') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-users fa-fw"></i> Usuários</a>
+    <?php endif; ?>
+
+    <?php // Agendamentos: Visível para admin, profissional e recepcionista ?>
+    <?php if (in_array($userType, ['admin', 'profissional', 'recepcionista'])): ?>
+        <a href="/backend/agendamentos/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/agendamentos') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-calendar fa-fw"></i> Agendamentos</a>
+    <?php endif; ?>
+
+    <?php // --- LINK "MEU PERFIL PROFISSIONAL" (NOVO) --- ?>
+    <?php // Visível apenas para Profissional ?>
+    <?php if ($userType === 'profissional'): ?>
+        <a href="/backend/profissional/meu-perfil" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/profissional/meu-perfil') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user-md fa-fw"></i> Meu Perfil Profissional</a>
+    <?php endif; ?>
     
-  </div>
+    <?php // Avaliações: Visível apenas para admin ?>
+    <?php if ($userType === 'admin'): ?>
+        <a href="/backend/avaliacoes/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/avaliacoes') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-star fa-fw"></i> Avaliações</a>
+    <?php endif; ?>
+
+    <?php // Pagamentos: Visível para admin e recepcionista ?>
+    <?php if (in_array($userType, ['admin', 'recepcionista'])): ?>
+        <a href="/backend/pagamentos/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/pagamentos') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-credit-card fa-fw"></i> Pagamentos</a>
+    <?php endif; ?>
+
+    <?php // Profissionais: Visível para admin e profissional ?>
+    <?php if (in_array($userType, ['admin'])): ?>
+        <a href="/backend/profissionais/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/profissionais') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-user-md fa-fw"></i> Profissionais</a>
+    <?php endif; ?>
+
+    <?php // Imagens do Site: Visível apenas para admin ?>
+    <?php if ($userType === 'admin'): ?>
+        <a href="/backend/imagens/listar" class="w3-bar-item w3-button w3-padding <?= (strpos($_SERVER['REQUEST_URI'], '/backend/imagens') !== false) ? 'w3-light-grey' : ''; ?>"><i class="fa fa-picture-o fa-fw"></i> Imagens do Site</a>
+    <?php endif; ?>
+
+    <?php // Sair: Visível para todos os tipos logados no backend ?>
+    <?php if (in_array($userType, ['admin', 'profissional', 'recepcionista', 'cliente'])): ?>
+        <a href="/backend/logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
+    <?php endif; ?>
+
+</div>
 </nav>
 
 <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>

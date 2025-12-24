@@ -7,33 +7,37 @@ use App\Psico\Database\Database;
 use App\Psico\Core\View;
 use App\Psico\Core\Redirect;
 use App\Psico\Validadores\ProfissionalValidador;
+use App\Psico\Controllers\Admin\AuthenticatedController;
 use App\Psico\Core\FileManager;
 use PDO;
 
-class ProfissionalController {
+class ProfissionalController extends AuthenticatedController {
     public $profissional;   
     public $db;
     public $usuario;
     public $fileManager;
 
     public function __construct(){
+        parent::__construct();
         $this->db = Database::getInstance();
         $this->profissional = new Profissional($this->db);
         $this->usuario = new Usuario($this->db);
         $this->fileManager = new FileManager(__DIR__ . '/../../');
     }
 
-public function viewCriarProfissionais()
-    {
+    public function viewCriarProfissionais(){
+        $this->verificarAcesso(['admin', 'profissional']);
         $usuariosDisponiveis = $this->usuario->buscarUsuariosNaoProfissionais();
+        $tiposAtendimento = $this->profissional->buscarTodosTiposAtendimento(); // <<< NOVO
 
         View::render('profissional/create', [
-            'usuariosDisponiveis' => $usuariosDisponiveis
+            'usuariosDisponiveis' => $usuariosDisponiveis,
+            'tiposAtendimento' => $tiposAtendimento // <<< NOVO
         ]);
     }
 
-    public function viewListarProfissionais()
-    {
+    public function viewListarProfissionais(){
+        $this->verificarAcesso(['admin', 'profissional']);
         $pagina = $_GET['pagina'] ?? 1;
         $dadosPaginados = $this->profissional->paginacao((int)$pagina, 10);
         
@@ -69,17 +73,29 @@ public function viewCriarProfissionais()
     }
 
     public function viewEditarProfissionais($id) {
+        $this->verificarAcesso(['admin']);
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
         if (!$profissional) {
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado.");
             return;
         }
-        View::render("profissional/edit", ["usuario" => $profissional]);
+
+        // --- INÍCIO DAS NOVAS LINHAS ---
+        $todosTiposAtendimento = $this->profissional->buscarTodosTiposAtendimento();
+        $tiposSelecionadosIds = $this->profissional->buscarTiposPorProfissionalId((int)$id);
+        // --- FIM DAS NOVAS LINHAS ---
+
+        View::render("profissional/edit", [
+            "usuario" => $profissional,
+            "todosTiposAtendimento" => $todosTiposAtendimento, // <<< NOVO
+            "tiposSelecionadosIds" => $tiposSelecionadosIds   // <<< NOVO
+        ]);
     }
 
 
 
     public function viewExcluirProfissionais($id) {
+        $this->verificarAcesso(['admin']);
         $profissional = $this->profissional->buscarProfissionalPorId((int)$id);
         if (!$profissional) {
             Redirect::redirecionarComMensagem("profissionais/listar", "error", "Profissional não encontrado para exclusão.");
@@ -115,21 +131,21 @@ public function viewCriarProfissionais()
             return;
         }
 
-        $caminhoImagemSalva = null; // Inicializa como nulo
+        $caminhoImagemSalva = null; 
 
         // --- Processamento do Upload ---
         if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
             try {
-                // Tenta salvar o arquivo na pasta 'img/profissionais/'
-                // Tipos permitidos: jpeg, png, webp. Tamanho máximo: 2MB (2 * 1024 * 1024 bytes)
+            
                 $caminhoImagemSalva = $this->fileManager->salvarArquivo(
                     $_FILES['img_profissional'],
-                    'img/profissionais', // Subdiretório
-                    ['image/jpeg', 'image/png', 'image/webp'], // Tipos permitidos
-                    2 * 1024 * 1024 // Tamanho máximo (2MB)
+                    'img/profissionais', 
+                    ['image/jpeg', 'image/png', 'image/webp'], 
+                    2 * 1024 * 1024 
                 );
             } catch (\Exception $e) {
                 // Se o upload falhar, redireciona com o erro
+                // *** LINHA CORRIGIDA ABAIXO ***
                 Redirect::redirecionarComMensagem("profissionais/criar", "error", "Erro no upload da imagem: " . $e->getMessage());
                 return;
             }
@@ -143,6 +159,7 @@ public function viewCriarProfissionais()
         $publico = isset($_POST['publico']) ? 1 : 0;
         $sobre = $_POST['sobre'] ?? null;
         $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 99);
+        $tipos_ids = $_POST['tipos_atendimento'] ?? []; // <<< NOVO
 
         $usuarioExistente = $this->usuario->buscarUsuarioPorId($id_usuario);
         if (!$usuarioExistente) {
@@ -158,7 +175,8 @@ public function viewCriarProfissionais()
             $publico,
             $sobre,
             $ordem_exibicao,
-            $caminhoImagemSalva // <<< Usa o caminho retornado pelo FileManager (ou null)
+            $caminhoImagemSalva,
+            $tipos_ids // <<< NOVO
         );
 
         if ($id_profissional) {
@@ -191,20 +209,19 @@ public function viewCriarProfissionais()
         }
 
         // --- ATUALIZAÇÃO DO USUÁRIO ---
-        // (Validação pode ser adicionada)
         $sucesso_usuario = $this->usuario->atualizarUsuario(
             (int)$_POST['id_usuario'],
             $_POST['nome_usuario'],
             $_POST['email_usuario'],
             $_POST['senha_usuario'] ?? null,
             'profissional',
-            $profissional->cpf ?? '', // Mantém CPF
+            $profissional->cpf ?? '',
             $_POST['status_usuario'] ?? 'ativo'
         );
 
         // --- Processamento do Upload da Nova Imagem (se houver) ---
         $caminhoNovaImagem = null;
-        $imagemAntiga = $_POST['imagem_atual'] ?? null; // Pega do campo hidden
+        $imagemAntiga = $_POST['imagem_atual'] ?? null; 
 
         if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
              try {
@@ -215,24 +232,21 @@ public function viewCriarProfissionais()
                     2 * 1024 * 1024
                 );
             } catch (\Exception $e) {
+                // *** LINHA CORRIGIDA ABAIXO ***
                 Redirect::redirecionarComMensagem("profissionais/editar/{$id}", "error", "Erro no upload da nova imagem: " . $e->getMessage());
                 return;
             }
         }
-        // --- Fim do Processamento do Upload ---
-
-        // Define qual caminho de imagem será salvo no banco
-        // Se uma nova imagem foi enviada, usa o caminho dela. Senão, mantém o caminho antigo.
+ 
         $caminhoImagemParaSalvar = $caminhoNovaImagem ?? $imagemAntiga;
 
-        // --- ATUALIZAÇÃO DO PROFISSIONAL ---
-        // (Validação pode ser adicionada)
         $especialidadeInput = $_POST['especialidade'] ?? '';
         $valor_consulta = (float)($_POST['valor_consulta'] ?? 0);
         $sinal_consulta = (float)($_POST['sinal_consulta'] ?? 0);
         $publico = isset($_POST['publico']) ? 1 : 0;
         $sobre = $_POST['sobre'] ?? null;
         $ordem_exibicao = (int)($_POST['ordem_exibicao'] ?? 99);
+        $tipos_ids = $_POST['tipos_atendimento'] ?? []; // <<< NOVO
 
         // Processamento da Especialidade (igual ao anterior)
         $especialidadeTrimmed = trim($especialidadeInput);
@@ -248,18 +262,17 @@ public function viewCriarProfissionais()
             $publico,
             $sobre,
             $ordem_exibicao,
-            $caminhoImagemParaSalvar // <<< Passa o caminho final (novo ou antigo)
+            $caminhoImagemParaSalvar, 
+            $tipos_ids // <<< NOVO
         );
 
         // --- VERIFICAÇÃO E REDIRECIONAMENTO ---
         if ($sucesso_usuario && $sucesso_profissional) {
-             // Se a atualização foi bem-sucedida E uma nova imagem foi enviada, deleta a antiga (se existir)
              if ($caminhoNovaImagem && !empty($imagemAntiga) && $imagemAntiga !== $caminhoNovaImagem) {
                  $this->fileManager->delete($imagemAntiga);
              }
             Redirect::redirecionarComMensagem("profissionais/listar", "success", "Profissional atualizado com sucesso!");
         } else {
-             // Se a atualização falhou, remove a nova imagem que pode ter sido salva
              if ($caminhoNovaImagem) {
                  $this->fileManager->delete($caminhoNovaImagem);
              }
@@ -273,113 +286,92 @@ public function viewCriarProfissionais()
         }
     }
 
+    public function viewMeuPerfilProfissional() {
+        // 1. Garante que apenas um profissional logado acesse
+        $this->verificarAcesso(['profissional']);
 
-     public function listarPublico() {
-        header('Content-Type: application/json');
-        try {
-            // Alterado para usar o novo método com o filtro de visibilidade
-            $profissionais = $this->profissional->listarProfissionaisPublicos();
+        // 2. Pega o ID do usuário da SESSÃO
+        $id_usuario_logado = $_SESSION['usuario_id'] ?? null;
 
-            http_response_code(200);
-            echo json_encode($profissionais);
 
-        } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Erro interno ao buscar profissionais.', 'details' => $e->getMessage()]);
+        // 3. Busca os dados de profissional associados a esse usuário
+        $profissional = $this->profissional->buscarProfissionalPorUsuarioId((int)$id_usuario_logado);
+
+        if (!$profissional) {
+            // Se não encontrar (ex: um profissional que não completou o cadastro), redireciona
+            Redirect::redirecionarComMensagem("dashboard", "error", "Perfil profissional não encontrado ou incompleto.");
+            return;
         }
+
+        View::render("profissional/meu-perfil", ["profissional" => $profissional]);
     }
 
-    // Removido horáriosPublico estático
+    public function atualizarMeuPerfilProfissional() {
+        // 1. Garante que apenas um profissional logado acesse
+        $this->verificarAcesso(['profissional']);
 
-    public function detalhePublico($id) {
-        header('Content-Type: application/json');
-        try {
-            // Alterado para usar o novo método seguro
-            $profissional = $this->profissional->buscarProfissionalPublicoPorId((int)$id);
+        // 2. Pega o ID do usuário da SESSÃO (Fonte segura)
+        $id_usuario_logado = $_SESSION['usuario_id'] ?? null;
+        $profissionalAtual = $this->profissional->buscarProfissionalPorUsuarioId((int)$id_usuario_logado);
 
-            if (!$profissional) {
-                http_response_code(404);
-                echo json_encode(['error' => 'Profissional não encontrado ou não está disponível.']);
+        // 3. Verifica se o profissional existe
+        if (!$profissionalAtual) {
+            Redirect::redirecionarComMensagem("dashboard", "error", "Não foi possível atualizar. Perfil profissional não encontrado.");
+            return;
+        }
+        $id_profissional = $profissionalAtual->id_profissional;
+
+        // 4. Processamento do Upload da Nova Imagem (se houver)
+        $caminhoNovaImagem = null;
+        $imagemAntiga = $profissionalAtual->img_profissional ?? null; 
+
+        if (isset($_FILES['img_profissional']) && $_FILES['img_profissional']['error'] == UPLOAD_ERR_OK) {
+             try {
+                $caminhoNovaImagem = $this->fileManager->salvarArquivo(
+                    $_FILES['img_profissional'],
+                    'img/profissionais',
+                    ['image/jpeg', 'image/png', 'image/webp'],
+                    2 * 1024 * 1024 // 2MB Max
+                );
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("profissional/meu-perfil", "error", "Erro no upload da nova imagem: " . $e->getMessage());
                 return;
             }
+        }
+ 
+        // 5. Decide qual caminho de imagem salvar no banco
+        $caminhoImagemParaSalvar = $caminhoNovaImagem ?? $imagemAntiga;
 
-            // Se encontrou, retorna os dados com sucesso
-            http_response_code(200);
-            echo json_encode($profissional);
+        // 6. Pega os dados do formulário
+        $valor_consulta = (float)($_POST['valor_consulta'] ?? $profissionalAtual->valor_consulta);
+        $sinal_consulta = (float)($_POST['sinal_consulta'] ?? $profissionalAtual->sinal_consulta);
+        $sobre = $_POST['sobre'] ?? $profissionalAtual->sobre;
+        $especialidade = $_POST['especialidade'] ?? $profissionalAtual->especialidade;
 
-        } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Erro interno ao buscar detalhes do profissional.', 'details' => $e->getMessage()]);
+        // 7. Atualiza usando o novo método seguro do Model
+        $sucesso_profissional = $this->profissional->atualizarPerfilProfissional(
+            (int)$id_profissional,
+            $especialidade,
+            $valor_consulta,
+            $sinal_consulta,
+            $sobre,
+            $caminhoImagemParaSalvar
+        );
+
+        // 8. VERIFICAÇÃO E REDIRECIONAMENTO
+        if ($sucesso_profissional) {
+             // Se a atualização foi bem-sucedida E uma nova imagem foi enviada, deleta a antiga
+             if ($caminhoNovaImagem && !empty($imagemAntiga) && $imagemAntiga !== $caminhoNovaImagem) {
+                 $this->fileManager->delete($imagemAntiga);
+             }
+            Redirect::redirecionarComMensagem("profissional/meu-perfil", "success", "Perfil profissional atualizado com sucesso!");
+        } else {
+             // Se a atualização falhou, remove a nova imagem que pode ter sido salva
+             if ($caminhoNovaImagem) {
+                 $this->fileManager->delete($caminhoNovaImagem);
+             }
+            Redirect::redirecionarComMensagem("profissional/meu-perfil", "error", "Erro ao atualizar dados do profissional.");
         }
     }
     
-    public function getCarrosselCardsHtml() {
-        // Define os IDs corretos
-        $idsProfissionaisCarrossel = [6, 7, 8, 9, 10]; // IDs corretos que funcionaram
-
-        $htmlCards = '';
-        $profissionaisParaCarrossel = [];
-
-        foreach ($idsProfissionaisCarrossel as $id) {
-            $prof = $this->profissional->buscarProfissionalPublicoPorId($id);
-            if ($prof) {
-                $profissionaisParaCarrossel[] = $prof;
-            } else {
-                error_log("Aviso: Profissional com ID {$id} não encontrado para o carrossel.");
-            }
-        }
-
-        // --- Gera o HTML ---
-        foreach ($profissionaisParaCarrossel as $profissional) {
-
-            // ===== INÍCIO DA LÓGICA CORRETA PARA PEGAR A PRIMEIRA ESPECIALIDADE =====
-            $especialidadeExibida = 'Clínica Geral'; // Define um padrão
-            if (!empty($profissional->especialidade)) {
-                // Remove espaços em branco do início e fim da string completa
-                $especialidadesString = trim($profissional->especialidade);
-
-                // Divide a string na PRIMEIRA vírgula encontrada, limitando a 2 partes
-                $partes = explode(',', $especialidadesString, 2);
-
-                // Pega a primeira parte (índice 0) ou uma string vazia se não houver nada
-                $primeiraEspecialidade = $partes[0] ?? '';
-
-                // Remove espaços em branco extras da primeira parte
-                $primeiraEspecialidadeLimpa = trim($primeiraEspecialidade);
-
-                // Usa a especialidade limpa APENAS se ela não ficou vazia após a limpeza
-                if ($primeiraEspecialidadeLimpa !== '') {
-                    $especialidadeExibida = $primeiraEspecialidadeLimpa;
-                }
-            }
-            // ===== FIM DA LÓGICA CORRETA PARA PEGAR A PRIMEIRA ESPECIALIDADE =====
-
-
-            // Define a URL da foto (sem alterações)
-            $nomeBase = explode(' ', $profissional->nome_usuario)[0];
-            $fotoUrlPadrao = "/img/profissionais/" . strtolower($nomeBase) . ".png";
-            $fotoFinal = (!empty($profissional->img_profissional)) ? "/" . ltrim($profissional->img_profissional, '/') : $fotoUrlPadrao;
-
-            // Gera o HTML do card (sem alterações)
-            $htmlCards .= '
-            <div class="card" data-id-profissional="'.htmlspecialchars($profissional->id_profissional).'">
-              <a href="profissionais.html?id='.htmlspecialchars($profissional->id_profissional).'" class="card-link">
-                <div class="foto" style="background-image: url(\''.htmlspecialchars($fotoFinal).'\'); background-size: cover; background-position: center;">
-                </div>
-                <h3>'.htmlspecialchars($profissional->nome_usuario).'</h3>
-                <div class="avaliacoes">
-                  <h4>Psicólogo(a)</h4>
-                  <p>'.htmlspecialchars($especialidadeExibida).'</p> </div>
-              </a>
-            </div>
-            ';
-        }
-
-        // Envia apenas o HTML dos 5 cards (sem duplicação no PHP)
-        $htmlCompleto = $htmlCards;
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo $htmlCompleto;
-        exit;
-    }
 }

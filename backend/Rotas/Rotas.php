@@ -6,105 +6,125 @@ class Rotas {
     public static function get(){
         return [
             "GET" => [
-                // NOVAS ROTAS GET PARA USUARIOS
-                "/usuarios" => "UsuarioController@meuPerfilApi",
+                // --- USUARIOS (Admin & API) ---
+                "/usuarios" => "UsuarioController@meuPerfilApi", // API 'minha-conta'
                 "/usuario/criar" => "UsuarioController@viewCriarUsuarios",
                 "/usuario/listar" => "UsuarioController@viewListarUsuarios",
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
+                "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
+                "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
+                '/api/usuarios/{pagina}' => 'APIUsuarioController@getUsuarios',
+                '/api/usuarios' => 'APIUsuarioController@getUsuarios',
 
-                "/carrossel/cards" => "ProfissionalController@getCarrosselCardsHtml",
-                
-                // NOVAS ROTAS GET PARA AGENDAMENTOS
-                "/agendamentos/disponibilidade/{id_profissional}/{data}" => "AgendamentoController@buscarDisponibilidade",
+                // --- AGENDAMENTOS (Admin & API Pública) ---
+                "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
                 "/agendamentos" => "AgendamentoController@index",
                 "/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
                 "/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
                 "/agendamentos/editar/{id}" => "AgendamentoController@viewEditarAgendamentos",
                 "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
-                "/avaliacoes" => "AvaliacaoController@buscarPorProfissional",
-                "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
                 "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
-            
-                // NOVAS ROTAS GET PARA PAGAMENTOS
-                "/pagamentos/criar" => "PagamentoController@viewCriarPagamentos",
-                "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
-                "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
-                "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
+                "/agendamentos/detalhe-pagamento/{id}" => "PublicAgendamentoController@getDetalhesPagamento",
+                '/api/agendamentos/{pagina}' => 'APIAgendamentoController@getAgendamentos',
+                '/api/agendamentos' => 'APIAgendamentoController@getAgendamentos',
 
-                // NOVAS ROTAS GET PARA AVALIAÇÕES (CRIAÇÃO/EDIÇÃO)
+                // --- AVALIAÇÕES (Admin & API Pública) ---
+                "/avaliacoes" => "AvaliacaoController@buscarPorProfissional", // API pública
                 "/avaliacoes/criar" => "AvaliacaoController@viewCriarAvaliacoes",
                 "/avaliacoes/listar" => "AvaliacaoController@viewListarAvaliacoes",
                 "/avaliacoes/editar/{id}" => "AvaliacaoController@viewEditarAvaliacoes",
                 "/avaliacoes/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
+                '/api/avaliacoes/{pagina}' => 'APIAvaliacaoController@getAvaliacoes',
+                '/api/avaliacoes' => 'APIAvaliacaoController@getAvaliacoes',
 
-                // NOVAS ROTAS GET PARA PROFISSIONAIS
+                // --- PAGAMENTOS (Admin) ---
+                "/pagamentos/criar" => "PagamentoController@viewCriarPagamentos",
+                "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
+                "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
+                "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
+                '/api/pagamentos/{pagina}' => 'APIPagamentoController@getPagamentos',
+                '/api/pagamentos' => 'APIPagamentoController@getPagamentos',
+
+                // --- PROFISSIONAIS (Admin & API Pública) ---
                 "/profissionais" => "ProfissionalController@index",
                 "/profissionais/criar" => "ProfissionalController@viewCriarProfissionais",
                 "/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
                 "/profissionais/editar/{id}" => "ProfissionalController@viewEditarProfissionais",
                 "/profissionais/excluir/{id}" => "ProfissionalController@viewExcluirProfissionais",
-                "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
-                "/profissionais/listar-publico" => "ProfissionalController@listarPublico",
-                "/profissionais/detalhe/{id}" => "ProfissionalController@detalhePublico",
-                
-                "/logout" => "UsuarioController@logout",
-                "/dashboard" => "UsuarioController@dashboard",
-                "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
-                
-                // --- ROTAS PARA GERENCIAMENTO DE IMAGENS ---
+                "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
+                "/profissionais/detalhe/{id}" => "PublicProfissionalController@detalhePublico",
+                "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
+                "/profissional/meu-perfil" => "ProfissionalController@viewMeuPerfilProfissional",
+                "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
+                '/api/profissionais/{pagina}' => 'APIProfissionalController@getProfissionais',
+                '/api/profissionais' => 'APIProfissionalController@getProfissionais',
+
+                // --- IMAGENS (Admin & API Pública) ---
                 "/imagens/listar" => "ImagemController@viewListarImagens",
                 "/imagens/criar" => "ImagemController@viewCriarImagem",
-                "/imagens/editar/{id}" => "ImagemController@viewEditarImagem", 
-                "/imagens/excluir/{id}" => "ImagemController@viewExcluirImagem", 
-
-                // --- NOVA ROTA API PARA BUSCAR SEÇÕES ---
-                "/api/secoes/por-pagina/{id_pagina}" => "ImagemController@buscarSecoesPorPaginaApi", // <<< ADICIONADA
-
-                // --- ROTAS DE API EXISTENTES ---
+                "/imagens/editar/{id}" => "ImagemController@viewEditarImagem",
+                "/imagens/excluir/{id}" => "ImagemController@viewExcluirImagem",
+                "/api/secoes/por-pagina/{id_pagina}" => "ImagemController@buscarSecoesPorPaginaApi",
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
                 "/api/imagens/servicos" => "ImagemController@listarServicos",
 
+                // --- GERAL (Admin) ---
+                "/logout" => "UsuarioController@logout",
+                "/dashboard" => "UsuarioController@dashboard",
+                "/meu-perfil" => "UsuarioController@viewMeuPerfil",
+                "/usuarios" => "UsuarioController@meuPerfilApi",
             ],
+            
             "POST" => [
-                // NOVAS ROTAS POST PARA USUARIOS
-                "/usuario/salvar" => "UsuarioController@salvarUsuarios",
+                // --- USUARIOS ---
+                
+                "/usuario/salvar" => "UsuarioController@salvarUsuarios", // Usado pelo Admin e Registro público
                 "/usuario/atualizar/{id}" => "UsuarioController@atualizarUsuarios",
                 "/usuario/deletar/{id}" => "UsuarioController@deletarUsuarios",
-                
-                // NOVAS ROTAS POST PARA AGENDAMENTOS
-                "/agendamentos/salvar" => "AgendamentoController@salvarAgendamentos",
+                "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
+                "/login" => "UsuarioController@login",
+                "/api/desktop/login" => "DesktopApiController@login",
+                "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
+                "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
+                '/api/usuarios/salvar' => 'APIUsuarioController@salvarUsuario',
+
+                // --- AGENDAMENTOS ---
+                // Esta é a rota que o seu formulário está chamando:
+                "/agendamentos/salvar" => "PublicAgendamentoController@salvarAgendamentos", 
                 "/agendamentos/atualizar/{id}" => "AgendamentoController@atualizarAgendamentos",
                 "/agendamentos/deletar/{id}" => "AgendamentoController@deletarAgendamentos",
+                '/api/agendamentos/salvar'   => 'APIAgendamentoController@salvarAgendamento',
 
-                // NOVAS ROTAS POST PARA PAGAMENTOS
+                // --- PAGAMENTOS ---
                 "/pagamentos/salvar" => "PagamentoController@salvarPagamentos",
                 "/pagamentos/atualizar/{id}" =>"PagamentoController@atualizarPagamento",
                 "/pagamentos/deletar/{id}" =>"PagamentoController@deletarPagamento",
-                
-                // NOVAS ROTAS POST PARA AVALIACAOS
+                "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal", // Rota p/ pág. pagamento
+                '/api/pagamentos/salvar'   => 'APIPagamentoController@salvarPagamento',
+
+                // --- AVALIAÇÕES ---
                 "/avaliacoes/salvar" => "AvaliacaoController@salvarAvaliacoes",
                 "/avaliacoes/atualizar/{id}" => "AvaliacaoController@atualizarAvaliacoes",
                 "/avaliacoes/deletar/{id}" => "AvaliacaoController@deletarAvaliacoes",
+                "/api/cliente/avaliar" => "AvaliacaoController@salvarAvaliacaoCliente",
+                '/api/avaliacoes/salvar'   => 'APIAvaliacaoController@salvarAvaliacao',
 
-                // NOVAS ROTAS POST PARA PROFISSIONAIS
+                // --- PROFISSIONAIS ---
                 "/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
                 "/profissionais/atualizar/{id}" => "ProfissionalController@atualizarProfissionais",
                 "/profissionais/deletar/{id}" => "ProfissionalController@deletarProfissionais",
+                "/profissional/atualizar-meu-perfil" => "ProfissionalController@atualizarMeuPerfilProfissional",
+                '/api/profissionais/salvar'   => 'APIProfissionalController@salvarProfissional',
 
-                // LOGIN
-                "/login" => "UsuarioController@login",
-                "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
-                "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
-
-                // --- ROTAS POST PARA IMAGENS ---
+                // --- IMAGENS ---
                 "/imagens/salvar" => "ImagemController@salvarImagem",
                 "/imagens/atualizar/{id}" => "ImagemController@atualizarImagem",
                 "/imagens/deletar/{id}" => "ImagemController@deletarImagem",
-                "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
-                "/api/cliente/avaliar" => "AvaliacaoController@salvarAvaliacaoCliente",
-                "/enviar-contato" => "ContatoController@processarFormulario",
                 
+                // --- CONTATO ---
+                "/enviar-contato" => "ContatoController@processarFormulario",
+                '/api/contato/enviar' => 'APIContatoController@enviarMensagem',
             ],
         ];
     }

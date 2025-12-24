@@ -118,8 +118,7 @@ class Usuario {
 
     public function buscarUsuariosNaoProfissionais(): array {
         $sql = "SELECT id_usuario, nome_usuario FROM {$this->table} 
-                WHERE tipo_usuario != 'profissional' 
-                AND id_usuario NOT IN (SELECT id_usuario FROM profissional)";
+                WHERE id_usuario NOT IN (SELECT id_usuario FROM profissional)";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
@@ -213,5 +212,23 @@ class Usuario {
         }
         
         return $mesesFormatados;
+    }
+
+    public function paginacaoAPI(int $pagina = 1, int $por_pagina = 10): array{
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table}";
+        $totalStmt = $this->db->query($totalQuery);
+        $total_de_registros = $totalStmt->fetchColumn();
+        $offset = ($pagina - 1) * $por_pagina;
+        $dataQuery = "SELECT * FROM {$this->table} LIMIT :limit OFFSET :offset";
+        $dataStmt = $this->db->prepare($dataQuery);
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+        $lastPage = ceil($total_de_registros / $por_pagina);
+ 
+        return [
+            'data' => $dados
+        ];
     }
 }

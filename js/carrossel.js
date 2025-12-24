@@ -127,36 +127,38 @@ window.moverCarrossel = (direcao) => {
 // Lógica do Lightbox (mantida como estava)
 // ... (código existente do lightbox) ...
 document.addEventListener('DOMContentLoaded', () => {
-    const lightbox = document.getElementById('lightbox');
-    const imgAmpliada = document.getElementById('img-ampliada');
+  const lightbox = document.getElementById('lightbox');
+  const imgAmpliada = document.getElementById('img-ampliada');
+  const faixaImagens = document.querySelector('.faixa-imagens');
 
-    document.querySelectorAll('.faixa-imagens img').forEach(img => {
-        img.addEventListener('click', () => {
-            if (lightbox && imgAmpliada) {
-                imgAmpliada.src = img.src;
-                lightbox.classList.remove('hidden');
-            }
-        });
+  if (faixaImagens) {
+    faixaImagens.addEventListener('click', (e) => {
+      const img = e.target.closest('img'); 
+      if (img && lightbox && imgAmpliada) {
+        imgAmpliada.src = img.src;
+        lightbox.classList.remove('hidden');
+      }
     });
+  }
 
-    window.fecharLightbox = () => {
-        if (lightbox && imgAmpliada) {
-            lightbox.classList.add('hidden');
-            imgAmpliada.src = '';
-        }
-    };
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && lightbox && !lightbox.classList.contains('hidden')) {
-            fecharLightbox();
-        }
-    });
-
-    if (lightbox) {
-        lightbox.addEventListener('click', (e) => {
-            if (e.target.id === 'lightbox') {
-                fecharLightbox();
-            }
-        });
+  window.fecharLightbox = () => {
+    if (lightbox && imgAmpliada) {
+      lightbox.classList.add('hidden');
+      imgAmpliada.src = '';
     }
+  };
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && lightbox && !lightbox.classList.contains('hidden')) {
+      fecharLightbox();
+    }
+  });
+
+  if (lightbox) {
+    lightbox.addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        fecharLightbox();
+      }
+    });
+  }
 });

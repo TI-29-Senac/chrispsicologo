@@ -70,11 +70,16 @@ class Pagamento {
 
     public function buscarTodosPagamentos(): array {
         $sql = "
-            SELECT prof.valor_consulta, fp.nome_forma_pagamento as tipo_pagamento 
+            SELECT 
+                p.id_pagamento,
+                p.criado_em as data_pagamento, /* <--- O SEGREDO ESTÁ AQUI */
+                prof.valor_consulta, 
+                fp.nome_forma_pagamento as tipo_pagamento 
             FROM {$this->table} p
             JOIN agendamento a ON p.id_agendamento = a.id_agendamento
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
             JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento 
+            ORDER BY p.criado_em DESC
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();

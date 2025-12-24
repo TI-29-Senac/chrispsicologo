@@ -138,7 +138,7 @@ class UsuarioController extends AdminController {
                 $_POST['nome_usuario'],
                 $_POST['email_usuario'],
                 $_POST['senha_usuario'],
-                 $tipoUsuario, 
+                $tipoUsuario, 
                 $_POST['cpf'] ?? '' 
             );
 
@@ -147,7 +147,7 @@ class UsuarioController extends AdminController {
                  if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                      Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
                  } else {
-                     Flash::set("success", "Registo realizado com sucesso! Pode fazer login.");
+                     Flash::set("success", "Registro realizado com sucesso! Pode fazer login.");
                      header('Location: /index.html'); 
                      exit();
                  }
@@ -191,7 +191,13 @@ class UsuarioController extends AdminController {
 
 
     public function viewEditarUsuarios($id) {
-         $this->verificarAcesso(['admin']); 
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+         $idUsuarioLogado = $_SESSION['usuario_id'] ?? null;
+         $tipoUsuarioLogado = $_SESSION['usuario_tipo'] ?? null;
+         if ($tipoUsuarioLogado != 'admin' && (int)$id != (int)$idUsuarioLogado) {
+            Redirect::redirecionarComMensagem("dashboard", "error", "Você não tem permissão para editar este usuário.");
+            return;
+         }
         $usuario = $this->usuario->buscarUsuarioPorId((int)$id);
         if ($usuario) {
             View::render("usuario/edit", ["usuario" => $usuario]);
@@ -201,42 +207,76 @@ class UsuarioController extends AdminController {
     }
 
     public function atualizarUsuarios($id) {
-         $this->verificarAcesso(['admin']); 
-         
-         $erros = UsuarioValidador::ValidarEntradas($_POST, true); 
-         if (!empty($erros)) {
-              $mensagemErro = implode("<br>", array_values($erros));
-              Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", $mensagemErro);
-              return;
-         }
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+         $idUsuarioLogado = $_SESSION['usuario_id'] ?? null;
+         $tipoUsuarioLogado = $_SESSION['usuario_tipo'] ?? null;
+
+        if ($tipoUsuarioLogado != 'admin' && (int)$id != (int)$idUsuarioLogado) {
+            Redirect::redirecionarComMensagem("dashboard", "error", "Você não tem permissão para atualizar este usuário.");
+            return;
+        }
+        $erros = UsuarioValidador::ValidarEntradas($_POST, true); 
+        if (!empty($erros)) {
+            $mensagemErro = implode("<br>", array_values($erros));
+            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", $mensagemErro);
+            return;
+        }
 
         try {
-            $status = $_POST['status_usuario'] ?? 'ativo';
+            // --- INÍCIO DA NOVA LÓGICA DE SEGURANÇA ---
+            
+            // Busca os dados atuais do usuário que está sendo editado
+            $usuarioAtual = $this->usuario->buscarUsuarioPorId((int)$id);
+            if (!$usuarioAtual) {
+                Redirect::redirecionarComMensagem("usuario/listar", "error", "Usuário não encontrado.");
+                return;
+            }
+
+            // Determina qual 'tipo_usuario' usar
+            $tipoParaSalvar = '';
+            if ($tipoUsuarioLogado === 'admin') {
+                // Se for admin, pega o tipo que veio do formulário
+                $tipoParaSalvar = $_POST['tipo_usuario'];
+            } else {
+                // Se NÃO for admin, ignora o que veio do formulário
+                // e usa o tipo que já estava no banco de dados
+                $tipoParaSalvar = $usuarioAtual->tipo_usuario;
+            }
+            $statusParaSalvar = '';
+            if ($tipoUsuarioLogado === 'admin') {
+                // Se for admin, pega o status que veio do formulário
+                $statusParaSalvar = $_POST['status_usuario'] ?? 'ativo';
+            } else {
+                // Se NÃO for admin, ignora o formulário e usa o status do banco
+                $statusParaSalvar = $usuarioAtual->status_usuario;
+            }
+
+            // $status = $_POST['status_usuario'] ?? 'ativo';
             $sucesso = $this->usuario->atualizarUsuario(
                 (int)$id,
                 $_POST['nome_usuario'],
                 $_POST['email_usuario'],
                 $_POST['senha_usuario'] ?? null, 
-                $_POST['tipo_usuario'],
+                $tipoParaSalvar,
                 $_POST['cpf'] ?? '', 
-                $status
+                $statusParaSalvar
             );
 
             if ($sucesso) {
                 Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário atualizado com sucesso!");
-            } else {
+            }else {
                 Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", "Erro ao atualizar usuário.");
             }
-         } catch (PDOException $e) {
+        } catch (PDOException $e) {
              
-             if ($e->getCode() == 23000 || $e->getCode() == 1062) {
-                 $mensagemErro = "Erro ao atualizar: O email fornecido já está em uso por outro utilizador.";
-             } else {
-                 error_log("Erro de PDO ao atualizar usuário: " . $e->getMessage()); 
-                 $mensagemErro = "Ocorreu um erro inesperado no servidor ao atualizar. Tente novamente.";
-             }
-             Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", $mensagemErro);
-         }
+            if ($e->getCode() == 23000 || $e->getCode() == 1062) {
+                $mensagemErro = "Erro ao atualizar: O email fornecido já está em uso por outro utilizador.";
+            } else {
+                error_log("Erro de PDO ao atualizar usuário: " . $e->getMessage()); 
+                $mensagemErro = "Ocorreu um erro inesperado no servidor ao atualizar. Tente novamente.";
+            }
+            Redirect::redirecionarComMensagem("usuario/editar/{$id}", "error", $mensagemErro);
+        }
     }
 
     public function viewCriarUsuarios(){
@@ -775,6 +815,20 @@ class UsuarioController extends AdminController {
             "chartFaturamentoLabels" => json_encode($chartFaturamentoLabels),
             "chartFaturamentoValores" => json_encode($chartFaturamentoValores)
         ]);
+    }
+
+    public function viewMeuPerfil() {
+        // Verifica se o usuário está logado (qualquer tipo)
+        if (!isset($_SESSION['usuario_id'])) {
+             Redirect::redirecionarComMensagem("dashboard", "error", "Sessão inválida.");
+             return;
+        }
+        
+        $idUsuarioLogado = $_SESSION['usuario_id'];
+        
+        // Redireciona para a view de edição com o ID do próprio usuário
+        header("Location: /backend/usuario/editar/" . $idUsuarioLogado);
+        exit();
     }
 
 }

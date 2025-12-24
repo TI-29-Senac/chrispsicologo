@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento via Pix - Chris Psicologia</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <section class="contato-hero" style="min-height: 100vh; height: auto;">
+            <div class="foia">
+                <img src="img/icons/folha.svg" class="folha f1" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f2" alt="folhas caindo">
+                <img src="img/icons/folha.svg" class="folha f3" alt="folhas caindo">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-esquerdo" alt="">
+                <img src="img/icons/plantas-bege.svg" class="contato-planta lado-direito" alt="">
+            </div>
+
+            <div class="pagamento-container" id="pagamento-container">
+                <h3>PAGAMENTO VIA PIX</h3>
+                <p class="explicacao" id="loading-message">Carregando detalhes do seu agendamento...</p>
+
+                <div id="conteudo-pagamento" style="display: none;">
+                    <div class="resumo-agendamento">
+                        <p><strong>Profissional:</strong> <span id="profissional-nome">...</span></p>
+                        <p><strong>Data:</strong> <span id="data-hora">...</span></p>
+                    </div>
+
+                    <div class="valor-sinal-box-grande">
+                        Valor do sinal: <strong id="valor-sinal">R$ 0,00</strong>
+                    </div>
+                    
+                    <p class="explicacao">
+                        Para confirmar, escaneie o QR Code abaixo com seu app do banco.
+                    </p>
+
+                    <div class="qr-code-section">
+                        <img src="img/qr/qr-placeholder.jpg" alt="QR Code para pagamento Pix" id="qr-code-img">
+                    </div>
+
+                    <p class="explicacao" style="margin-top: 20px;">Ou copie o código Pix:</p>
+                    <div class="pix-copia-cola">
+                        <input type="text" id="pix-codigo" value="0002012698243769764523" readonly>
+                        <button id="btn-copiar-pix">Copiar</button>
+                    </div>
+
+                    <p class="explicacao-pequena">
+                        Após efetuar o pagamento, clique no botão abaixo para confirmar sua consulta.
+                    </p>
+                    
+                    <button class="btn-pagamento-final" id="btn-confirmar-pix">
+                        Já paguei, confirmar agendamento
+                    </button>
+                    <p id="pagamento-status-message" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
+    <footer id="footer"></footer>
+
+    <script src="js/header.js" defer></script>
+    <script src="js/footer.js" defer></script>
+    <script src="js/login-modal-injector.js" defer></script>
+    <script src="js/login.js" defer></script>
+    <script src="js/pagamento-pix.js" defer></script>
+</body>
+</html>
