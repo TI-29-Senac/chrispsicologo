@@ -42,46 +42,37 @@ class APIUsuarioController {
     }
 
     public function salvarUsuario(){
-        // Validação Centralizada
-        if (!APIAutenticador::validar()) {
-            APIAutenticador::enviarErroNaoAutorizado();
-        }
+    if (!APIAutenticador::validar()) {
+        APIAutenticador::enviarErroNaoAutorizado();
+    }
 
-        header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
+    header('Content-Type: application/json');
+    $input = json_decode(file_get_contents('php://input'), true);
 
-        if (empty($input) || !is_array($input)) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'JSON inválido ou vazio.']);
-            exit;
-        }
-
-        if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Campos obrigatórios faltando.']);
-            exit;
-        }
-
-        try {
-            $novoId = $this->usuarioModel->inserirUsuario(
-                $input["nome_usuario"],
-                $input["email_usuario"],
-                $input["senha_usuario"],
-                $input["tipo_usuario"] ?? 'cliente',
-                $input["cpf"] ?? ''
-            );
-
-            if ($novoId) {
-                http_response_code(201);
-                echo json_encode(['status' => 'success', 'message' => 'Usuário criado.', 'id_usuario' => $novoId]);
-            } else {
-                http_response_code(500);
-                echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar no banco.']);
-            }
-        } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Erro interno: ' . $e->getMessage()]);
-        }
+    if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Parâmetros obrigatórios faltando no JSON.']);
         exit;
     }
+
+    try {
+        $novoId = $this->usuarioModel->inserirUsuario(
+            $input["nome_usuario"],
+            $input["email_usuario"],
+            $input["senha_usuario"],
+            $input["tipo_usuario"] ?? 'cliente',
+            $input["cpf"] ?? ''
+        );
+
+        if ($novoId) {
+            echo json_encode(['status' => 'success', 'message' => 'Usuário criado.', 'id_usuario' => $novoId]);
+        } else {
+            throw new \Exception("Falha na inserção do banco de dados.");
+        }
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+    exit;
+}
 }

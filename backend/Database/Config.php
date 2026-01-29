@@ -37,7 +37,7 @@ class Config {
      */
     private static function loadEnv()
     {
-        $dotenvPath = __DIR__ . '/../../.env';
+        $dotenvPath = __DIR__ . '/../.env';
  
         if (is_readable($dotenvPath)) {
             $lines = file($dotenvPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

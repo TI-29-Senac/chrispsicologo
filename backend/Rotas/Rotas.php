@@ -6,125 +6,65 @@ class Rotas {
     public static function get(){
         return [
             "GET" => [
-                // --- USUARIOS (Admin & API) ---
-                "/usuarios" => "UsuarioController@meuPerfilApi", // API 'minha-conta'
+                // --- USUARIOS ---
+                "/usuarios" => "UsuarioController@meuPerfilApi",
                 "/usuario/criar" => "UsuarioController@viewCriarUsuarios",
                 "/usuario/listar" => "UsuarioController@viewListarUsuarios",
                 "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
                 "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
-                "/usuario/relatorio/{id}/{data1}/{data2}" => "UsuarioController@relatorioUsuarios",
-                "/recuperar-senha/validar/{token}" => "UsuarioController@validarTokenReset",
-                '/api/usuarios/{pagina}' => 'APIUsuarioController@getUsuarios',
-                '/api/usuarios' => 'APIUsuarioController@getUsuarios',
+                
+                // Rotas essenciais para o Desktop buscar dados específicos
+                "/usuarios/{id}" => "APIUsuarioController@buscarPorId", 
+                "/api/usuarios" => "APIUsuarioController@getUsuarios",
+                "/api/usuarios/{pagina}" => "APIUsuarioController@getUsuarios",
 
-                // --- AGENDAMENTOS (Admin & API Pública) ---
-                "/agendamentos/disponibilidade/{id_profissional}/{data}" => "PublicAgendamentoController@buscarDisponibilidade",
+                // --- AGENDAMENTOS ---
                 "/agendamentos" => "AgendamentoController@index",
-                "/agendamentos/criar" => "AgendamentoController@viewCriarAgendamentos",
                 "/agendamentos/listar" => "AgendamentoController@viewListarAgendamentos",
-                "/agendamentos/editar/{id}" => "AgendamentoController@viewEditarAgendamentos",
-                "/agendamentos/excluir/{id}" => "AgendamentoController@viewExcluirAgendamentos",
-                "/api/cliente/meus-agendamentos" => "AgendamentoController@buscarAgendamentosPorUsuarioApi",
+                "/api/agendamentos" => "APIAgendamentoController@getAgendamentos",
                 "/agendamentos/detalhe-pagamento/{id}" => "PublicAgendamentoController@getDetalhesPagamento",
-                '/api/agendamentos/{pagina}' => 'APIAgendamentoController@getAgendamentos',
-                '/api/agendamentos' => 'APIAgendamentoController@getAgendamentos',
 
-                // --- AVALIAÇÕES (Admin & API Pública) ---
-                "/avaliacoes" => "AvaliacaoController@buscarPorProfissional", // API pública
-                "/avaliacoes/criar" => "AvaliacaoController@viewCriarAvaliacoes",
-                "/avaliacoes/listar" => "AvaliacaoController@viewListarAvaliacoes",
-                "/avaliacoes/editar/{id}" => "AvaliacaoController@viewEditarAvaliacoes",
-                "/avaliacoes/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
-                '/api/avaliacoes/{pagina}' => 'APIAvaliacaoController@getAvaliacoes',
-                '/api/avaliacoes' => 'APIAvaliacaoController@getAvaliacoes',
-
-                // --- PAGAMENTOS (Admin) ---
-                "/pagamentos/criar" => "PagamentoController@viewCriarPagamentos",
-                "/pagamentos/listar" => "PagamentoController@viewListarPagamentos",
-                "/pagamentos/editar/{id}" => "PagamentoController@viewEditarPagamentos",
-                "/pagamentos/excluir/{id}" => "PagamentoController@viewExcluirPagamentos",
-                '/api/pagamentos/{pagina}' => 'APIPagamentoController@getPagamentos',
-                '/api/pagamentos' => 'APIPagamentoController@getPagamentos',
-
-                // --- PROFISSIONAIS (Admin & API Pública) ---
-                "/profissionais" => "ProfissionalController@index",
-                "/profissionais/criar" => "ProfissionalController@viewCriarProfissionais",
-                "/profissionais/listar" => "ProfissionalController@viewListarProfissionais",
-                "/profissionais/editar/{id}" => "ProfissionalController@viewEditarProfissionais",
-                "/profissionais/excluir/{id}" => "ProfissionalController@viewExcluirProfissionais",
+                // --- PROFISSIONAIS ---
                 "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
-                "/profissionais/detalhe/{id}" => "PublicProfissionalController@detalhePublico",
-                "/carrossel/cards" => "PublicProfissionalController@getCarrosselCardsHtml",
-                "/profissional/meu-perfil" => "ProfissionalController@viewMeuPerfilProfissional",
-                "/profissionais/listar-publico" => "PublicProfissionalController@listarPublico",
-                '/api/profissionais/{pagina}' => 'APIProfissionalController@getProfissionais',
-                '/api/profissionais' => 'APIProfissionalController@getProfissionais',
+                "/api/profissionais" => "APIProfissionalController@getProfissionais",
 
-                // --- IMAGENS (Admin & API Pública) ---
-                "/imagens/listar" => "ImagemController@viewListarImagens",
-                "/imagens/criar" => "ImagemController@viewCriarImagem",
-                "/imagens/editar/{id}" => "ImagemController@viewEditarImagem",
-                "/imagens/excluir/{id}" => "ImagemController@viewExcluirImagem",
-                "/api/secoes/por-pagina/{id_pagina}" => "ImagemController@buscarSecoesPorPaginaApi",
+                // --- IMAGENS ---
                 "/api/imagens/quem-somos" => "ImagemController@listarQuemSomos",
                 "/api/imagens/servicos" => "ImagemController@listarServicos",
 
-                // --- GERAL (Admin) ---
+                // --- GERAL ---
                 "/logout" => "UsuarioController@logout",
                 "/dashboard" => "UsuarioController@dashboard",
                 "/meu-perfil" => "UsuarioController@viewMeuPerfil",
-                "/usuarios" => "UsuarioController@meuPerfilApi",
             ],
             
             "POST" => [
-                // --- USUARIOS ---
-                
-                "/usuario/salvar" => "UsuarioController@salvarUsuarios", // Usado pelo Admin e Registro público
+                // --- USUARIOS (Ajustado para bater com o log do Desktop) ---
+                "/api/usuarios/salvar" => "APIUsuarioController@salvarUsuario", // Corrigido p/ plural conforme log
+                "/usuario/salvar" => "UsuarioController@salvarUsuarios",   // Mantido para o Admin Web
                 "/usuario/atualizar/{id}" => "UsuarioController@atualizarUsuarios",
-                "/usuario/deletar/{id}" => "UsuarioController@deletarUsuarios",
-                "/api/cliente/atualizar-perfil" => "UsuarioController@atualizarMeuPerfil",
+                "/usuarios/excluir/{id}" => "APIUsuarioController@deletarUsuario",
+                
+                // Login
                 "/login" => "UsuarioController@login",
                 "/api/desktop/login" => "DesktopApiController@login",
+                
+                // Senha
                 "/recuperar-senha/solicitar" => "UsuarioController@solicitarRecuperacaoSenha",
                 "/recuperar-senha/processar" => "UsuarioController@processarRedefinicaoSenha",
-                '/api/usuarios/salvar' => 'APIUsuarioController@salvarUsuario',
 
                 // --- AGENDAMENTOS ---
-                // Esta é a rota que o seu formulário está chamando:
                 "/agendamentos/salvar" => "PublicAgendamentoController@salvarAgendamentos", 
-                "/agendamentos/atualizar/{id}" => "AgendamentoController@atualizarAgendamentos",
+                "/api/agendamentos/salvar" => "APIAgendamentoController@salvarAgendamento",
                 "/agendamentos/deletar/{id}" => "AgendamentoController@deletarAgendamentos",
-                '/api/agendamentos/salvar'   => 'APIAgendamentoController@salvarAgendamento',
 
                 // --- PAGAMENTOS ---
                 "/pagamentos/salvar" => "PagamentoController@salvarPagamentos",
-                "/pagamentos/atualizar/{id}" =>"PagamentoController@atualizarPagamento",
-                "/pagamentos/deletar/{id}" =>"PagamentoController@deletarPagamento",
-                "/agendamentos/confirmar-sinal/{id}" => "AgendamentoController@confirmarSinal", // Rota p/ pág. pagamento
-                '/api/pagamentos/salvar'   => 'APIPagamentoController@salvarPagamento',
+                "/api/pagamentos/salvar" => "APIPagamentoController@salvarPagamento",
 
-                // --- AVALIAÇÕES ---
-                "/avaliacoes/salvar" => "AvaliacaoController@salvarAvaliacoes",
-                "/avaliacoes/atualizar/{id}" => "AvaliacaoController@atualizarAvaliacoes",
-                "/avaliacoes/deletar/{id}" => "AvaliacaoController@deletarAvaliacoes",
-                "/api/cliente/avaliar" => "AvaliacaoController@salvarAvaliacaoCliente",
-                '/api/avaliacoes/salvar'   => 'APIAvaliacaoController@salvarAvaliacao',
-
-                // --- PROFISSIONAIS ---
-                "/profissionais/salvar" => "ProfissionalController@salvarProfissionais",
-                "/profissionais/atualizar/{id}" => "ProfissionalController@atualizarProfissionais",
-                "/profissionais/deletar/{id}" => "ProfissionalController@deletarProfissionais",
-                "/profissional/atualizar-meu-perfil" => "ProfissionalController@atualizarMeuPerfilProfissional",
-                '/api/profissionais/salvar'   => 'APIProfissionalController@salvarProfissional',
-
-                // --- IMAGENS ---
-                "/imagens/salvar" => "ImagemController@salvarImagem",
-                "/imagens/atualizar/{id}" => "ImagemController@atualizarImagem",
-                "/imagens/deletar/{id}" => "ImagemController@deletarImagem",
-                
                 // --- CONTATO ---
                 "/enviar-contato" => "ContatoController@processarFormulario",
-                '/api/contato/enviar' => 'APIContatoController@enviarMensagem',
+                "/api/contato/enviar" => "APIContatoController@enviarMensagem",
             ],
         ];
     }
