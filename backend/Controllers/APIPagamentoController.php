@@ -4,7 +4,8 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Pagamento;
 use App\Psico\Database\Database;
-use App\Psico\Core\APIAutenticador;
+use App\Psico\Core\Auth;
+use App\Psico\Core\Response;
 
 class APIPagamentoController {
     private $pagamentoModel;
@@ -15,52 +16,36 @@ class APIPagamentoController {
     }
 
     public function getPagamentos($pagina = 0) {
-        if (!APIAutenticador::validar()) {
-            APIAutenticador::enviarErroNaoAutorizado();
-        }
-
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
         $pagina = $pagina === 0 ? 1 : (int)$pagina;
 
         $dados = $this->pagamentoModel->paginacao($pagina, $registros_por_pagina);
 
-        header('Content-Type: application/json');
-        http_response_code(200);
-        echo json_encode(['status' => 'success', 'data' => $dados['data']], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        exit;
+        Response::success(['data' => $dados['data']]);
     }
 
     public function salvarPagamento() {
-        if (!APIAutenticador::validar()) {
-            APIAutenticador::enviarErroNaoAutorizado();
-        }
-
-        header('Content-Type: application/json');
         $input = json_decode(file_get_contents('php://input'), true);
 
         if (empty($input['id_agendamento']) || empty($input['tipo_pagamento'])) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Dados incompletos.']);
-            exit;
+            Response::error('Dados incompletos (id_agendamento e tipo_pagamento são obrigatórios).', 400);
         }
 
         try {
+            // Nota: O model inserirPagamento provavelmente espera int e string.
+            // Validações extras poderiam ser feitas aqui.
             $novoId = $this->pagamentoModel->inserirPagamento(
                 (int)$input['id_agendamento'],
                 $input['tipo_pagamento']
             );
 
             if ($novoId) {
-                http_response_code(201);
-                echo json_encode(['status' => 'success', 'id_pagamento' => $novoId]);
+                Response::success(['id_pagamento' => $novoId], 201);
             } else {
-                http_response_code(500);
-                echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar.']);
+                Response::error('Erro ao salvar pagamento.', 500);
             }
         } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            Response::error($e->getMessage(), 500);
         }
-        exit;
     }
 }

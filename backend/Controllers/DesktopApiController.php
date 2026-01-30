@@ -6,16 +6,25 @@ use App\Psico\Models\Agendamento;
 use App\Psico\Models\Pagamento;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Profissional;
+use App\Psico\Core\Response;
 
 class DesktopApiController {
     private $db;
 
-    public function __construct() {
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Headers: Content-Type");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        header("Content-Type: application/json; charset=UTF-8");
+    private function setCors() {
+        $allowedOrigin = $_ENV['CORS_ALLOWED_ORIGIN'] ?? '*';
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
+        if ($allowedOrigin === '*' || $origin === $allowedOrigin) {
+            header("Access-Control-Allow-Origin: " . ($allowedOrigin === '*' ? '*' : $origin));
+        }
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    }
+
+    public function __construct() {
+        $this->setCors();
+        // O Response helper já define o Content-Type, mas para OPTIONS é bom manter
         if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
             http_response_code(200);
             exit();
@@ -24,58 +33,47 @@ class DesktopApiController {
     }
 
     public function login() {
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+        $this->setCors();
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { http_response_code(200); exit(); }
 
-    // Se o Electron mandar uma pergunta de teste (OPTIONS), respondemos OK e paramos aqui.
-    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-        http_response_code(200);
-        exit();
-    }
-    // --- FIM DO BLOCO CORS ---
+        $input = $this->getInput();
 
-    $input = $this->getInput();
-
-    // Validação básica
-    if (empty($input['email']) || empty($input['senha'])) {
-        $this->erro("Email e senha são obrigatórios.");
-        return;
-    }
-
-    try {
-        $model = new Usuario($this->db);
-        // O método autenticarUsuario já verifica a hash da senha
-        $usuario = $model->autenticarUsuario($input['email'], $input['senha']);
-
-        if ($usuario) {
-            // Garante que a senha não seja enviada de volta
-            unset($usuario->senha_usuario);
-            
-            // Retorna sucesso e os dados do usuário
-            echo json_encode([
-                'success' => true, 
-                'usuario' => $usuario,
-                'token' => bin2hex(random_bytes(16)) 
-            ]);
-        } else {
-            // Retorna erro genérico
-            $this->erro("Email ou senha incorretos.");
+        if (empty($input['email']) || empty($input['senha'])) {
+            Response::error("Email e senha são obrigatórios."); // Usando Helper
+            return; // O helper dá exit, mas o return satisfaz a IDE
         }
-    } catch (\Exception $e) { 
-        $this->erro($e->getMessage()); // Dica: use getMessage() para pegar o texto do erro
+
+        try {
+            $model = new Usuario($this->db);
+            $usuario = $model->autenticarUsuario($input['email'], $input['senha']);
+
+            if ($usuario) {
+                unset($usuario->senha_usuario);
+                
+                // GERAÇÃO DO TOKEN JWT
+                // Supondo que $usuario->id_usuario e $usuario->tipo_usuario existam
+                $token = \App\Psico\Core\Auth::generate($usuario->id_usuario, $usuario->tipo_usuario);
+
+                Response::success([
+                    'usuario' => $usuario,
+                    'token' => $token
+                ]);
+            } else {
+                Response::error("Email ou senha incorretos.");
+            }
+        } catch (\Exception $e) { 
+            Response::error($e->getMessage(), 500);
+        }
     }
-}
 
     // --- USUÁRIOS ---
     public function listarUsuarios() {
         try {
             $model = new Usuario($this->db);
             $dados = $model->buscarTodosUsuarios();
-            // Remove senhas do retorno por segurança
             foreach($dados as $k => $v) unset($dados[$k]->senha_usuario);
-            echo json_encode(['success' => true, 'data' => $dados]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success(['data' => $dados]);
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     public function criarUsuario() {
@@ -83,7 +81,7 @@ class DesktopApiController {
         try {
             $model = new Usuario($this->db);
             if ($model->buscarUsuarioPorEmail($input['email_usuario'])) {
-                $this->erro('Email já cadastrado'); return;
+                Response::error('Email já cadastrado');
             }
             $model->inserirUsuario(
                 $input['nome_usuario'], $input['email_usuario'], 
@@ -91,8 +89,8 @@ class DesktopApiController {
                 $input['tipo_usuario'] ?? 'cliente', 
                 $input['cpf'] ?? ''
             );
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     public function editarUsuario($id) {
@@ -102,8 +100,7 @@ class DesktopApiController {
             $usuarioAtual = $model->buscarUsuarioPorId($id);
             
             if (!$usuarioAtual) {
-                $this->erro("Usuário não encontrado.");
-                return;
+                Response::error("Usuário não encontrado.", 404);
             }
             $novaSenha = !empty($input['senha_usuario']) ? $input['senha_usuario'] : null;
 
@@ -116,9 +113,9 @@ class DesktopApiController {
                 $input['cpf'] ?? $usuarioAtual->cpf_usuario,
                 $input['status_usuario'] ?? $usuarioAtual->status_usuario 
             );
-            echo json_encode(['success' => true]);
+            Response::success();
         } catch (\Exception $e) { 
-            $this->erro($e); 
+             Response::error($e->getMessage(), 500); 
         }
     }
 
@@ -126,63 +123,59 @@ class DesktopApiController {
         try {
             $model = new Usuario($this->db);
             $model->excluirUsuario($id);
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     // --- AGENDAMENTOS ---
     public function listarAgendamentos() {
         try {
             $model = new Agendamento($this->db);
-            echo json_encode(['success' => true, 'data' => $model->buscarAgendamentos()]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success(['data' => $model->buscarAgendamentos()]);
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     public function criarAgendamento() {
         $input = $this->getInput();
         try {
             $model = new Agendamento($this->db);
-            // Formato esperado: YYYY-MM-DD HH:MM:SS
             $model->inserirAgendamento(
                 $input['id_usuario'], 
                 $input['id_profissional'], 
                 $input['data_agendamento']
             );
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     public function excluirAgendamento($id) {
         try {
             $model = new Agendamento($this->db);
             $model->deletarAgendamento($id);
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     // --- PAGAMENTOS ---
     public function listarPagamentos() {
         try {
             $model = new Pagamento($this->db);
-            echo json_encode(['success' => true, 'data' => $model->buscarTodosPagamentos()]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success(['data' => $model->buscarTodosPagamentos()]);
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     public function excluirPagamento($id) {
         try {
             $model = new Pagamento($this->db);
             $model->deletarPagamento($id);
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { $this->erro($e); }
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
     // Auxiliares
     private function getInput() {
         return json_decode(file_get_contents('php://input'), true);
     }
-
-    private function erro($e) {
-        $msg = is_string($e) ? $e : $e->getMessage();
-        echo json_encode(['success' => false, 'error' => $msg]);
-    }
+    
+    // Método erro removido pois agora usamos Response::error
 }

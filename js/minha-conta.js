@@ -233,10 +233,25 @@ document.addEventListener('DOMContentLoaded', () => {
              return;
         }
 
-        // Gera o HTML da página usando os dados do usuário
+        // Função auxiliar para escapar HTML e prevenir XSS
+        const escapeHtml = (unsafe) => {
+            if (!unsafe) return '';
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        };
+
+        const nomeSeguro = escapeHtml(usuario.nome_usuario);
+        const emailSeguro = escapeHtml(usuario.email_usuario);
+        const cpfSeguro = escapeHtml(usuario.cpf);
+
+        // Gera o HTML da página usando os dados do usuário sanitizados
         container.innerHTML = `
             <div class="formulario-registro-container minha-conta-card">
-                <h3>Minha Conta - ${usuario.nome_usuario.split(' ')[0]}</h3>
+                <h3>Minha Conta - ${nomeSeguro.split(' ')[0]}</h3>
                 <p class="subtitulo-registro">Gerencie seu perfil e agendamentos.</p>
 
                 <div class="minha-conta-nav">
@@ -248,11 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div id="secao-perfil" class="secao-conteudo">
                     <form id="form-atualizar-perfil" action="/backend/api/cliente/atualizar-perfil" method="POST">
                         <label for="nome_usuario">Nome Completo</label>
-                        <input type="text" id="nome_usuario" name="nome_usuario" value="${usuario.nome_usuario || ''}" required>
+                        <input type="text" id="nome_usuario" name="nome_usuario" value="${nomeSeguro}" required>
                         <label for="email_usuario">E-mail</label>
-                        <input type="email" id="email_usuario" name="email_usuario" value="${usuario.email_usuario || ''}" required>
+                        <input type="email" id="email_usuario" name="email_usuario" value="${emailSeguro}" required>
                         <label for="cpf">CPF (Opcional)</label>
-                        <input type="text" id="cpf" name="cpf" value="${usuario.cpf || ''}">
+                        <input type="text" id="cpf" name="cpf" value="${cpfSeguro}">
                         <label for="senha_usuario">Nova Senha (Deixe em branco para não alterar)</label>
                         <input type="password" id="senha_usuario" name="senha_usuario" placeholder="Mínimo 6 caracteres">
                         <button type="submit" id="btn-atualizar-perfil">Atualizar Perfil</button>
