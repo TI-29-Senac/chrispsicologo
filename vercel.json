@@ -3,6 +3,14 @@
         {
             "src": "backend/*.php",
             "use": "vercel-php@0.7.1"
+        },
+        {
+            "src": "*.{html,ico,txt}",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "{css,js,img}/**",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
