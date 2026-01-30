@@ -413,8 +413,9 @@ header {
   position: relative;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .hero-wrapper {
@@ -428,6 +429,8 @@ header {
   padding: 0 2rem;
   z-index: 10;
   box-sizing: border-box;
+  flex-grow: 1;
+  /* Allow content to grow and push banner down */
 }
 
 .conteudo-hero {
@@ -614,8 +617,8 @@ header {
 
 /* #region Barra Banner */
 .barra-banner {
-  position: absolute;
-  bottom: 0;
+  /* Removed absolute position to sit in flex flow */
+  /* position: absolute; bottom: 0; */
   width: 100%;
   height: 75px;
   background-color: #5D6D68;
