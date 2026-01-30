@@ -4,7 +4,8 @@ namespace App\Psico\Controllers;
 
 use App\Psico\Models\Usuario;
 use App\Psico\Database\Database;
-use App\Psico\Core\APIAutenticador;
+use App\Psico\Core\Auth;
+use App\Psico\Core\Response;
 
 class APIUsuarioController {
     private $usuarioModel;
@@ -15,11 +16,11 @@ class APIUsuarioController {
     }
 
     public function getUsuarios($pagina = 0){
-        // Validação Centralizada em uma linha
-        if (!APIAutenticador::validar()) {
-           APIAutenticador::enviarErroNaoAutorizado();
-        }
-
+        // Auth::check() já é chamado pelo Middleware na Rotas.php, 
+        // mas pode ser chamado aqui também para garantir o payload do usuário se necessário.
+        // Como o middleware já barra, aqui assumimos autenticado ou re-verificamos.
+        // Se quisermos o ID do usuário: $payload = Auth::check();
+        
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
         $pagina = $pagina === 0 ? 1 : (int)$pagina;
 
@@ -29,50 +30,66 @@ class APIUsuarioController {
             foreach($resultado['data'] as &$usuario){
                 unset($usuario['senha_usuario']);
             }
-            unset($usuario);
+            unset($usuario); // Quebra referência
         }
 
-        header('Content-Type: application/json');
-        http_response_code(200);
-        echo json_encode([
-            'status' => 'success',
-            'data' => $resultado['data']
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        exit;
+        Response::success($resultado['data']);
+    }
+
+    public function buscarPorId($id) {
+        $usuario = $this->usuarioModel->buscarUsuarioPorId((int)$id);
+        if ($usuario) {
+            unset($usuario->senha_usuario);
+            Response::success($usuario);
+        } else {
+            Response::error('Usuário não encontrado.', 404);
+        }
     }
 
     public function salvarUsuario(){
-    if (!APIAutenticador::validar()) {
-        APIAutenticador::enviarErroNaoAutorizado();
-    }
+        // Nota: Se esta rota for pública para registro, remova a proteção no Rotas.php ou aqui.
+        // Assumindo criação via Admin/Auth por enquanto.
+        
+        $input = json_decode(file_get_contents('php://input'), true);
 
-    header('Content-Type: application/json');
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
-        http_response_code(400);
-        echo json_encode(['status' => 'error', 'message' => 'Parâmetros obrigatórios faltando no JSON.']);
-        exit;
-    }
-
-    try {
-        $novoId = $this->usuarioModel->inserirUsuario(
-            $input["nome_usuario"],
-            $input["email_usuario"],
-            $input["senha_usuario"],
-            $input["tipo_usuario"] ?? 'cliente',
-            $input["cpf"] ?? ''
-        );
-
-        if ($novoId) {
-            echo json_encode(['status' => 'success', 'message' => 'Usuário criado.', 'id_usuario' => $novoId]);
-        } else {
-            throw new \Exception("Falha na inserção do banco de dados.");
+        if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
+            Response::error('Parâmetros obrigatórios faltando (nome, email, senha).', 400);
         }
-    } catch (\Exception $e) {
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+
+        try {
+            $novoId = $this->usuarioModel->inserirUsuario(
+                $input["nome_usuario"],
+                $input["email_usuario"],
+                $input["senha_usuario"],
+                $input["tipo_usuario"] ?? 'cliente',
+                $input["cpf"] ?? ''
+            );
+
+            if ($novoId) {
+                Response::success(['message' => 'Usuário criado.', 'id_usuario' => $novoId], 201);
+            } else {
+                Response::error("Falha na inserção do banco de dados.", 500);
+            }
+        } catch (\Exception $e) {
+            // Verifica duplicidade (código 23000 usualmente)
+            if (strpos($e->getMessage(), 'Duplicate') !== false || $e->getCode() == 23000) {
+                 Response::error('Email já cadastrado.', 409);
+            }
+            Response::error($e->getMessage(), 500);
+        }
     }
-    exit;
-}
+
+    public function deletarUsuario($id){
+        // Exemplo de verificação de permissão: Apenas admin
+        $payload = Auth::check();
+        if ($payload->role !== 'admin') {
+            Response::error('Acesso negado. Apenas administradores.', 403);
+        }
+
+        if ($this->usuarioModel->excluirUsuario((int)$id)) {
+            Response::success(['message' => 'Usuário excluído com sucesso.']);
+        } else {
+            Response::error('Erro ao excluir usuário ou usuário não encontrado.', 500);
+        }
+    }
 }

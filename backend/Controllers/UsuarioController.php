@@ -411,60 +411,34 @@ class UsuarioController extends AdminController {
       }
     }
 
-    // Dentro da classe UsuarioController
     public function meuPerfilApi() {
-        error_reporting(E_ALL); 
-        ini_set('display_errors', 1); 
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
-        ob_start();
-        header('Content-Type: application/json'); 
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+
         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-            http_response_code(401);
-            ob_end_clean(); 
-            echo json_encode(['success' => false, 'message' => 'Acesso não autorizado.']);
-            exit; 
+            \App\Psico\Core\Response::error('Acesso não autorizado.', 401);
+            return;
         }
+
         $id_usuario = $_SESSION['usuario_id'];
         $usuario = null; 
-        $errorMessage = null; 
         try {
             $usuario = $this->usuario->buscarUsuarioPorId((int)$id_usuario);
         } catch (\PDOException $e) {
-            error_log("PDO Error in meuPerfilApi: " . $e->getMessage()); // Loga o erro PDO
-            $errorMessage = "Erro interno ao buscar dados do perfil [DB].";
+            error_log("PDO Error in meuPerfilApi: " . $e->getMessage()); 
+            \App\Psico\Core\Response::error("Erro interno ao buscar dados do perfil [DB].", 500);
+            return;
         } catch (\Exception $e) {
-            error_log("General Error in meuPerfilApi: " . $e->getMessage()); // Loga outros erros
-            $errorMessage = "Erro interno ao buscar dados do perfil.";
-        }
-
-        // Limpa o buffer ANTES de verificar o resultado e enviar o JSON final
-        $potentialErrorsOutput = ob_get_clean();
-        if (!empty($potentialErrorsOutput)) {
-             // Se algo foi impresso (um erro PHP, por exemplo), loga e retorna erro JSON
-             error_log("Output inesperado capturado em meuPerfilApi: " . $potentialErrorsOutput);
-             http_response_code(500);
-             echo json_encode(['success' => false, 'message' => 'Erro interno do servidor [Output].', 'details' => $potentialErrorsOutput]);
-             exit;
-        }
-
-        // Continua com a lógica original se não houve output inesperado
-        if ($errorMessage) {
-             http_response_code(500);
-             echo json_encode(['success' => false, 'message' => $errorMessage]);
-             exit;
+            error_log("General Error in meuPerfilApi: " . $e->getMessage()); 
+            \App\Psico\Core\Response::error("Erro interno ao buscar dados do perfil.", 500);
+            return;
         }
 
         if ($usuario) {
             unset($usuario->senha_usuario);
-            http_response_code(200);
-            echo json_encode(['success' => true, 'data' => $usuario]);
+            \App\Psico\Core\Response::success(['data' => $usuario]); 
         } else {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'message' => 'Utilizador não encontrado.']);
+            \App\Psico\Core\Response::error('Utilizador não encontrado.', 404);
         }
-        exit; // Garante que nada mais é executado após o JSON
     }
 
     public function atualizarMeuPerfil() {
