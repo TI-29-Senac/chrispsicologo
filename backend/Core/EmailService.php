@@ -38,7 +38,7 @@ class EmailService {
         }
     }
 
-    public function enviarEmail(string $paraEmail, string $paraNome = '', string $assunto, string $corpoHtml, string $corpoTexto = ''): bool {
+    public function enviarEmail(string $paraEmail, string $paraNome, string $assunto, string $corpoHtml, string $corpoTexto = ''): bool {
         try {
             $this->mailer->addAddress($paraEmail, $paraNome);
             $this->mailer->isHTML(true);
