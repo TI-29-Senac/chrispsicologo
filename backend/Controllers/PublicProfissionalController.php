@@ -62,7 +62,7 @@ class PublicProfissionalController {
         $htmlCards = '';
         // $profissionaisParaCarrossel = []; // <-- REMOVIDO
         
-        // <<< INÍCIO DA ALTERAÇÃO >>>
+    // <<< INÍCIO DA ALTERAÇÃO >>>
         // Busca todos os profissionais marcados como "público = 1" e "status = 'ativo'"
         // O método listarProfissionaisPublicos() já faz isso e ordena por 'ordem_exibicao'.
         try {
@@ -111,5 +111,32 @@ class PublicProfissionalController {
         header('Content-Type: text/html; charset=utf-8');
         echo $htmlCompleto;
         exit;
+    }
+
+    /**
+     * Busca avaliações de um profissional (Público)
+     */
+    public function buscarAvaliacoes() {
+        $id = $_GET['id'] ?? null;
+        
+        header('Content-Type: application/json');
+
+        if (!$id || !is_numeric($id)) {
+            http_response_code(400);
+            echo json_encode(["error" => "ID do profissional inválido ou não fornecido."]);
+            return;
+        }
+
+        // Instancia o model aqui ou no construtor
+        $avaliacaoModel = new \App\Psico\Models\Avaliacao($this->db); 
+
+        try {
+            $avaliacoes = $avaliacaoModel->buscarAvaliacoesPorProfissional((int)$id);
+            http_response_code(200);
+            echo json_encode($avaliacoes);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro interno ao buscar avaliações.']);
+        }
     }
 }

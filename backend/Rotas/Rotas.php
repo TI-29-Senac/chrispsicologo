@@ -56,11 +56,13 @@ class Rotas {
         $router->get('/agendamentos', 'AgendamentoController@index');
         $router->get('/agendamentos/listar', 'AgendamentoController@viewListarAgendamentos');
         $router->get('/api/agendamentos', 'APIAgendamentoController@getAgendamentos');
+        $router->get('/agendamentos/disponibilidade/{id}/{data}', 'PublicAgendamentoController@buscarDisponibilidade');
         $router->get('/agendamentos/detalhe-pagamento/{id}', 'PublicAgendamentoController@getDetalhesPagamento');
 
         // PROFISSIONAIS
         $router->get('/profissionais/listar-publico', 'PublicProfissionalController@listarPublico');
         $router->get('/profissionais/detalhe/{id}', 'PublicProfissionalController@detalhePublico');
+        $router->get('/avaliacoes', 'PublicProfissionalController@buscarAvaliacoes');
         $router->get('/api/profissionais', 'APIProfissionalController@getProfissionais');
 
         // IMAGENS
