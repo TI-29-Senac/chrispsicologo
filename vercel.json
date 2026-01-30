@@ -1,0 +1,17 @@
+{
+    "functions": {
+        "backend/*.php": {
+            "runtime": "vercel-php@0.6.0"
+        }
+    },
+    "routes": [
+        {
+            "src": "/backend/test_db_connection.php",
+            "dest": "/backend/test_db_connection.php"
+        },
+        {
+            "src": "/backend/(.*)",
+            "dest": "/backend/index.php"
+        }
+    ]
+}
