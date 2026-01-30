@@ -45,60 +45,59 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.style.color = 'black';
 
             try {
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email: email, senha: senha })
-                    });
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
 
-                    const result = await response.json();
+                const result = await response.json();
 
-                    // Verifica response.ok E result.success (ou se existe token na resposta direta do Response::success)
-                    if (response.ok && (result.success || result.data?.token)) {
-                        statusMessage.textContent = result.message || 'Login bem-sucedido! Redirecionando...';
-                        statusMessage.style.color = 'green';
+                // Verifica response.ok E result.success (ou se existe token na resposta direta do Response::success)
+                if (response.ok && (result.success || result.data?.token)) {
+                    statusMessage.textContent = result.message || 'Login bem-sucedido! Redirecionando...';
+                    statusMessage.style.color = 'green';
 
-                        // Armazena Token e Nome
-                        const token = result.data?.token || result.token; // Ajuste conforme payload do DesktopApiController
-                        const usuario = result.data?.usuario || result.usuario;
+                    // Armazena Token e Nome
+                    const token = result.data?.token || result.token; // Ajuste conforme payload do DesktopApiController
+                    const usuario = result.data?.usuario || result.usuario;
 
-                        if (token) {
-                            localStorage.setItem('auth_token', token);
-                        }
-
-                        if (usuario && usuario.nome_usuario) {
-                            sessionStorage.setItem('welcomeUserName', usuario.nome_usuario);
-                        }
-
-                        // --- LÓGICA DE REDIRECIONAMENTO ATUALIZADA ---
-                        setTimeout(() => {
-                            // Decide o redirecionamento com base no userType recebido
-                            const userType = usuario ? usuario.tipo_usuario : (result.userType || 'cliente');
-
-                            if (userType === 'cliente') {
-                                window.location.href = '/minha-conta.html'; // Redireciona para o painel do cliente
-                            } else {
-                                window.location.href = '/backend/dashboard'; // Redireciona outros para o dashboard
-                            }
-                        }, 1500); // Espera 1.5 segundos
-
-                    } else {
-                        // Se response.ok for false ou result.success for false
-                        statusMessage.textContent = result.message || 'Erro de autenticação. Tente novamente.';
-                        statusMessage.style.color = 'red';
+                    if (token) {
+                        localStorage.setItem('auth_token', token);
                     }
-                } catch (error) {
-                    console.error('Erro de rede/servidor:', error);
-                    statusMessage.textContent = 'Erro ao conectar com o servidor.';
+
+                    if (usuario && usuario.nome_usuario) {
+                        sessionStorage.setItem('welcomeUserName', usuario.nome_usuario);
+                    }
+
+                    // --- LÓGICA DE REDIRECIONAMENTO ATUALIZADA ---
+                    setTimeout(() => {
+                        // Decide o redirecionamento com base no userType recebido
+                        const userType = usuario ? usuario.tipo_usuario : (result.userType || 'cliente');
+
+                        if (userType === 'cliente') {
+                            window.location.href = '/minha-conta.html'; // Redireciona para o painel do cliente
+                        } else {
+                            window.location.href = '/backend/dashboard'; // Redireciona outros para o dashboard
+                        }
+                    }, 1500); // Espera 1.5 segundos
+
+                } else {
+                    // Se response.ok for false ou result.success for false
+                    statusMessage.textContent = result.message || 'Erro de autenticação. Tente novamente.';
                     statusMessage.style.color = 'red';
-                } finally {
-                    submitButton.textContent = 'Entrar';
-                    submitButton.disabled = false;
                 }
-            });
+            } catch (error) {
+                console.error('Erro de rede/servidor:', error);
+                statusMessage.textContent = 'Erro ao conectar com o servidor.';
+                statusMessage.style.color = 'red';
+            } finally {
+                submitButton.textContent = 'Entrar';
+                submitButton.disabled = false;
+            }
+        });
     }
 
     // ... (redirecionarRegistro, redirecionarEsqueciSenha functions remain the same) ...
