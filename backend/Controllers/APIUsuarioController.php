@@ -99,7 +99,7 @@ class APIUsuarioController {
         $usuario = $this->usuarioModel->buscarUsuarioPorId($id);
         if ($usuario) {
             unset($usuario->senha_usuario);
-            Response::success($usuario);
+            Response::success(['data' => $usuario]);
         } else {
             Response::error('Usuário não encontrado', 404);
         }

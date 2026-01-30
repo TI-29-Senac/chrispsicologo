@@ -355,13 +355,22 @@ class UsuarioController extends AdminController {
                 $_SESSION['logged_in'] = true;
 
                 
+                // GERAÇÃO DO TOKEN JWT HÍBRIDO
+                $token = \App\Psico\Core\Auth::generate($usuarioAutenticado->id_usuario, $usuarioAutenticado->tipo_usuario);
+
                 http_response_code(200);
                 echo json_encode([
                     'success' => true,
                     'message' => 'Login bem-sucedido!',
                     'userType' => $usuarioAutenticado->tipo_usuario, 
-                    'userName' => $usuarioAutenticado->nome_usuario   
-                    
+                    'userName' => $usuarioAutenticado->nome_usuario,
+                    'token' => $token, // Token para o frontend (API)
+                    'usuario' => [ // Objeto usuário para o frontend
+                        'id_usuario' => $usuarioAutenticado->id_usuario,
+                        'nome_usuario' => $usuarioAutenticado->nome_usuario,
+                        'email_usuario' => $usuarioAutenticado->email_usuario,
+                        'tipo_usuario' => $usuarioAutenticado->tipo_usuario
+                    ]
                 ]);
             } else {
                 

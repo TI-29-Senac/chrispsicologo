@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="login-modal-content">
                 <span class="modal-close" onclick="fecharLoginModal()">&times;</span>
                 <h2>Acesso ao Painel</h2>
-                <form id="login-form" action="/backend/api/desktop/login" method="POST">
+                <form id="login-form" action="/backend/login" method="POST">
                     <label for="login-email">Email:</label>
                     <input type="email" id="login-email" name="email" required autocomplete="email">
 
