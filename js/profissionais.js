@@ -41,20 +41,51 @@ document.addEventListener('DOMContentLoaded', () => {
                                <img src="${fotoFinal}" alt="${item.nome_usuario}" style="width:100%; height:100%; object-fit: cover; border-radius: inherit;">
                             </div>
                             <h3>${item.nome_usuario}</h3>
-                            <div class="avaliacoes"><h4>Psicólogo(a)</h4><p>${item.especialidade || 'Clínica Geral'}</p></div>
+                            <div class="avaliacoes">
+                                <h4>Psicólogo(a)</h4>
+                                <p class="especialidade-rotativa" data-especialidades='${JSON.stringify((item.especialidade || 'Clínica Geral').split(',').map(s => s.trim()))}'>
+                                    ${(item.especialidade || 'Clínica Geral').split(',')[0].trim()}
+                                </p>
+                            </div>
                         </a>`;
                     cardsContainerCarrossel.appendChild(card);
                 });
+
 
                 if (typeof window.inicializarCarrosselHome === 'function') {
                     window.inicializarCarrosselHome();
                 }
 
+                // Inicia a rotação das especialidades
+                iniciarRotacaoEspecialidades();
 
             })
             .catch(error => console.error('Erro ao carregar profissionais para o carrossel:', error));
     }
 });
+
+function iniciarRotacaoEspecialidades() {
+    setInterval(() => {
+        document.querySelectorAll('.especialidade-rotativa').forEach(el => {
+            const specs = JSON.parse(el.getAttribute('data-especialidades') || '[]');
+            if (specs.length <= 1) return;
+
+            // Fade Out
+            el.style.opacity = '0';
+
+            setTimeout(() => {
+                let idx = parseInt(el.dataset.index || 0);
+                idx = (idx + 1) % specs.length;
+                el.dataset.index = idx;
+                el.textContent = specs[idx];
+
+                // Fade In
+                el.style.opacity = '1';
+            }, 500); // Tempo igual ao transition no CSS
+        });
+    }, 5000); // Troca a cada 5 segundos
+}
+
 // Fim da Lógica do Carrossel (index.html)
 
 
