@@ -9,31 +9,31 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => {
                 if (!response.ok) throw new Error('A resposta da rede não foi OK ao carregar para carrossel');
                 return response.json();
-             })
+            })
             .then(profissionais => {
                 if (!profissionais || !Array.isArray(profissionais)) {
-                     console.warn('Dados dos profissionais para carrossel inválidos ou vazios.');
-                     return; 
-                 }
+                    console.warn('Dados dos profissionais para carrossel inválidos ou vazios.');
+                    return;
+                }
 
-                if (profissionais.length === 0) return; 
+                if (profissionais.length === 0) return;
 
                 // --- Lógica para Duplicação (para carrossel infinito) ---
                 const profissionaisParaCarrossel = [];
-                const repeticoes = Math.max(3, Math.ceil(10 / profissionais.length)); 
+                const repeticoes = Math.max(3, Math.ceil(10 / profissionais.length));
                 for (let i = 0; i < repeticoes; i++) {
                     profissionais.forEach(item => profissionaisParaCarrossel.push(item));
                 }
                 // --- Fim da Lógica para Duplicação ---
 
-
+                cardsContainerCarrossel.innerHTML = '';
                 profissionaisParaCarrossel.forEach(item => {
                     const card = document.createElement("div");
-                    card.className = "card"; 
+                    card.className = "card";
 
                     const nomeBase = item.nome_usuario.split(' ')[0].toLowerCase();
-                    const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`; 
-                    const fotoFinal = item.img_profissional ? `/${item.img_profissional}` : fotoUrlPadrao; 
+                    const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`;
+                    const fotoFinal = item.img_profissional ? `/${item.img_profissional}` : fotoUrlPadrao;
 
                     card.innerHTML = `
                         <a href="profissionais.html" class="card-link">
@@ -46,12 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     cardsContainerCarrossel.appendChild(card);
                 });
 
-                 if (typeof destacarCardCentral === 'function') {
-                    const cardWidth = 300 + 60; 
-                    const totalOriginalCards = profissionais.length;
-                    cardsContainerCarrossel.scrollLeft = totalOriginalCards * cardWidth;
-                    destacarCardCentral();
-                 }
+                if (typeof window.inicializarCarrosselHome === 'function') {
+                    window.inicializarCarrosselHome();
+                }
 
 
             })
@@ -76,9 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.json();
             })
             .then(profissionais => {
-                 if (!profissionais || !Array.isArray(profissionais)) {
-                     throw new Error('Dados dos profissionais inválidos ou vazios.');
-                 }
+                if (!profissionais || !Array.isArray(profissionais)) {
+                    throw new Error('Dados dos profissionais inválidos ou vazios.');
+                }
 
                 if (profissionais.length === 0) {
                     containerProfissionais.innerHTML = '<p style="text-align: center; font-size: 1.2rem;">Nenhum profissional encontrado no momento.</p>';
@@ -87,15 +84,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const profissionaisMapeado = profissionais.map(prof => {
                     const nomeBase = prof.nome_usuario.split(' ')[0].toLowerCase();
-                    const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`; 
-                    const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao; 
-                    
+                    const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`;
+                    const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao;
+
                     // --- (INÍCIO) CORREÇÃO APLICADA AQUI ---
                     let tiposDeAtendimento = null;
                     if (prof.tipos_atendimento) { // Verifica se não é nulo
                         try {
                             // Converte a string JSON (ex: "[{...}]") em um array de objetos
-                            tiposDeAtendimento = JSON.parse(prof.tipos_atendimento); 
+                            tiposDeAtendimento = JSON.parse(prof.tipos_atendimento);
                         } catch (e) {
                             console.error("Erro ao parsear tipos_atendimento:", e);
                         }
@@ -135,16 +132,16 @@ document.addEventListener("DOMContentLoaded", () => {
 function renderizarCardsProfissionais(profissionais) {
     const container = document.getElementById("container-profissionais");
     if (!container) return;
-    container.innerHTML = ''; 
+    container.innerHTML = '';
 
     profissionais.forEach((prof, index) => {
         const card = document.createElement("div");
-        card.classList.add("profissional"); 
+        card.classList.add("profissional");
 
-        const maxChars = 130; 
+        const maxChars = 130;
         let sobreResumido = prof.sobre || '';
         if (sobreResumido.length > maxChars) {
-            sobreResumido = sobreResumido.substring(0, maxChars).trim() + '...'; 
+            sobreResumido = sobreResumido.substring(0, maxChars).trim() + '...';
         }
 
         card.innerHTML = `
@@ -186,20 +183,20 @@ async function fetchAndRenderProfStats(profissionais) {
     for (const prof of profissionais) {
         const id_db = prof.id_db;
         const cardElement = document.querySelector(`.profissional .card-prof [data-id-db="${id_db}"]`);
-        if (!cardElement) continue; 
+        if (!cardElement) continue;
 
         const totalAvaliacoesEl = cardElement.querySelector('.total-avaliacoes');
-        const notaMediaEl = document.getElementById(`nota-media-prof-${id_db}`); 
-        const estrelasEl = document.getElementById(`estrelas-prof-${id_db}`); 
+        const notaMediaEl = document.getElementById(`nota-media-prof-${id_db}`);
+        const estrelasEl = document.getElementById(`estrelas-prof-${id_db}`);
 
-        if (!totalAvaliacoesEl || !notaMediaEl || !estrelasEl) continue; 
+        if (!totalAvaliacoesEl || !notaMediaEl || !estrelasEl) continue;
 
         try {
             const response = await fetch(`/backend/avaliacoes?id=${id_db}`);
             if (!response.ok) throw new Error(`Falha ao buscar avaliações para prof ${id_db}`);
 
             const comentarios = await response.json();
-             prof.avaliacoes = comentarios || [];
+            prof.avaliacoes = comentarios || [];
 
             if (!comentarios || comentarios.length === 0) {
                 totalAvaliacoesEl.textContent = '0 Avaliações';
@@ -211,16 +208,16 @@ async function fetchAndRenderProfStats(profissionais) {
             const total = comentarios.length;
             const soma_notas = comentarios.reduce((acc, curr) => acc + parseFloat(curr.nota_avaliacao || 0), 0);
             const media = total > 0 ? soma_notas / total : 0;
-            const media_arredondada = Math.round(media); 
+            const media_arredondada = Math.round(media);
 
             totalAvaliacoesEl.textContent = `${total} ${total === 1 ? 'Avaliação' : 'Avaliações'}`;
-            notaMediaEl.textContent = media.toFixed(1); 
+            notaMediaEl.textContent = media.toFixed(1);
             estrelasEl.innerHTML = `${"★".repeat(media_arredondada)}${"☆".repeat(5 - media_arredondada)}`;
         } catch (error) {
             console.error(`Erro ao buscar stats para prof ${id_db}:`, error);
             if (totalAvaliacoesEl) totalAvaliacoesEl.textContent = 'Erro ao carregar';
-             if (notaMediaEl) notaMediaEl.textContent = 'N/A';
-             if (estrelasEl) estrelasEl.innerHTML = "☆☆☆☆☆";
+            if (notaMediaEl) notaMediaEl.textContent = 'N/A';
+            if (estrelasEl) estrelasEl.innerHTML = "☆☆☆☆☆";
         }
     }
 }
@@ -228,24 +225,24 @@ async function fetchAndRenderProfStats(profissionais) {
 // Função para adicionar listeners aos botões/áreas que abrem o modal
 function adicionarListenersModal(profissionais) {
     const modal = document.getElementById("modal-avaliacoes");
-    if (!modal) return; 
+    if (!modal) return;
 
     document.querySelectorAll(".avaliacoes-prof").forEach(el => {
         el.addEventListener("click", () => {
-            const index = parseInt(el.dataset.index, 10); 
+            const index = parseInt(el.dataset.index, 10);
             if (!isNaN(index) && profissionais[index]) {
                 const profData = profissionais[index];
-                renderizarModal(profData.avaliacoes || [], profData.nome); 
-                modal.style.display = "flex"; 
+                renderizarModal(profData.avaliacoes || [], profData.nome);
+                modal.style.display = "flex";
             } else {
-                 console.error("Índice de profissional inválido ou não encontrado:", el.dataset.index);
+                console.error("Índice de profissional inválido ou não encontrado:", el.dataset.index);
             }
         });
     });
 
     modal.addEventListener("click", e => {
         if (e.target === modal || e.target.classList.contains('fechar-modal') || e.target.closest('.fechar-modal')) {
-            modal.style.display = "none"; 
+            modal.style.display = "none";
         }
     });
 }
@@ -260,7 +257,7 @@ function renderizarModal(comentarios, nomeProfissional) {
     const media = total > 0 ? (soma_notas / total).toFixed(1) : "0.0";
 
     const modalConteudo = modal.querySelector('.modal-conteudo');
-    if (!modalConteudo) return; 
+    if (!modalConteudo) return;
 
     modalConteudo.innerHTML = `
       <span class="fechar-modal" id="fechar-modal-interno">&times;</span>
@@ -271,15 +268,15 @@ function renderizarModal(comentarios, nomeProfissional) {
 
     const barrasContainer = modalConteudo.querySelector("#barras-container-api");
     if (barrasContainer) {
-        const contagem = {1:0, 2:0, 3:0, 4:0, 5:0}; 
+        const contagem = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
         comentarios.forEach(c => {
             const n = Math.round(parseFloat(c.nota_avaliacao || 0));
             if (n >= 1 && n <= 5) contagem[n]++;
         });
 
-        for (let nota = 5; nota >= 1; nota--) { 
+        for (let nota = 5; nota >= 1; nota--) {
             const linha = document.createElement("div");
-            linha.classList.add("linha-nota"); 
+            linha.classList.add("linha-nota");
             linha.innerHTML = `
                 <span class="numero-1">${nota} ★</span>
                 <div class="barra-1"><div class="barra-2" style="width: ${total > 0 ? (contagem[nota] / total) * 100 : 0}%;"></div></div>
@@ -296,7 +293,7 @@ function renderizarModal(comentarios, nomeProfissional) {
         } else {
             comentarios.forEach(c => {
                 const comentarioEl = document.createElement("div");
-                comentarioEl.className = "comentario"; 
+                comentarioEl.className = "comentario";
                 const notaArredondada = Math.round(parseFloat(c.nota_avaliacao || 0));
                 comentarioEl.innerHTML = `
                     <div class="comentario-estrelas">${"★".repeat(notaArredondada)}${"☆".repeat(5 - notaArredondada)}</div>
