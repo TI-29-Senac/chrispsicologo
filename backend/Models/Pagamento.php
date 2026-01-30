@@ -141,6 +141,29 @@ class Pagamento {
         return $stmt->execute();
     }
 
+    public function buscarPagamentosPorCliente(int $idCliente): array {
+        $sql = "
+            SELECT 
+                p.id_pagamento, 
+                p.criado_em as data_pagamento, 
+                prof.valor_consulta, 
+                fp.nome_forma_pagamento as tipo_pagamento,
+                u_prof.nome_usuario as nome_profissional, 
+                a.data_agendamento
+            FROM {$this->table} p
+            JOIN agendamento a ON p.id_agendamento = a.id_agendamento
+            JOIN profissional prof ON a.id_profissional = prof.id_profissional
+            JOIN usuario u_prof ON prof.id_usuario = u_prof.id_usuario
+            JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento
+            WHERE a.id_usuario = :id_cliente
+            ORDER BY p.criado_em DESC
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_cliente', $idCliente, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getFaturamentoPorMes() {
 
         $sql = "

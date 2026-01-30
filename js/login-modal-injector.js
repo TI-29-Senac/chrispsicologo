@@ -1,11 +1,11 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     // Definindo a estrutura HTML do modal como uma string literal
     const modalHTML = `
         <div id="login-modal" class="login-modal-overlay">
             <div class="login-modal-content">
                 <span class="modal-close" onclick="fecharLoginModal()">&times;</span>
                 <h2>Acesso ao Painel</h2>
-                <form id="login-form" action="/backend/login" method="POST">
+                <form id="login-form" action="/backend/api/desktop/login" method="POST">
                     <label for="login-email">Email:</label>
                     <input type="email" id="login-email" name="email" required autocomplete="email">
 

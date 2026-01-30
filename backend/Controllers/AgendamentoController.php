@@ -158,26 +158,16 @@ class AgendamentoController extends AuthenticatedController {
     public function buscarMeusAgendamentosApi() {
         header('Content-Type: application/json');
         
-        // 1. Verificar se há cliente logado na sessão
-        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSION['usuario_tipo'] !== 'cliente') {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Acesso não autorizado. Faça login como cliente.']);
-            return;
-        }
-
-        $id_usuario = $_SESSION['usuario_id']; 
-
         try {
-            // 2. Chamar um novo método no Model Agendamento (ver próxima seção)
+            $payload = \App\Psico\Core\Auth::check(); // Verifica token JWT
+            $id_usuario = $payload->sub;
+
             $agendamentos = $this->agendamento->buscarAgendamentosPorUsuario((int)$id_usuario);
             
-            http_response_code(200);
-            echo json_encode(['success' => true, 'agendamentos' => $agendamentos]);
+            \App\Psico\Core\Response::success(['agendamentos' => $agendamentos]);
 
         } catch (\Exception $e) {
-            error_log("Erro API buscarMeusAgendamentosApi: " . $e->getMessage()); 
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Erro interno ao buscar agendamentos.']);
+            \App\Psico\Core\Response::error($e->getMessage(), 401); 
         }
     }
 

@@ -2071,6 +2071,11 @@ header {
     font-size: 0.95rem;
   }
 
+  .card-valor {
+    min-height: auto;
+    height: auto;
+  }
+
   /* Esconder plantas/fichas laterais */
   .valores .folhas-lado {
     display: none;
@@ -2146,7 +2151,8 @@ header {
   margin-top: 0.5rem;
   padding-top: 0;
   font-family: 'questrial' sans-serif;
-  justify-content: space-between;
+  /* justify-content: space-between;  REMOVIDO PARA CORRIGIR MOBILE */
+  gap: 1rem;
 }
 
 .bloco-valor {
@@ -5043,8 +5049,12 @@ body::-webkit-scrollbar-thumb:hover {
     grid-template-columns: 1fr;
     /* Empilha as colunas */
     gap: 20px;
-    width: 95%;
-    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
 
   .profissional-info-coluna {
@@ -5097,6 +5107,10 @@ body::-webkit-scrollbar-thumb:hover {
     text-align: center;
     /* Centraliza texto da bio */
     font-size: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    white-space: normal;
   }
 
   .profissional-bio-coluna .avaliacoes-detalhe {
@@ -5195,7 +5209,8 @@ body::-webkit-scrollbar-thumb:hover {
   .valor-sinal,
   .btn-pagamento {
     font-size: 0.95rem;
-    /* Reduz fontes do formulário */
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
@@ -5287,12 +5302,51 @@ body::-webkit-scrollbar-thumb:hover {
 
 }
 
-/* Título e Subtítulo */
-.minha-conta-container h3 {
-  font-size: 2rem;
-  color: #5D6D68;
-  text-align: center;
-  margin-bottom: 5px;
+
+/* FIX FINAL PARA AGENDAMENTO DETALHE MOBILE */
+@media (max-width: 768px) {
+  .agendamento-detalhe-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+  }
+
+  .profissional-info-coluna,
+  .profissional-bio-coluna {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .profissional-bio-coluna p {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: justify !important;
+    white-space: normal !important;
+  }
+
+  .profissional-bio-coluna h4 {
+    margin-left: 0 !important;
+    text-align: center !important;
+  }
+
+  .agenda-container,
+  .confirmacao-container {
+    width: 100% !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+  }
+
+  .agenda-body {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 5px !important;
+  }
+}
+
+margin-bottom: 5px;
 }
 
 .minha-conta-container .subtitulo-registro {
@@ -5405,7 +5459,6 @@ body::-webkit-scrollbar-thumb:hover {
 #btn-atualizar-perfil:hover {
   background-color: #5D6D68;
 }
-
 
 /* Estilos Agendamentos */
 #secao-agendamentos {

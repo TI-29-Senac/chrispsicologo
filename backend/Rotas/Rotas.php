@@ -48,8 +48,10 @@ class Rotas {
         $router->get('/api/usuarios', 'APIUsuarioController@getUsuarios');
         $router->get('/api/usuarios/{pagina}', 'APIUsuarioController@getUsuarios');
         
-        // Rota específica do cliente web (usa sessão PHP ainda, não JWT)
+        // Rota específica do cliente web (usa sessão PHP ainda, não JWT) - MIGRANDO PARA JWT
         $router->get('/api/cliente/meus-agendamentos', 'AgendamentoController@buscarMeusAgendamentosApi');
+        $router->get('/api/cliente/meu-perfil', 'APIUsuarioController@getMeuPerfil');
+        $router->get('/api/cliente/financeiro', 'PagamentoController@listarFinanceiroCliente');
 
 
         // AGENDAMENTOS

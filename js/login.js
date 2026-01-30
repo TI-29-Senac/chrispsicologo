@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMessage = document.getElementById('login-status-message');
 
     // ... (abrirLoginModal, fecharLoginModal functions remain the same) ...
-     window.abrirLoginModal = () => {
+    window.abrirLoginModal = () => {
         modal.classList.add('open');
         // Fecha o menu lateral se estiver aberto (redundância para segurança)
         const menuLateral = document.getElementById('menu-lateral');
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         form.reset();
     }
 
-     modal.addEventListener('click', (e) => {
+    modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             fecharLoginModal();
         }
@@ -55,21 +55,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const result = await response.json(); // Sempre espera JSON
 
-                if (response.ok && result.success) { // Verifica response.ok E result.success
+                // Verifica response.ok E result.success (ou se existe token na resposta direta do Response::success)
+                if (response.ok && (result.success || result.data?.token)) {
                     statusMessage.textContent = result.message || 'Login bem-sucedido! Redirecionando...';
                     statusMessage.style.color = 'green';
+
+                    // Armazena Token e Nome
+                    const token = result.data?.token || result.token; // Ajuste conforme payload do DesktopApiController
+                    const usuario = result.data?.usuario || result.usuario;
+
+                    if (token) {
+                        localStorage.setItem('auth_token', token);
+                    }
+
+                    if (usuario && usuario.nome_usuario) {
+                        sessionStorage.setItem('welcomeUserName', usuario.nome_usuario);
+                    }
 
                     // --- LÓGICA DE REDIRECIONAMENTO ATUALIZADA ---
                     setTimeout(() => {
                         // Decide o redirecionamento com base no userType recebido
-                        if (result.userType === 'cliente') {
-                            // Armazena o nome do usuário para a mensagem de boas-vindas
-                            sessionStorage.setItem('welcomeUserName', result.userName);
-                            window.location.href = '/index.html'; // Redireciona cliente para a página inicial
-                        } else if (['admin', 'profissional', 'recepcionista'].includes(result.userType)) {
-                            window.location.href = '/backend/dashboard'; // Redireciona outros para o dashboard
+                        const userType = usuario ? usuario.tipo_usuario : (result.userType || 'cliente');
+
+                        if (userType === 'cliente') {
+                            window.location.href = '/minha-conta.html'; // Redireciona para o painel do cliente
                         } else {
-                             window.location.href = '/index.html'; // Redirecionamento padrão (fallback)
+                            window.location.href = '/backend/dashboard'; // Redireciona outros para o dashboard
                         }
                     }, 1500); // Espera 1.5 segundos
 
@@ -90,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ... (redirecionarRegistro, redirecionarEsqueciSenha functions remain the same) ...
-     window.redirecionarRegistro = () => {
+    window.redirecionarRegistro = () => {
         window.location.href = 'registro.html';
     }
 

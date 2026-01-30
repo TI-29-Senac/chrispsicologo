@@ -180,4 +180,15 @@ class PagamentoController extends AuthenticatedController{
             echo json_encode(['success' => false, 'message' => 'Erro ao gerar o PIX: ' . $e->getMessage()]);
         }
     }
+
+    public function listarFinanceiroCliente() {
+        try {
+            $payload = \App\Psico\Core\Auth::check();
+            $idCliente = $payload->sub;
+            $pagamentos = $this->pagamento->buscarPagamentosPorCliente((int)$idCliente);
+            \App\Psico\Core\Response::success(['data' => $pagamentos]);
+        } catch (\Exception $e) {
+            \App\Psico\Core\Response::error($e->getMessage(), 500);
+        }
+    }
 }

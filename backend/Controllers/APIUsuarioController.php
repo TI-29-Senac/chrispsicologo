@@ -92,4 +92,16 @@ class APIUsuarioController {
             Response::error('Erro ao excluir usuário ou usuário não encontrado.', 500);
         }
     }
+
+    public function getMeuPerfil() {
+        $payload = Auth::check();
+        $id = $payload->sub;
+        $usuario = $this->usuarioModel->buscarUsuarioPorId($id);
+        if ($usuario) {
+            unset($usuario->senha_usuario);
+            Response::success($usuario);
+        } else {
+            Response::error('Usuário não encontrado', 404);
+        }
+    }
 }
