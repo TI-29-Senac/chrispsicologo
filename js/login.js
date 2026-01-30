@@ -30,14 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Processa a submissão do formulário via Fetch API (AJAX)
-    if (form) {
-        form.addEventListener('submit', async (e) => {
+    // Use event delegation for form submission to handle dynamic form injection
+    document.body.addEventListener('submit', async (e) => {
+        if (e.target.id === 'login-form') {
             e.preventDefault();
-
-            const email = document.getElementById('login-email').value;
-            const senha = document.getElementById('login-senha').value;
+            const form = e.target;
+            const emailInput = document.getElementById('login-email');
+            const senhaInput = document.getElementById('login-senha');
             const submitButton = form.querySelector('button[type="submit"]');
+
+            if (!emailInput || !senhaInput) {
+                console.error('Login inputs not found!');
+                return;
+            }
+
+            const email = emailInput.value;
+            const senha = senhaInput.value;
 
             submitButton.textContent = 'Verificando...';
             submitButton.disabled = true;
@@ -56,12 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 // Verifica response.ok E result.success (ou se existe token na resposta direta do Response::success)
-                if (response.ok && (result.success || result.data?.token)) {
+                if (response.ok && (result.success || result.data?.token || result.token)) {
                     statusMessage.textContent = result.message || 'Login bem-sucedido! Redirecionando...';
                     statusMessage.style.color = 'green';
 
                     // Armazena Token e Nome
-                    const token = result.data?.token || result.token; // Ajuste conforme payload do DesktopApiController
+                    const token = result.data?.token || result.token;
                     const usuario = result.data?.usuario || result.usuario;
 
                     if (token) {
@@ -77,16 +85,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Decide o redirecionamento com base no userType recebido
                         const userType = usuario ? usuario.tipo_usuario : (result.userType || 'cliente');
 
-                        if (userType === 'cliente') {
-                            window.location.href = '/minha-conta.html'; // Redireciona para o painel do cliente
+                        if (['admin', 'recepcionista', 'profissional'].includes(userType)) {
+                            window.location.href = '/backend/dashboard'; // Redireciona staff para o dashboard
                         } else {
-                            window.location.href = '/backend/dashboard'; // Redireciona outros para o dashboard
+                            window.location.href = '/minha-conta.html'; // Redireciona clientes (e outros) para o painel do cliente
                         }
                     }, 1500); // Espera 1.5 segundos
 
                 } else {
                     // Se response.ok for false ou result.success for false
-                    statusMessage.textContent = result.message || 'Erro de autenticação. Tente novamente.';
+                    // Backend retorna 'error' key, não 'message' em Response::error
+                    statusMessage.textContent = result.error || result.message || 'Erro de autenticação. Tente novamente.';
                     statusMessage.style.color = 'red';
                 }
             } catch (error) {
@@ -97,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitButton.textContent = 'Entrar';
                 submitButton.disabled = false;
             }
-        });
-    }
+        }
+    });
 
     // ... (redirecionarRegistro, redirecionarEsqueciSenha functions remain the same) ...
     window.redirecionarRegistro = () => {
