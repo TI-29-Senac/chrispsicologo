@@ -60,6 +60,7 @@ class Rotas {
 
         // PROFISSIONAIS
         $router->get('/profissionais/listar-publico', 'PublicProfissionalController@listarPublico');
+        $router->get('/profissionais/detalhe/{id}', 'PublicProfissionalController@detalhePublico');
         $router->get('/api/profissionais', 'APIProfissionalController@getProfissionais');
 
         // IMAGENS

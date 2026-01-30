@@ -45,70 +45,38 @@ window.inicializarCarrosselHome = () => {
         return;
     }
 
-    // --- LÓGICA DE DUPLICAÇÃO MOVIDA PARA CÁ ---
-    const originalCardsHTML = cardsContainerHome.innerHTML;
-    // Duplica o conteúdo (vamos triplicar para ter blocos antes e depois)
-    cardsContainerHome.innerHTML = originalCardsHTML + originalCardsHTML + originalCardsHTML;
-    // --- FIM DA DUPLICAÇÃO ---
-
+    // REMOVIDO: Lógica de duplicação HTML (já feita no profissionais.js)
+    
     const totalCards = cardsContainerHome.querySelectorAll('.card').length;
-    let totalOriginalCards = 0;
+    
     if (totalCards > 0) {
-        // Calcula o número original de cards (total dividido por 3 agora)
-        totalOriginalCards = totalCards / 3;
-
-        // Verifica se totalOriginalCards é um número válido e maior que zero
-        if (isNaN(totalOriginalCards) || totalOriginalCards <= 0) {
-            console.error("Número original de cards inválido após duplicação.");
-            return; // Evita erros de cálculo
-        }
-
-        // Posiciona o scroll no início do SEGUNDO bloco de cards
-        // Usar Math.floor() para garantir que é um índice inteiro
-        cardsContainerHome.scrollLeft = Math.floor(totalOriginalCards) * cardWidthHome;
-    } else {
-        console.warn("Nenhum card encontrado no carrossel após duplicação.");
-        return; // Sai se não houver cards para evitar erros
+        // Centraliza inicialmente (calcula metade da largura total de cards)
+        const scrollCenter = (totalCards * cardWidthHome) / 2 - (cardsContainerHome.clientWidth / 2);
+        cardsContainerHome.scrollLeft = Math.max(0, scrollCenter);
     }
 
     destacarCardCentral(); // Destaca o card inicial
-    setupCarrosselScroll(totalOriginalCards); // Passa o número original para a função de scroll
+    setupCarrosselScroll(); 
 };
 
-// Handler do evento de scroll MODIFICADO para receber totalOriginal
-function handleCarrosselScroll(totalOriginal) {
-    if (!cardsContainerHome || !totalOriginal || totalOriginal <= 0) return; // Validação adicional
-
+// Handler do evento de scroll SIMPLIFICADO
+function handleCarrosselScroll() {
+    if (!cardsContainerHome) return;
     destacarCardCentral();
-
-    // Lógica de scroll infinito (ajustada para usar totalOriginal)
-    const umBloco = totalOriginal * cardWidthHome;
-    const doisBlocos = 2 * umBloco;
-
-    // Se está perto do início (primeiro bloco), pula para o segundo bloco
-    // Ajuste a condição para ser mais robusta, talvez menor que meia largura de card
-    if (cardsContainerHome.scrollLeft < cardWidthHome / 2) {
-       console.log("Scroll perto do início, pulando para o meio...");
-       cardsContainerHome.scrollLeft += umBloco;
-    }
-    // Se está perto do fim (terceiro bloco), volta para o segundo bloco
-    // Ajuste a condição para ser mais robusta
-    else if (cardsContainerHome.scrollLeft >= doisBlocos - (cardWidthHome / 2)) {
-        console.log("Scroll perto do fim, voltando para o meio...");
-        cardsContainerHome.scrollLeft -= umBloco;
-    }
 }
 
-// Função para configurar o scroll MODIFICADA para passar totalOriginal
-function setupCarrosselScroll(totalOriginal) {
+// Função para configurar o scroll SIMPLIFICADA
+function setupCarrosselScroll() {
      if (!cardsContainerHome) cardsContainerHome = document.getElementById("cards-carrossel");
      if (!cardsContainerHome) return;
 
      // Remove listener antigo para evitar duplicação
-     cardsContainerHome.removeEventListener('scroll', cardsContainerHome._scrollHandler); // Usa uma referência guardada
+     if (cardsContainerHome._scrollHandler) {
+        cardsContainerHome.removeEventListener('scroll', cardsContainerHome._scrollHandler);
+     }
 
-     // Cria uma nova função handler que chama a original com o parâmetro
-     cardsContainerHome._scrollHandler = () => handleCarrosselScroll(totalOriginal);
+     // Cria uma nova função handler
+     cardsContainerHome._scrollHandler = () => handleCarrosselScroll();
 
      // Adiciona o novo listener
      cardsContainerHome.addEventListener('scroll', cardsContainerHome._scrollHandler);
