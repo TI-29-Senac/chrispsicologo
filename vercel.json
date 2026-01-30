@@ -1,9 +1,10 @@
 {
-    "functions": {
-        "backend/*.php": {
-            "runtime": "vercel-php@0.6.0"
+    "builds": [
+        {
+            "src": "backend/*.php",
+            "use": "vercel-php@0.6.0"
         }
-    },
+    ],
     "routes": [
         {
             "src": "/backend/test_db_connection.php",
