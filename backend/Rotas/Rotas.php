@@ -59,13 +59,45 @@ class Rotas {
         $router->get('/agendamentos/disponibilidade/{id}/{data}', 'PublicAgendamentoController@buscarDisponibilidade');
         $router->get('/agendamentos/detalhe-pagamento/{id}', 'PublicAgendamentoController@getDetalhesPagamento');
 
-        // PROFISSIONAIS
+        // PROFISSIONAIS (Admin)
+        $router->get('/profissionais/listar', 'ProfissionalController@viewListarProfissionais');
+        $router->get('/profissionais/criar', 'ProfissionalController@viewCriarProfissionais');
+        $router->get('/profissionais/editar/{id}', 'ProfissionalController@viewEditarProfissionais');
+        $router->get('/profissionais/excluir/{id}', 'ProfissionalController@viewExcluirProfissionais');
+        $router->post('/profissionais/salvar', 'ProfissionalController@salvarProfissionais');
+        $router->post('/profissionais/atualizar/{id}', 'ProfissionalController@atualizarProfissionais');
+        $router->post('/profissionais/deletar/{id}', 'ProfissionalController@deletarProfissionais');
+        // Perfil do Profissional (Logado)
+        $router->get('/profissional/meu-perfil', 'ProfissionalController@viewMeuPerfilProfissional');
+        $router->post('/profissional/atualizar-meu-perfil', 'ProfissionalController@atualizarMeuPerfilProfissional');
+
+        // PROFISSIONAIS (Público/API)
         $router->get('/profissionais/listar-publico', 'PublicProfissionalController@listarPublico');
         $router->get('/profissionais/detalhe/{id}', 'PublicProfissionalController@detalhePublico');
         $router->get('/avaliacoes', 'PublicProfissionalController@buscarAvaliacoes');
         $router->get('/api/profissionais', 'APIProfissionalController@getProfissionais');
 
-        // IMAGENS
+        // AVALIAÇÕES (Admin)
+        $router->get('/avaliacoes/listar', 'AvaliacaoController@viewListarAvaliacoes');
+        $router->get('/avaliacoes/criar', 'AvaliacaoController@viewCriarAvaliacoes');
+        $router->get('/avaliacoes/editar/{id}', 'AvaliacaoController@viewEditarAvaliacoes');
+        $router->get('/avaliacoes/excluir/{id}', 'AvaliacaoController@viewExcluirAvaliacoes');
+        $router->post('/avaliacoes/salvar', 'AvaliacaoController@salvarAvaliacoes');
+        $router->post('/avaliacoes/atualizar/{id}', 'AvaliacaoController@atualizarAvaliacoes');
+        $router->post('/avaliacoes/deletar/{id}', 'AvaliacaoController@deletarAvaliacoes');
+
+
+        // IMAGENS (Admin)
+        $router->get('/imagens/listar', 'ImagemController@viewListarImagens');
+        $router->get('/imagens/criar', 'ImagemController@viewCriarImagem');
+        $router->get('/imagens/editar/{id}', 'ImagemController@viewEditarImagem');
+        $router->get('/imagens/excluir/{id}', 'ImagemController@viewExcluirImagem');
+        $router->post('/imagens/salvar', 'ImagemController@salvarImagem');
+        $router->post('/imagens/atualizar/{id}', 'ImagemController@atualizarImagem');
+        $router->post('/imagens/deletar/{id}', 'ImagemController@deletarImagem');
+        $router->get('/api/imagens/secoes/{id}', 'ImagemController@buscarSecoesPorPaginaApi');
+        
+        // IMAGENS (Público/API)
         $router->get('/api/imagens/quem-somos', 'ImagemController@listarQuemSomos');
         $router->get('/api/imagens/servicos', 'ImagemController@listarServicos');
 
@@ -84,7 +116,7 @@ class Rotas {
         
         // Rota específica do cliente web (perfil)
         $router->post('/api/cliente/atualizar-perfil', 'UsuarioController@atualizarMeuPerfil');
-        $router->post('/api/cliente/avaliar', 'AvaliacaoController@salvarAvaliacao'); // Assumindo controller
+        $router->post('/api/cliente/avaliar', 'AvaliacaoController@salvarAvaliacaoCliente'); // Alterado para método correto se existir, ou verificar
 
         // Login
         $router->post('/login', 'UsuarioController@login');
@@ -99,7 +131,15 @@ class Rotas {
         $router->post('/api/agendamentos/salvar', 'APIAgendamentoController@salvarAgendamento');
         $router->post('/agendamentos/deletar/{id}', 'AgendamentoController@deletarAgendamentos');
 
-        // PAGAMENTOS
+        // PAGAMENTOS (Admin)
+        $router->get('/pagamentos/listar', 'PagamentoController@viewListarPagamentos');
+        $router->get('/pagamentos/criar', 'PagamentoController@viewCriarPagamentos');
+        $router->get('/pagamentos/editar/{id}', 'PagamentoController@viewEditarPagamentos');
+        $router->get('/pagamentos/excluir/{id}', 'PagamentoController@viewExcluirPagamentos');
+        $router->post('/pagamentos/atualizar/{id}', 'PagamentoController@atualizarPagamento');
+        $router->post('/pagamentos/deletar/{id}', 'PagamentoController@deletarPagamento');
+
+        // PAGAMENTOS (Salvar)
         $router->post('/pagamentos/salvar', 'PagamentoController@salvarPagamentos');
         $router->post('/api/pagamentos/salvar', 'APIPagamentoController@salvarPagamento');
 
