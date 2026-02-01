@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMessage = document.getElementById('pagamento-status-message');
     const formCartao = document.getElementById('form-cartao');
     const btnPagar = document.getElementById('btn-pagar-cartao');
-    
+
     // Elementos de dados
     const profissionalNomeEl = document.getElementById('profissional-nome');
     const dataHoraEl = document.getElementById('data-hora');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             profissionalNomeEl.textContent = data.profissional.nome_usuario;
             dataHoraEl.textContent = `${dataFormatada} às ${horaFormatada}`;
             valorSinalEl.textContent = `R$ ${parseFloat(data.agendamento.valor_sinal).toFixed(2).replace('.', ',')}`;
-            
+
             // Exibe o conteúdo
             loadingMessage.style.display = 'none';
             conteudoPagamento.style.display = 'block';
@@ -63,7 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function processarPagamentoCartao(event) {
         event.preventDefault(); // Impede o envio real do formulário
-        
+
+        // Validação Manual
+        const nome = document.getElementById('nome-cartao').value;
+        const numero = document.getElementById('numero-cartao').value;
+        const validade = document.getElementById('validade-cartao').value;
+        const cvc = document.getElementById('cvc-cartao').value;
+
+        if (!nome || !numero || !validade || !cvc) {
+            statusMessage.textContent = 'Por favor, preencha todos os campos do cartão.';
+            statusMessage.style.color = 'red';
+            return;
+        }
+
         statusMessage.textContent = 'Processando pagamento...';
         statusMessage.style.color = '#faf6ee';
         btnPagar.disabled = true;
@@ -72,10 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // 1. Simula a chamada para um gateway de pagamento
             await new Promise(resolve => setTimeout(resolve, 2000)); // Simula 2s
-            
+
             // 2. Confirma em nosso backend
             const response = await fetch(`/backend/agendamentos/confirmar-sinal/${agendamentoId}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tipo_pagamento: 'cartao' })
             });
 
             const result = await response.json();

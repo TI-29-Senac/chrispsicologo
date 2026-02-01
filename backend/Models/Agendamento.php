@@ -300,7 +300,7 @@ ORDER BY a.data_agendamento DESC
         return $mesesFormatados;
     }
 
-    public static function marcarSinalComoPago($id_agendamento) {
+    public static function marcarSinalComoPago($id_agendamento, $id_forma_pagamento = 1) {
         $db = Database::getInstance();
         
         try {
@@ -309,7 +309,7 @@ ORDER BY a.data_agendamento DESC
             // 1. Atualiza a tabela 'agendamento' para 'Confirmado'
             $stmtAg = $db->prepare(
                 "UPDATE agendamento
-                 SET status_consulta = 'confirmada' -- CORRETO: Atualiza 'status_consulta'
+                 SET status_consulta = 'confirmada'
                  WHERE id_agendamento = :id"
             );
             $stmtAg->execute(['id' => $id_agendamento]);
@@ -322,19 +322,21 @@ ORDER BY a.data_agendamento DESC
 
             if ($exists) {
                 // Atualiza a data do pagamento para agora (confirmação)
+                // Se desejar atualizar o tipo também, inclua id_forma_pagamento = :tipo
                 $stmtPg = $db->prepare(
                     "UPDATE pagamento 
-                     SET criado_em = NOW() 
+                     SET criado_em = NOW(),
+                         id_forma_pagamento = :tipo
                      WHERE id_agendamento = :id"
                 );
-                $stmtPg->execute(['id' => $id_agendamento]);
+                $stmtPg->execute(['id' => $id_agendamento, 'tipo' => $id_forma_pagamento]);
             } else {
-                // Insere novo registro de pagamento (PIX = 1)
+                // Insere novo registro de pagamento
                 $stmtPg = $db->prepare(
                     "INSERT INTO pagamento (id_agendamento, id_forma_pagamento, criado_em) 
-                     VALUES (:id, 1, NOW())"
+                     VALUES (:id, :tipo, NOW())"
                 );
-                $stmtPg->execute(['id' => $id_agendamento]);
+                $stmtPg->execute(['id' => $id_agendamento, 'tipo' => $id_forma_pagamento]);
             }
 
             // Confirma a transação

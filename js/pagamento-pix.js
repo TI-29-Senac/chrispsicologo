@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingMessage = document.getElementById('loading-message');
     const conteudoPagamento = document.getElementById('conteudo-pagamento');
     const statusMessage = document.getElementById('pagamento-status-message');
-    
+
     // Elementos de dados
     const profissionalNomeEl = document.getElementById('profissional-nome');
     const dataHoraEl = document.getElementById('data-hora');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             profissionalNomeEl.textContent = data.profissional.nome_usuario;
             dataHoraEl.textContent = `${dataFormatada} às ${horaFormatada}`; // Junta data e hora
             valorSinalEl.textContent = `R$ ${parseFloat(data.agendamento.valor_sinal).toFixed(2).replace('.', ',')}`;
-            
+
             // Exibe o conteúdo
             loadingMessage.style.display = 'none';
             conteudoPagamento.style.display = 'block';
@@ -72,7 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Este endpoint irá atualizar o status do agendamento/pagamento no DB
             const response = await fetch(`backend/agendamentos/confirmar-sinal/${agendamentoId}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tipo_pagamento: 'pix' })
             });
 
             const result = await response.json();

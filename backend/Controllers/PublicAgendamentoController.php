@@ -204,8 +204,16 @@ class PublicAgendamentoController {
             return;
         }
 
+        // Ler o corpo da requisição (JSON)
+        $input = json_decode(file_get_contents('php://input'), true);
+        $tipo_pagamento = $input['tipo_pagamento'] ?? 'pix'; // Default pix
+
+        // Mapeamento simples (idealmente buscar do banco 'forma_pagamento')
+        // 1 = Pix, 2 = Cartão de Crédito
+        $id_forma_pagamento = ($tipo_pagamento === 'cartao' || $tipo_pagamento === 'credito') ? 2 : 1;
+
         // Chama o método estático do Model que já implementa a transação e updates
-        $sucesso = Agendamento::marcarSinalComoPago($id);
+        $sucesso = Agendamento::marcarSinalComoPago($id, $id_forma_pagamento);
 
         if ($sucesso) {
             http_response_code(200);

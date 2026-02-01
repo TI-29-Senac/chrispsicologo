@@ -4408,22 +4408,29 @@ body::-webkit-scrollbar-thumb:hover {
   /* ---------------------------------------------------------------- */
 
   /* Centraliza e ajusta a grid de horários no mobile */
+
   .agenda-body {
     grid-template-columns: repeat(2, 1fr);
-    justify-content: center;
-    /* Centralização horizontal da grid */
+    justify-items: center;
+    /* Centraliza os itens dentro das células da grid */
+    align-items: start;
     gap: 15px;
+    width: 100%;
   }
 
   .agenda-coluna {
     display: flex;
-    /* Garante flexbox */
     flex-direction: column;
-    /* Coluna vertical */
     align-items: center;
-    /* Centraliza os botões horizontalmente na coluna */
     width: 100%;
   }
+
+  .agenda-horarios-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
 
   .agenda-header {
     display: none;

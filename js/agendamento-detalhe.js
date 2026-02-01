@@ -598,8 +598,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const formData = new FormData(form);
-        formData.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment);
+        // Validação Explícita para Mobile
+        if (!formData.get('data_selecionada') || !formData.get('horario_selecionado')) {
+            statusMessage.textContent = 'Por favor, selecione uma data e um horário.';
+            statusMessage.style.color = 'red';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Confirmar Agendamento';
+            return;
+        }
+
+        if (!selectedPayment) {
+            statusMessage.textContent = 'Por favor, selecione uma forma de pagamento.';
+            statusMessage.style.color = 'red';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Confirmar Agendamento';
+            return;
+        }
+
+        const formDataToSend = new FormData();
+        // Copia os dados do form original e adiciona o tipo de pagamento
+        for (var pair of formData.entries()) {
+            formDataToSend.append(pair[0], pair[1]);
+        }
+        formDataToSend.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment);
 
         try {
             const token = localStorage.getItem('auth_token');
@@ -608,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
-                body: new URLSearchParams(formData)
+                body: new URLSearchParams(formDataToSend)
             });
 
             const result = await response.json();
