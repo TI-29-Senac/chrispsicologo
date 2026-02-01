@@ -131,6 +131,7 @@ class Rotas {
         // AGENDAMENTOS
         $router->post('/agendamentos/salvar', 'PublicAgendamentoController@salvarAgendamentos'); 
         $router->post('/api/agendamentos/salvar', 'APIAgendamentoController@salvarAgendamento');
+        $router->post('/agendamentos/confirmar-sinal/{id}', 'PublicAgendamentoController@confirmarSinal'); // Rota para confirmar pagamento
         $router->post('/agendamentos/deletar/{id}', 'AgendamentoController@deletarAgendamentos');
 
         // PAGAMENTOS (Admin)

@@ -230,9 +230,10 @@ class Agendamento {
     a.id_agendamento,
     a.data_agendamento,
     a.status_consulta,
-    p.id_profissional, -- Adicione esta linha
-    prof_usuario.nome_usuario AS nome_profissional
-FROM agendamento a -- Use alias para a tabela
+    p.id_profissional,
+    prof_usuario.nome_usuario AS nome_profissional,
+    (SELECT COUNT(*) FROM avaliacao av WHERE av.id_cliente = a.id_usuario AND av.id_profissional = a.id_profissional AND av.excluido_em IS NULL) > 0 AS ja_avaliado
+FROM agendamento a
 JOIN profissional p ON a.id_profissional = p.id_profissional
 JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
 WHERE a.id_usuario = :id_usuario
@@ -308,19 +309,33 @@ ORDER BY a.data_agendamento DESC
             // 1. Atualiza a tabela 'agendamento' para 'Confirmado'
             $stmtAg = $db->prepare(
                 "UPDATE agendamento
-                 SET status_consulta = 'Confirmado' -- CORRETO: Atualiza 'status_consulta'
+                 SET status_consulta = 'confirmada' -- CORRETO: Atualiza 'status_consulta'
                  WHERE id_agendamento = :id"
             );
             $stmtAg->execute(['id' => $id_agendamento]);
 
-            // 2. Atualiza a tabela 'pagamento' com a data do pagamento
-            //    (A tabela pagamento NÃO tem status, apenas registra a data)
-            $stmtPg = $db->prepare(
-                "UPDATE pagamento 
-                 SET data_pagamento = NOW() 
-                 WHERE id_agendamento = :id"
-            );
-            $stmtPg->execute(['id' => $id_agendamento]);
+            // 2. Atualiza ou Insere na tabela 'pagamento'
+            // Verifica se já existem registro de pagamento
+            $stmtCheck = $db->prepare("SELECT id_pagamento FROM pagamento WHERE id_agendamento = :id");
+            $stmtCheck->execute(['id' => $id_agendamento]);
+            $exists = $stmtCheck->fetchColumn();
+
+            if ($exists) {
+                // Atualiza a data do pagamento para agora (confirmação)
+                $stmtPg = $db->prepare(
+                    "UPDATE pagamento 
+                     SET criado_em = NOW() 
+                     WHERE id_agendamento = :id"
+                );
+                $stmtPg->execute(['id' => $id_agendamento]);
+            } else {
+                // Insere novo registro de pagamento (PIX = 1)
+                $stmtPg = $db->prepare(
+                    "INSERT INTO pagamento (id_agendamento, id_forma_pagamento, criado_em) 
+                     VALUES (:id, 1, NOW())"
+                );
+                $stmtPg->execute(['id' => $id_agendamento]);
+            }
 
             // Confirma a transação
             $db->commit();

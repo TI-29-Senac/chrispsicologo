@@ -4366,24 +4366,64 @@ body::-webkit-scrollbar-thumb:hover {
 @media (max-width: 800px) {
   .agendamento-detalhe-grid {
     grid-template-columns: 1fr;
-    /* Coluna única em telas menores */
   }
 
-  .agenda-header,
+  /* Garante que os labels sejam visíveis em telas menores */
+  .confirmacao-container label,
+  .form-grupo label {
+    color: #5D6D68 !important;
+    /* Força cor escura para contraste */
+  }
+
+  /* Ajuste no container de confirmação para mobile */
+  .confirmacao-container {
+    padding: 15px;
+    background-color: #faf6ee;
+    /* Garante fundo claro */
+    border-radius: 8px;
+  }
+
+  /* Centraliza e ajusta a grid de horários no mobile */
   .agenda-body {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 colunas para melhor visualização */
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .agenda-coluna {
+    align-items: center;
+  }
+
+  .agenda-header {
+    display: none;
+    /* Esconde cabeçalho complexo no mobile se necessário, ou ajusta */
   }
 
   .form-grupo-duplo {
     grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 5px;
+    /* Ajuste se estava com top negativo */
+  }
+
+  .form-grupo-duplo {
+    top: 0;
+    /* Remove top negativo que quebrava layout mobile */
   }
 }
 
 @media (max-width: 500px) {
-
-  .agenda-header,
   .agenda-body {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    /* Uma coluna em telas muito pequenas */
+  }
+
+  /* Garante que os inputs não estourem a tela */
+  .form-grupo input,
+  .form-grupo select {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .form-rodape {

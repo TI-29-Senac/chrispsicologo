@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const profissionalId = params.get('id');
 
-    let profissionalData = null; 
-    let dataSelecionada = null; 
-    let horarioSelecionado = null; 
+    let profissionalData = null;
+    let dataSelecionada = null;
+    let horarioSelecionado = null;
 
     if (!profissionalId) {
         loadingMessage.textContent = 'Erro: ID do Profissional não fornecido na URL.';
@@ -15,18 +15,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    
+    // --- PROTEÇÃO DA PÁGINA: Verifica se o usuário está logado ---
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+        // Opção 1: Alertar e redirecionar para home onde o modal de login pode ser aberto
+        alert('Você precisa estar logado para realizar um agendamento.');
+
+        // Remove parâmetros da URL para evitar loops ou estados inconsistentes
+        // window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Oculta o conteúdo para não "piscar" informações
+        container.style.display = 'none';
+
+        // Redireciona para a home
+        window.location.href = '/index.html?openLogin=true';
+
+        // Nota: Se preferir abrir o modal diretamente na página, seria necessário
+        // garantir que o login.js já carregou e usar 'abrirLoginModal()', mas
+        // se o usuário não logar, ele veria a página. O bloqueio exige redirecionamento
+        // ou um overlay persistente.
+        return;
+    }
+    // --- FIM DA PROTEÇÃO ---
+
+
     function getHojeFormatado() {
         const hoje = new Date();
         const ano = hoje.getFullYear();
-        const mes = String(hoje.getMonth() + 1).padStart(2, '0'); 
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
         const dia = String(hoje.getDate()).padStart(2, '0');
         return `${ano}-${mes}-${dia}`;
     }
 
     async function carregarDadosIniciais() {
         loadingMessage.textContent = 'Carregando informações do profissional...';
-        container.innerHTML = ''; 
+        container.innerHTML = '';
 
         try {
             const resProfissional = await fetch(`/backend/profissionais/detalhe/${profissionalId}`);
@@ -38,20 +61,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             profissionalData = await resProfissional.json();
 
-            
+
             renderizarLayoutBase(profissionalData);
-            loadingMessage.style.display = 'none'; 
+            loadingMessage.style.display = 'none';
             carregarAvaliacoesProfissional(profissionalId);
 
-            
+
             const hoje = getHojeFormatado();
             const dateInput = document.getElementById('data-consulta');
-            if(dateInput) {
-                dateInput.value = hoje; 
-                dataSelecionada = hoje; 
-                buscarHorariosDisponiveis(); 
+            if (dateInput) {
+                dateInput.value = hoje;
+                dataSelecionada = hoje;
+                buscarHorariosDisponiveis();
             }
-            
+
 
         } catch (error) {
             console.error('Erro ao carregar dados do profissional:', error);
@@ -63,14 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const nomeBase = prof.nome_usuario.split(' ')[0].toLowerCase();
         const fotoUrlPadrao = `/img/profissionais/${nomeBase}.png`;
         const fotoFinal = prof.img_profissional ? `/${prof.img_profissional}` : fotoUrlPadrao;
-        const hojeFormatado = getHojeFormatado(); 
+        const hojeFormatado = getHojeFormatado();
         const maxEspecialidades = 1;
 
         // Processar a string de especialidades
-        const especialidadesArray = prof.especialidade ? 
-            prof.especialidade.split(',').map(s => s.trim()).filter(s => s.length > 0) : 
-            ["Psicoterapia Individual", "Terapia de Casal", "Psicoterapia Infantil", "Orientação Profissional"]; 
-        
+        const especialidadesArray = prof.especialidade ?
+            prof.especialidade.split(',').map(s => s.trim()).filter(s => s.length > 0) :
+            ["Psicoterapia Individual", "Terapia de Casal", "Psicoterapia Infantil", "Orientação Profissional"];
+
         const especialidadesHtml = especialidadesArray.map(esp => `
              <label><input type="checkbox" name="especialidade[]" value="${esp}"> ${esp}</label>
         `).join('');
@@ -88,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!tiposDeAtendimento || !Array.isArray(tiposDeAtendimento) || tiposDeAtendimento.length === 0) {
             tiposDeAtendimento = defaultTipos;
         }
-        const tiposAtendimentoHtml = tiposDeAtendimento.map(t => 
+        const tiposAtendimentoHtml = tiposDeAtendimento.map(t =>
             `<li><img src="/${t.icone}" class="icon-prof" alt=""> ${t.texto}</li>`
         ).join("");
 
@@ -216,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const inputCPF = document.getElementById('cpf');
         if (inputCPF) {
-            inputCPF.addEventListener('input', function(e) {
+            inputCPF.addEventListener('input', function (e) {
                 let value = e.target.value.replace(/\D/g, ""); // Remove não dígitos
                 if (value.length > 11) value = value.slice(0, 11); // Limita a 11 números
 
@@ -228,12 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (value.length > 3) {
                     value = value.replace(/^(\d{3})(\d{3}).*/, "$1.$2");
                 }
-                
+
                 e.target.value = value;
-                
+
                 // Validação visual (mínimo 14 caracteres com a máscara)
                 const erroCpf = document.getElementById('erro-cpf');
-                if (value.length < 14) { 
+                if (value.length < 14) {
                     erroCpf.style.display = 'block';
                     e.target.style.border = '2px solid #ff6b6b';
                 } else {
@@ -246,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Máscara e Validação de Telefone ( (11) 99999-9999 )
         const inputTelefone = document.getElementById('telefone');
         if (inputTelefone) {
-            inputTelefone.addEventListener('input', function(e) {
+            inputTelefone.addEventListener('input', function (e) {
                 let value = e.target.value.replace(/\D/g, "");
                 if (value.length > 11) value = value.slice(0, 11);
 
@@ -278,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Validação de Email (Regex simples)
         const inputEmail = document.getElementById('email');
         if (inputEmail) {
-            inputEmail.addEventListener('blur', function(e) { // Valida ao sair do campo
+            inputEmail.addEventListener('blur', function (e) { // Valida ao sair do campo
                 const value = e.target.value;
                 const erroEmail = document.getElementById('erro-email');
                 // Regex padrão para xxx@xxx.xx
@@ -289,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.target.style.border = '2px solid #ff6b6b';
                 } else {
                     erroEmail.style.display = 'none';
-                    if(value) e.target.style.border = '2px solid #99b198';
+                    if (value) e.target.style.border = '2px solid #99b198';
                     else e.target.style.border = '1px solid #ccc'; // Volta ao normal se vazio
                 }
             });
@@ -299,14 +322,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // (O restante do código da função renderizarLayoutBase continua igual:
         // Lógica do botão "Ler Mais" da bio, checkboxes, etc...)
-        
+
         const bioContainer = document.getElementById('bioContainer');
         const bioBtn = document.getElementById('bioReadMoreBtn');
         const bioText = bioContainer.querySelector('p');
-        const alturaContraida = 450; 
+        const alturaContraida = 450;
 
         if (bioText.scrollHeight > alturaContraida) {
-            bioBtn.style.display = 'block'; 
+            bioBtn.style.display = 'block';
             bioBtn.addEventListener('click', () => {
                 if (bioContainer.classList.toggle('expanded')) {
                     bioBtn.textContent = 'Ler Menos';
@@ -319,13 +342,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkboxesEspecialidade = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]');
 
         function atualizarLimiteCheckboxes() {
-             const checkedCount = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]:checked').length;
-             const atingiuLimite = checkedCount >= maxEspecialidades;
+            const checkedCount = document.querySelectorAll('.lista-especialidades input[name="especialidade[]"]:checked').length;
+            const atingiuLimite = checkedCount >= maxEspecialidades;
             checkboxesEspecialidade.forEach(checkbox => {
                 if (!checkbox.checked) {
-                     checkbox.disabled = atingiuLimite;
-                     checkbox.parentElement.classList.toggle('disabled-label', atingiuLimite);
-                 }
+                    checkbox.disabled = atingiuLimite;
+                    checkbox.parentElement.classList.toggle('disabled-label', atingiuLimite);
+                }
             });
         }
 
@@ -337,10 +360,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateInput = document.getElementById('data-consulta');
         if (dateInput) {
             dateInput.addEventListener('change', buscarHorariosDisponiveis);
+            // Melhora a UX permitindo clicar em qualquer lugar do input para abrir o calendário
+            dateInput.addEventListener('click', function () {
+                try {
+                    if (typeof this.showPicker === 'function') {
+                        this.showPicker();
+                    }
+                } catch (error) {
+                    console.warn('Browser does not support showPicker() or prevented it:', error);
+                }
+            });
         }
 
         document.querySelectorAll('input[name="forma_pagamento"]').forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 document.getElementById('tipo_pagamento_backend').value = this.value;
             });
         });
@@ -348,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Modificação no Listener do Submit para bloquear envio se houver erro
         const formConfirmacao = document.getElementById('form-confirmacao');
         if (formConfirmacao) {
-            formConfirmacao.addEventListener('submit', function(e) {
+            formConfirmacao.addEventListener('submit', function (e) {
                 // Verifica se há mensagens de erro visíveis
                 const erroCpf = document.getElementById('erro-cpf').style.display;
                 const erroTel = document.getElementById('erro-telefone').style.display;
@@ -364,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 submeterAgendamento(e);
             });
         }
-        
+
         // ... (Lógica do Modal de Termos - pode copiar do seu código original ou manter se já estiver lá) ...
         // Certifique-se de que a lógica do modal de termos (openTerms, termsOverlay, etc) está aqui embaixo também.
         setupTermosModal(); // Função auxiliar para organizar (veja abaixo)
@@ -423,36 +456,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    
+
     async function buscarHorariosDisponiveis() {
         const dateInput = document.getElementById('data-consulta');
-        dataSelecionada = dateInput.value; 
+        dataSelecionada = dateInput.value;
         const horariosContainer = document.getElementById('agenda-horarios-container');
         const agendaBody = horariosContainer.querySelector('.agenda-body');
         const feedbackEl = document.getElementById('agenda-feedback');
         const confirmacaoContainer = document.getElementById('confirmacao-container');
 
-        
+
         agendaBody.innerHTML = '';
         agendaBody.style.display = 'none';
         feedbackEl.textContent = 'Buscando horários...';
         feedbackEl.style.color = '#faf6ee';
-        horarioSelecionado = null; 
-        confirmacaoContainer.style.display = 'none'; 
+        horarioSelecionado = null;
+        confirmacaoContainer.style.display = 'none';
 
         if (!dataSelecionada) {
             feedbackEl.textContent = 'Selecione uma data válida.';
             return;
         }
 
-        
+
         const hoje = getHojeFormatado();
         if (dataSelecionada < hoje) {
-             feedbackEl.textContent = 'Não é possível agendar para datas passadas.';
-             feedbackEl.style.color = '#ffdddd';
-             return;
+            feedbackEl.textContent = 'Não é possível agendar para datas passadas.';
+            feedbackEl.style.color = '#ffdddd';
+            return;
         }
-        
+
 
         try {
             const response = await fetch(`/backend/agendamentos/disponibilidade/${profissionalId}/${dataSelecionada}`);
@@ -466,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dataFormatada = new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
                 feedbackEl.textContent = `Horários disponíveis para ${dataFormatada}:`;
                 renderizarBotoesHorario(result.horarios, agendaBody);
-                agendaBody.style.display = 'grid'; 
+                agendaBody.style.display = 'grid';
             } else {
                 feedbackEl.textContent = 'Nenhum horário disponível para esta data.';
             }
@@ -474,51 +507,51 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Erro ao buscar horários:', error);
             feedbackEl.textContent = error.message || 'Erro ao carregar horários.';
-            feedbackEl.style.color = '#ffdddd'; 
+            feedbackEl.style.color = '#ffdddd';
         }
     }
 
-    
+
     function renderizarBotoesHorario(horarios, container) {
-        container.innerHTML = ''; 
-         
+        container.innerHTML = '';
+
         const horariosManha = horarios.filter(h => parseInt(h.split(':')[0]) < 13);
         const horariosTarde = horarios.filter(h => parseInt(h.split(':')[0]) >= 13);
 
-        let htmlBotoes = '<div class="agenda-coluna">'; 
+        let htmlBotoes = '<div class="agenda-coluna">';
         if (horariosManha.length > 0) {
-             htmlBotoes += horariosManha.map(hora => `<button class="horario-btn" data-horario="${hora}">${hora}</button>`).join('');
+            htmlBotoes += horariosManha.map(hora => `<button class="horario-btn" data-horario="${hora}">${hora}</button>`).join('');
         } else {
-             htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários<br>na manhã</p>';
+            htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários<br>na manhã</p>';
         }
-         htmlBotoes += '</div><div class="agenda-coluna">'; 
-         if (horariosTarde.length > 0) {
-             htmlBotoes += horariosTarde.map(hora => `<button class="horario-btn" data-horario="${hora}">${hora}</button>`).join('');
-         } else {
-             htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários<br>à tarde</p>';
-         }
-         htmlBotoes += '</div>';
+        htmlBotoes += '</div><div class="agenda-coluna">';
+        if (horariosTarde.length > 0) {
+            htmlBotoes += horariosTarde.map(hora => `<button class="horario-btn" data-horario="${hora}">${hora}</button>`).join('');
+        } else {
+            htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários<br>à tarde</p>';
+        }
+        htmlBotoes += '</div>';
 
         container.innerHTML = htmlBotoes;
 
 
-        
+
         container.querySelectorAll('.horario-btn').forEach(btn => {
             btn.addEventListener('click', () => selecionarHorario(btn));
         });
     }
 
-    
+
     function selecionarHorario(botaoClicado) {
         const container = botaoClicado.closest('.agenda-body');
-        
+
         container.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selecionado'));
 
-        
+
         botaoClicado.classList.add('selecionado');
         horarioSelecionado = botaoClicado.dataset.horario;
 
-        
+
         const confirmacaoContainer = document.getElementById('confirmacao-container');
         const textoConfirmacao = document.getElementById('horario-confirmacao-texto');
         const dataInputHidden = document.getElementById('data_selecionada_hidden');
@@ -526,24 +559,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         if (dataSelecionada && horarioSelecionado) {
-             const dataFormatada = new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+            const dataFormatada = new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
             textoConfirmacao.textContent = `Agendar para: ${dataFormatada} às ${horarioSelecionado}`;
-            dataInputHidden.value = dataSelecionada; 
-            horarioInputHidden.value = horarioSelecionado; 
-            confirmacaoContainer.style.display = 'block'; 
+            dataInputHidden.value = dataSelecionada;
+            horarioInputHidden.value = horarioSelecionado;
+            confirmacaoContainer.style.display = 'block';
         } else {
-             confirmacaoContainer.style.display = 'none'; 
+            confirmacaoContainer.style.display = 'none';
         }
     }
 
-    
-     async function submeterAgendamento(event) {
-        event.preventDefault(); 
+
+    async function submeterAgendamento(event) {
+        event.preventDefault();
         const form = event.target;
         const submitButton = document.getElementById('btn-confirmar-agendamento');
         const statusMessage = document.getElementById('agendamento-status-message');
-        
-        const selectedPayment = document.querySelector('input[name="forma_pagamento"]:checked').value; 
+
+        const selectedPayment = document.querySelector('input[name="forma_pagamento"]:checked').value;
 
         statusMessage.textContent = 'Solicitando agendamento e pagamento...';
         statusMessage.style.color = '#faf6ee';
@@ -557,27 +590,27 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.style.color = 'red';
             labelAceitos.style.color = 'red'; // Garante que o label fique vermelho
             submitButton.disabled = false;
-            
+
             // Tenta abrir o modal para o usuário
             const openBtn = document.getElementById('openTerms');
             if (openBtn) openBtn.click();
-            
+
             return;
         }
 
         const formData = new FormData(form);
-        formData.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment); 
-        
+        formData.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment);
+
         try {
             const response = await fetch('/backend/agendamentos/salvar', {
                 method: 'POST',
-                body: new URLSearchParams(formData) 
+                body: new URLSearchParams(formData)
             });
 
             const result = await response.json();
 
             if (response.ok && result.success) {
-                
+
                 const agendamentoId = result.agendamentoId;
                 let redirectUrl = '';
 
@@ -589,15 +622,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         redirectUrl = `/pagamento-cartao.html?id=${agendamentoId}`;
                         break;
                     default:
-                        redirectUrl = `/index.html`; 
+                        redirectUrl = `/index.html`;
                 }
 
                 statusMessage.textContent = result.message || 'Agendamento solicitado! Redirecionando para o pagamento...';
                 statusMessage.style.color = 'lightgreen';
-                
-                 setTimeout(() => {
-                     window.location.href = redirectUrl; 
-                 }, 2000); 
+
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 2000);
 
             } else {
                 throw new Error(result.message || `Erro ${response.status}`);
@@ -607,24 +640,24 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro ao submeter agendamento:', error);
             statusMessage.textContent = `Erro: ${error.message}. Tente novamente.`;
             statusMessage.style.color = 'red';
-             
-             if (error.message.includes('horário acabou de ser reservado')) {
-                 buscarHorariosDisponiveis(); 
-             }
+
+            if (error.message.includes('horário acabou de ser reservado')) {
+                buscarHorariosDisponiveis();
+            }
         } finally {
             if (statusMessage.style.color === 'red') {
-                 submitButton.disabled = false;
+                submitButton.disabled = false;
             }
         }
     }
 
 
-    
+
     function carregarAvaliacoesProfissional(id) {
         // Implementação omitida, mas a função é mantida no escopo original
     }
-    
-    
+
+
     carregarDadosIniciais();
 
 });
@@ -634,7 +667,7 @@ async function carregarAvaliacoesProfissional(idProf) {
     const containerAvaliacoes = document.getElementById(`avaliacoes-detalhe-${idProf}`);
     if (!containerAvaliacoes) {
         // console.log("Container de avaliações não encontrado (normal se não houver).");
-        return; 
+        return;
     }
 
     const notaMediaEl = containerAvaliacoes.querySelector('.nota-media-detalhe');
@@ -642,11 +675,11 @@ async function carregarAvaliacoesProfissional(idProf) {
     const totalEl = containerAvaliacoes.querySelector('.total-avaliacoes-detalhe');
 
     if (!notaMediaEl || !estrelasEl || !totalEl) {
-         console.error("Elementos de avaliação não encontrados no container.");
+        console.error("Elementos de avaliação não encontrados no container.");
         return;
     }
 
-    
+
     notaMediaEl.textContent = 'Carregando...';
     estrelasEl.innerHTML = "☆☆☆☆☆";
     totalEl.textContent = '';
@@ -660,21 +693,21 @@ async function carregarAvaliacoesProfissional(idProf) {
         if (!comentarios || comentarios.length === 0) {
             notaMediaEl.textContent = 'Sem avaliações';
             totalEl.textContent = '(0 avaliações)';
-            return; 
+            return;
         }
 
         const total = comentarios.length;
-        const soma_notas = comentarios.reduce((acc, curr) => acc + parseFloat(curr.nota_avaliacao), 0); 
+        const soma_notas = comentarios.reduce((acc, curr) => acc + parseFloat(curr.nota_avaliacao), 0);
         const media = soma_notas / total;
-        const media_arredondada = Math.round(media); 
+        const media_arredondada = Math.round(media);
 
-        notaMediaEl.textContent = `${media.toFixed(1)} de 5`; 
+        notaMediaEl.textContent = `${media.toFixed(1)} de 5`;
         estrelasEl.innerHTML = `${"★".repeat(media_arredondada)}${"☆".repeat(5 - media_arredondada)}`;
         totalEl.textContent = `(${total} ${total === 1 ? 'avaliação' : 'avaliações'})`;
 
     } catch (error) {
         console.error('Erro ao carregar avaliações:', error);
         notaMediaEl.textContent = 'Erro ao carregar';
-        totalEl.textContent = ''; 
+        totalEl.textContent = '';
     }
 }

@@ -29,6 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- CÓDIGO NOVO: Verifica se deve abrir o modal automaticamente ---
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('openLogin') === 'true') {
+        // Remove parâmetro da URL para não reabrir ao atualizar
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+
+        // Pequeno delay para garantir que tudo carregou
+        setTimeout(() => {
+            abrirLoginModal();
+        }, 500);
+    }
+    // --- FIM DO CÓDIGO NOVO ---
+
 
     // Use event delegation for form submission to handle dynamic form injection
     document.body.addEventListener('submit', async (e) => {

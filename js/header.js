@@ -1,27 +1,28 @@
 // chrispsicologo/js/header.js
 
 // Função para aplicar/remover classes de header menor no scroll
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
     const header = document.querySelector('header');
     const logo = document.getElementById('logo');
 
     if (!header || !logo) {
-      return;
+        return;
     }
 
     if (window.scrollY > 0) {
-      header.classList.add('header_menor');
-      logo.classList.add('logo_menor');
+        header.classList.add('header_menor');
+        logo.classList.add('logo_menor');
     } else {
-      header.classList.remove('header_menor');
-      logo.classList.remove('logo_menor');
+        header.classList.remove('header_menor');
+        logo.classList.remove('logo_menor');
     }
 });
 
 // Função global para logout
-window.performLogout = function(event) {
+window.performLogout = function (event) {
     event.preventDefault();
     sessionStorage.removeItem('welcomeUserName');
+    localStorage.removeItem('auth_token'); // Remove o token JWT também
     window.location.href = '/backend/logout';
 }
 
@@ -35,18 +36,18 @@ function ativarMenuLateral() {
 
     // Função para abrir o menu lateral
     const abrirMenuLateral = () => {
-         if (menuLateral && overlay) {
+        if (menuLateral && overlay) {
             menuLateral.classList.add("aberto");
             overlay.classList.add("ativo");
-         }
+        }
     };
 
     // Função para fechar o menu lateral
     const fecharMenuLateral = () => {
-         if (menuLateral && overlay) {
+        if (menuLateral && overlay) {
             menuLateral.classList.remove("aberto");
             overlay.classList.remove("ativo");
-         }
+        }
     };
 
 
@@ -64,12 +65,12 @@ function ativarMenuLateral() {
 
     // Adiciona listener ao botão de ícone de perfil (se existir e se usuário estiver logado)
     if (profileIconBtn && sessionStorage.getItem('welcomeUserName')) {
-         profileIconBtn.addEventListener("click", (e) => {
-             e.preventDefault();
-             abrirMenuLateral();
-         });
+        profileIconBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            abrirMenuLateral();
+        });
     } else if (profileIconBtn) {
-         // Se não estiver logado, o onclick="abrirLoginModal()" já está no HTML
+        // Se não estiver logado, o onclick="abrirLoginModal()" já está no HTML
     }
 
 }
@@ -115,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // --- Define o item de autenticação para o menu lateral ---
         let sideMenuAuthItemHTML = '';
         if (userName) {
-             sideMenuAuthItemHTML = `
+            sideMenuAuthItemHTML = `
                 <li class="welcome-user-side"><span>Olá, ${userName}!</span></li>
                 <li><a href="minha-conta.html">Minha Conta</a></li>
                 <li><a href="#" onclick="performLogout(event)">Sair</a></li>

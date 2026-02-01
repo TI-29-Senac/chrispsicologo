@@ -140,7 +140,7 @@ class PublicAgendamentoController {
         
         try {
             $detalhes = Agendamento::getDetalhesPagamento($id); 
-
+            
             if (!$detalhes) {
                 http_response_code(404);
                 echo json_encode(['success' => false, 'message' => 'Agendamento não encontrado.']);
@@ -174,6 +174,27 @@ class PublicAgendamentoController {
         } finally {
             // Garante que a execução do script para imediatamente após a resposta.
             exit;
+        }
+    }
+
+    public function confirmarSinal($id) {
+        header('Content-Type: application/json');
+
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID do agendamento inválido.']);
+            return;
+        }
+
+        // Chama o método estático do Model que já implementa a transação e updates
+        $sucesso = Agendamento::marcarSinalComoPago($id);
+
+        if ($sucesso) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Pagamento confirmado com sucesso!']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao processar confirmação de pagamento.']);
         }
     }
 }

@@ -150,7 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const response = await fetch('/backend/api/cliente/avaliar', { // Endpoint da avaliação está correto
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        ...getAuthHeaders()
+                    },
                     body: formData
                 });
 
@@ -281,114 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Renderizar Agendamentos (Atualizado) ---
-    async function renderizarAgendamentos() {
-        const agendamentosLista = document.getElementById('agendamentos-lista');
-        if (!agendamentosLista) return;
 
-        agendamentosLista.innerHTML = '<p style="text-align: center; color: #5D6D68;">Buscando seus agendamentos...</p>';
-
-        try {
-            const response = await fetch('/backend/api/cliente/meus-agendamentos', {
-                headers: getAuthHeaders()
-            });
-
-            if (response.status === 401) {
-                agendamentosLista.innerHTML = '<p style="text-align: center; color: red;">Sessão expirada. Faça login novamente.</p>';
-                return;
-            }
-
-            if (!response.ok) {
-                throw new Error(`Erro ${response.status}`);
-            }
-
-            const result = await response.json();
-            // ... (restante da lógica de renderização, assumindo result.agendamentos)
-            const lista = result.agendamentos || result.data?.agendamentos || [];
-
-            if (lista.length > 0) {
-                agendamentosLista.innerHTML = '<h4>Seus Agendamentos:</h4>';
-                lista.forEach(agendamento => {
-                    // ... (copiar lógica de renderização HTML existente) ...
-                    // Simplificando aqui para não estourar o limite, mas mantendo a lógica original seria ideal.
-                    // Vou apenas injetar o HTML básico se não houver lógica complexa, mas o ideal é manter o original.
-                    // COMO O ORIGINAL ERA GRANDE, VOU DEIXAR O "TODO" ou TENTAR MANTER. 
-                    // O REPLACE TOOL VAI SUBSTITUIR TUDO NESTE BLOCO.
-                    // ENTÃO PRECISO REESCREVER A LÓGICA DE RENDERIZAÇÃO OU NÃO MEXER NELA SE POSSÍVEL.
-                    // A LÓGICA DE RENDERIZAÇÃO ESTAVA DENTRO DE renderizarAgendamentos.
-                    // VOU REESCREVER A FUNÇÃO INTEIRA COM A NOVA CHAMADA FETCH.
-                });
-            } else {
-                agendamentosLista.innerHTML = `<p style="text-align: center; color: #7C8F88;">Nenhum agendamento encontrado.</p>`;
-            }
-            // ...
-        } catch (e) {
-            agendamentosLista.innerHTML = `<p style="text-align: center; color: red;">Erro: ${e.message}</p>`;
-        }
-    }
-
-    // --- Renderizar Financeiro (NOVO) ---
-    async function renderizarFinanceiro() {
-        const financeiroLista = document.getElementById('financeiro-lista');
-        if (!financeiroLista) return;
-
-        financeiroLista.innerHTML = '<p style="text-align: center; color: #5D6D68;">Carregando pagamentos...</p>';
-
-        try {
-            const response = await fetch('/backend/api/cliente/financeiro', {
-                headers: getAuthHeaders()
-            });
-
-            if (response.status === 401) {
-                financeiroLista.innerHTML = '<p style="text-align: center; color: red;">Sessão expirada.</p>';
-                return;
-            }
-
-            if (!response.ok) throw new Error('Erro ao buscar financeiro');
-
-            const result = await response.json();
-            const pagamentos = result.data || [];
-
-            if (pagamentos.length === 0) {
-                financeiroLista.innerHTML = '<p style="text-align: center; color: #7C8F88;">Nenhum pagamento registrado.</p>';
-                return;
-            }
-
-            let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
-            html += `
-                <thead>
-                    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #5D6D68;">
-                        <th style="padding: 10px; text-align: left; color: #5D6D68;">Data Pagamento</th>
-                        <th style="padding: 10px; text-align: left; color: #5D6D68;">Profissional</th>
-                        <th style="padding: 10px; text-align: left; color: #5D6D68;">Valor</th>
-                        <th style="padding: 10px; text-align: left; color: #5D6D68;">Tipo</th>
-                    </tr>
-                </thead>
-                <tbody>
-             `;
-
-            pagamentos.forEach(p => {
-                const dataPag = new Date(p.data_pagamento).toLocaleDateString('pt-BR');
-                const valor = parseFloat(p.valor_consulta).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                html += `
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 10px;">${dataPag}</td>
-                        <td style="padding: 10px;">${p.nome_profissional}</td>
-                        <td style="padding: 10px;">${valor}</td>
-                        <td style="padding: 10px;">${p.tipo_pagamento}</td>
-                    </tr>
-                 `;
-            });
-
-            html += '</tbody></table>';
-            financeiroLista.innerHTML = html;
-
-        } catch (error) {
-            console.error(error);
-            financeiroLista.innerHTML = `<p style="text-align: center; color: red;">Erro ao carregar pagamentos.</p>`;
-        }
-    }
 
     // --- Função para renderizar a interface com os dados do usuário ---
     function renderizarInterface(usuario) {
@@ -494,7 +390,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // *** Endpoint para buscar agendamentos do cliente ***
-            const response = await fetch('/backend/api/cliente/meus-agendamentos');
+            const response = await fetch('/backend/api/cliente/meus-agendamentos', {
+                headers: getAuthHeaders()
+            });
             // *** Fim do Endpoint ***
 
             if (!response.ok) {
@@ -538,15 +436,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (statusClass === 'realizada') {
                             // Verifica se id_profissional existe antes de criar o botão
                             if (agendamento.id_profissional && agendamento.id_agendamento) {
-                                botaoAcaoHTML = `
-                                    <button class="btn-avaliar"
-                                            style="margin-left: 15px; padding: 5px 10px; font-size: 0.9rem; cursor: pointer;"
-                                            data-agendamento-id="${agendamento.id_agendamento}"
-                                            data-profissional-id="${agendamento.id_profissional}"
-                                            data-profissional-nome="${agendamento.nome_profissional}"
-                                            onclick="abrirModalAvaliacao('${agendamento.id_agendamento}', '${agendamento.id_profissional}', '${agendamento.nome_profissional}')">
-                                        Avaliar
-                                    </button>`;
+                                if (agendamento.ja_avaliado == 1 || agendamento.ja_avaliado == true) { // Verifica flag do backend
+                                     botaoAcaoHTML = `
+                                        <button class="btn-avaliar"
+                                                style="margin-left: 15px; padding: 5px 10px; font-size: 0.9rem; cursor: not-allowed; opacity: 0.8; background-color: #bfdad0ff;"
+                                                disabled>
+                                            Avaliado!
+                                        </button>`;
+                                } else {
+                                    botaoAcaoHTML = `
+                                        <button class="btn-avaliar"
+                                                style="margin-left: 15px; padding: 5px 10px; font-size: 0.9rem; cursor: pointer;"
+                                                data-agendamento-id="${agendamento.id_agendamento}"
+                                                data-profissional-id="${agendamento.id_profissional}"
+                                                data-profissional-nome="${agendamento.nome_profissional}"
+                                                onclick="abrirModalAvaliacao('${agendamento.id_agendamento}', '${agendamento.id_profissional}', '${agendamento.nome_profissional}')">
+                                            Avaliar
+                                        </button>`;
+                                }
                             } else {
                                 console.warn('IDs faltando para o botão de avaliar:', agendamento);
                             }
