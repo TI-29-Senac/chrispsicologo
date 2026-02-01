@@ -4378,7 +4378,6 @@ body::-webkit-scrollbar-thumb:hover {
   .confirmacao-container {
     padding: 15px;
     border-radius: 8px;
-    /* Removemos background-color: #faf6ee para manter o verde herdado */
   }
 
   /* Garante que inputs sejam brancos para contraste com fundo verde */
@@ -4389,18 +4388,41 @@ body::-webkit-scrollbar-thumb:hover {
     border: 1px solid #ccc;
   }
 
+  /* --- NOVAS REGRAS PARA CAIXAS BRANCAS E TEXTO VERDE NO MOBILE --- */
+  .pagamento-radio-group,
+  .scrolling-checkbox-list {
+    background-color: #fff !important;
+    /* Fundo branco */
+    color: #5D6D68 !important;
+    /* Texto verde */
+    border: 1px solid #ccc;
+  }
+
+  .pagamento-radio-group label,
+  .pagamento-radio-group .radio-option,
+  .scrolling-checkbox-list label {
+    color: #5D6D68 !important;
+    /* Garante texto verde nos filhos */
+  }
+
+  /* ---------------------------------------------------------------- */
+
   /* Centraliza e ajusta a grid de horários no mobile */
   .agenda-body {
     grid-template-columns: repeat(2, 1fr);
     justify-content: center;
-    /* Centralização horizontal */
+    /* Centralização horizontal da grid */
     gap: 15px;
   }
 
   .agenda-coluna {
+    display: flex;
+    /* Garante flexbox */
+    flex-direction: column;
+    /* Coluna vertical */
     align-items: center;
+    /* Centraliza os botões horizontalmente na coluna */
     width: 100%;
-    /* Garante uso do espaço para centralizar botões internamente */
   }
 
   .agenda-header {
@@ -5047,9 +5069,8 @@ body::-webkit-scrollbar-thumb:hover {
 
   .profissional-info-foto {
     width: 90%;
-    /* Ajusta tamanho da foto */
+    object-fit: contain;
     margin-left: auto;
-    /* Centraliza */
     margin-right: auto;
   }
 
@@ -5119,7 +5140,7 @@ body::-webkit-scrollbar-thumb:hover {
 
   .profissional-info-foto {
     width: 150px;
-    /* Foto menor */
+    object-fit: contain;
     height: 187px;
     margin-bottom: 10px;
   }
@@ -5250,6 +5271,7 @@ body::-webkit-scrollbar-thumb:hover {
 
   .profissional-info-foto {
     width: 120px;
+    object-fit: contain;
     height: 150px;
   }
 
