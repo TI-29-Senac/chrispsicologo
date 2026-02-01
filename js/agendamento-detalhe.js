@@ -602,8 +602,12 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment);
 
         try {
+            const token = localStorage.getItem('auth_token');
             const response = await fetch('/backend/agendamentos/salvar', {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: new URLSearchParams(formData)
             });
 

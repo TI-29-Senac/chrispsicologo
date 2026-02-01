@@ -4368,48 +4368,53 @@ body::-webkit-scrollbar-thumb:hover {
     grid-template-columns: 1fr;
   }
 
-  /* Garante que os labels sejam visíveis em telas menores */
+  /* Mantém a cor original (clara/branca) dos labels em desktop */
   .confirmacao-container label,
   .form-grupo label {
-    color: #5D6D68 !important;
-    /* Força cor escura para contraste */
+    color: #faf6ee !important;
   }
 
-  /* Ajuste no container de confirmação para mobile */
+  /* Mantém o fundo verde original do desktop, apenas ajusta padding/border */
   .confirmacao-container {
     padding: 15px;
-    background-color: #faf6ee;
-    /* Garante fundo claro */
     border-radius: 8px;
+    /* Removemos background-color: #faf6ee para manter o verde herdado */
+  }
+
+  /* Garante que inputs sejam brancos para contraste com fundo verde */
+  .confirmacao-container input,
+  .confirmacao-container select {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
   }
 
   /* Centraliza e ajusta a grid de horários no mobile */
   .agenda-body {
     grid-template-columns: repeat(2, 1fr);
-    /* 2 colunas para melhor visualização */
     justify-content: center;
+    /* Centralização horizontal */
     gap: 15px;
   }
 
   .agenda-coluna {
     align-items: center;
+    width: 100%;
+    /* Garante uso do espaço para centralizar botões internamente */
   }
 
   .agenda-header {
     display: none;
-    /* Esconde cabeçalho complexo no mobile se necessário, ou ajusta */
   }
 
   .form-grupo-duplo {
     grid-template-columns: 1fr;
     gap: 10px;
     margin-top: 5px;
-    /* Ajuste se estava com top negativo */
   }
 
   .form-grupo-duplo {
     top: 0;
-    /* Remove top negativo que quebrava layout mobile */
   }
 }
 

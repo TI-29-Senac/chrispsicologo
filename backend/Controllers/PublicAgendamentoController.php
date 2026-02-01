@@ -6,6 +6,7 @@ use App\Psico\Models\Agendamento;
 use App\Psico\Models\Usuario;
 use App\Psico\Models\Profissional;
 use App\Psico\Database\Database;
+use App\Psico\Core\Auth; // Adicionando Auth
 use DateTime;
 
 class PublicAgendamentoController {
@@ -68,15 +69,32 @@ class PublicAgendamentoController {
     public function salvarAgendamentos() {
         header('Content-Type: application/json'); 
 
-        
-         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSION['usuario_tipo'] !== 'cliente') {
+        $id_usuario = null;
+
+        // 1. Tenta autenticação por Sessão (Legacy/Web)
+        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && $_SESSION['usuario_tipo'] === 'cliente') {
+             $id_usuario = $_SESSION['usuario_id'];
+        } 
+        // 2. Tenta autenticação por JWT (API/Modern Web)
+        else {
+            try {
+                $payload = Auth::check(); // Verifica o cabeçalho Authorization: Bearer
+                $id_usuario = $payload->sub;
+                
+                // Opcional: Verificar se é cliente, se necessário, buscando no BD
+                // Mas geralmente quem tem token válido pode agendar
+            } catch (\Exception $e) {
+                // Token inválido ou não fornecido
+            }
+        }
+
+        if (!$id_usuario) {
              http_response_code(401); 
              echo json_encode(['success' => false, 'message' => 'Acesso não autorizado. Faça login como cliente para agendar.']);
              return;
-         }
-         $id_usuario = $_SESSION['usuario_id']; 
+        }
 
-        
+        // Continua com $id_usuario definido...
         
         $id_profissional = $_POST['id_profissional'] ?? null;
         $data_selecionada = $_POST['data_selecionada'] ?? null;
