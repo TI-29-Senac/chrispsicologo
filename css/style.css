@@ -6001,3 +6001,74 @@ body::-webkit-scrollbar-thumb:hover {
   background-color: #5D6D68;
   color: white;
 }
+
+/* Carousel Mobile para Navegação Minha Conta */
+@media (max-width: 768px) {
+  .minha-conta-nav {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
+    padding: 10px 0;
+    /* Espaço para scrollbar se visível */
+    scrollbar-width: none;
+    /* Firefox */
+    position: relative;
+    justify-content: flex-start;
+    /* Garante que itens comecem do início */
+    margin-bottom: 5px;
+  }
+
+  .minha-conta-nav::-webkit-scrollbar {
+    display: none;
+    /* Esconde scrollbar no Chrome/Safari/Edge */
+  }
+
+  .minha-conta-nav .nav-btn {
+    flex: 0 0 auto;
+    /* Não encolher nem crescer */
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    /* Ajuste visual para botões no carousel */
+    border: 1px solid #d6e3d6;
+    border-radius: 20px;
+  }
+
+  .minha-conta-nav .nav-btn.active {
+    background-color: #5D6D68;
+    color: white;
+    border-color: #5D6D68;
+  }
+
+  /* Seta para indicar scroll */
+  .minha-conta-container::after {
+    content: '⮕';
+    position: absolute;
+    right: 10px;
+    top: 140px;
+    /* Ajuste manual baseado na posição aproximada dos botões */
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0 5px;
+    border-radius: 4px;
+    pointer-events: none;
+    animation: bounceRight 2s infinite;
+    color: #5D6D68;
+    font-size: 1.5rem;
+    z-index: 10;
+  }
+
+  /* Ajuste no posicionamento da seta se o container mudar */
+  /* Uma abordagem alternativa é colocar a seta num elemento pai relativo */
+}
+
+@keyframes bounceRight {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+}

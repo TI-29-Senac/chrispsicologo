@@ -48,4 +48,19 @@ class APIPagamentoController {
             Response::error($e->getMessage(), 500);
         }
     }
+    public function listarFinanceiro() {
+        try {
+            $payload = Auth::check();
+            $idCliente = $payload->sub;
+            
+            // Certifique-se de que o método 'buscarPagamentosPorCliente' existe no Model Pagamento
+            // Se não existir, precisaremos criá-lo ou verificar o nome correto.
+            // Assumindo que existe baseado no código anterior do PagamentoController.
+            $pagamentos = $this->pagamentoModel->buscarPagamentosPorCliente((int)$idCliente);
+            
+            Response::success(['data' => $pagamentos]);
+        } catch (\Exception $e) {
+            Response::error($e->getMessage(), 500);
+        }
+    }
 }

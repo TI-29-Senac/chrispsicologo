@@ -69,4 +69,20 @@ class APIAgendamentoController {
             Response::error('Erro interno: ' . $e->getMessage(), 500);
         }
     }
+    public function buscarMeusAgendamentos() {
+        try {
+            // Verifica o token JWT
+            $payload = Auth::check(); 
+            $id_usuario = $payload->sub;
+
+            // Busca os agendamentos do usuário
+            $agendamentos = $this->agendamentoModel->buscarAgendamentosPorUsuario((int)$id_usuario);
+            
+            // Retorna sucesso
+            Response::success(['agendamentos' => $agendamentos]);
+
+        } catch (\Exception $e) {
+            Response::error($e->getMessage(), 401); 
+        }
+    }
 }
