@@ -4520,6 +4520,16 @@ body::-webkit-scrollbar-thumb:hover {
   margin: 15px auto 0;
 }
 
+.agenda-body-unique {
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  max-width: 90%;
+  margin: 15px auto 0;
+}
+
+
+
 /* Colunas dentro do grid (sem alterações) */
 .agenda-coluna {
   display: flex;

@@ -332,14 +332,20 @@ class UsuarioController extends AdminController {
     public function login() {
         header('Content-Type: application/json'); 
 
-        if (empty($_POST['email']) || empty($_POST['senha'])) {
+        // Tenta pegar JSON primeiro
+        $json = json_decode(file_get_contents('php://input'), true);
+        
+        $email = $_POST['email'] ?? $json['email'] ?? null;
+        $senha = $_POST['senha'] ?? $json['senha'] ?? null;
+
+        if (empty($email) || empty($senha)) {
             http_response_code(400); 
             echo json_encode(['success' => false, 'message' => 'Email e senha são obrigatórios.']);
             return;
         }
 
         
-        $usuarioAutenticado = $this->usuario->autenticarUsuario($_POST['email'], $_POST['senha']);
+        $usuarioAutenticado = $this->usuario->autenticarUsuario($email, $senha);
 
         
         if ($usuarioAutenticado) {
