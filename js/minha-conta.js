@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const response = await fetch('/backend/api/cliente/avaliar', { // Endpoint da avaliação está correto
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         ...getAuthHeaders()
                     },
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             // Verifica se id_profissional existe antes de criar o botão
                             if (agendamento.id_profissional && agendamento.id_agendamento) {
                                 if (agendamento.ja_avaliado == 1 || agendamento.ja_avaliado == true) { // Verifica flag do backend
-                                     botaoAcaoHTML = `
+                                    botaoAcaoHTML = `
                                         <button class="btn-avaliar"
                                                 style="margin-left: 15px; padding: 5px 10px; font-size: 0.9rem; cursor: not-allowed; opacity: 0.8; background-color: #bfdad0ff;"
                                                 disabled>
@@ -562,7 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+            let html = '<div style="overflow-x: auto; width: 100%;">';
+            html += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px;">';
             html += `
                 <thead>
                     <tr style="background-color: #f8f9fa; border-bottom: 2px solid #5D6D68;">
@@ -589,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  `;
             });
 
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
             financeiroLista.innerHTML = html;
 
         } catch (error) {
