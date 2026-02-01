@@ -3849,9 +3849,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .agenda-body {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
+  margin: 0 auto;
+  flex-wrap: wrap;
   margin-top: 15px;
 }
 
@@ -4408,28 +4412,76 @@ body::-webkit-scrollbar-thumb:hover {
   /* ---------------------------------------------------------------- */
 
   /* Centraliza e ajusta a grid de horários no mobile */
-
   .agenda-body {
-    grid-template-columns: repeat(2, 1fr);
-    justify-items: center;
-    /* Centraliza os itens dentro das células da grid */
-    align-items: start;
+    display: flex;
+    /* Mudança de Grid para Flex para melhor centralização visual */
+    justify-content: center;
+    /* Centraliza os blocos no meio da tela */
+    align-items: flex-start;
     gap: 15px;
+    /* Reduz o gap */
     width: 100%;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    /* Garante quebra em telas muito pequenas */
   }
 
   .agenda-coluna {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 45%;
+    /* Define largura fixa relativa para manter proporção */
+    max-width: 200px;
+    /* Impede que fiquem muito largos */
+  }
+
+  .agenda-coluna h4 {
+    color: #faf6ee;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 5px;
     width: 100%;
+    /* Botões ocupam 80% da coluna */
+    text-align: center;
+  }
+
+  .horario-btn {
+    background-color: #faf6ee;
+    color: #5D6D68;
+    border: none;
+    padding: 10px 0;
+    width: 100%;
+    /* Botões ocupam 80% da coluna */
+    margin-bottom: 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: block;
+    /* Garante que margin: 0 auto funcione se precisar, mas estamos usando flex align-items: center */
+    text-align: center;
+  }
+
+  .horario-btn:hover {
+    background-color: #e0dcd4;
+    transform: translateY(-2px);
+  }
+
+  .horario-btn.selecionado {
+    background-color: #A3B8A1;
+    color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
 
   .agenda-horarios-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
+
 
 
   .agenda-header {
@@ -4448,10 +4500,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @media (max-width: 500px) {
-  .agenda-body {
-    grid-template-columns: 1fr;
-    /* Uma coluna em telas muito pequenas */
-  }
+
 
   /* Garante que os inputs não estourem a tela */
   .form-grupo input,
@@ -4585,14 +4634,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 
 /* Grid dos horários (sem alterações) */
-.agenda-body {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, max-content));
-  gap: 10px;
-  justify-content: center;
-  max-width: 90%;
-  margin: 15px auto 0;
-}
+
 
 .agenda-body-unique {
   display: grid;
@@ -4610,6 +4652,9 @@ body::-webkit-scrollbar-thumb:hover {
   flex-direction: column;
   gap: 10px;
   align-items: center;
+  width: 45%;
+  max-width: 300px;
+  min-width: 150px;
 }
 
 /* Botões de horário (sem alterações) */
@@ -4646,10 +4691,7 @@ body::-webkit-scrollbar-thumb:hover {
     margin: 0 auto;
   }
 
-  .agenda-body {
-    max-width: 95%;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  }
+
 
   .horario-btn {
     width: 100%;
@@ -5102,10 +5144,7 @@ body::-webkit-scrollbar-thumb:hover {
     padding: 25px;
   }
 
-  .agenda-body {
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    /* Mais colunas se couber */
-  }
+
 
   .form-grupo-duplo {
     gap: 15px;
@@ -5387,48 +5426,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 
-/* FIX FINAL PARA AGENDAMENTO DETALHE MOBILE */
-@media (max-width: 768px) {
-  .agendamento-detalhe-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    padding: 15px !important;
-    box-sizing: border-box !important;
-  }
 
-  .profissional-info-coluna,
-  .profissional-bio-coluna {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .profissional-bio-coluna p {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-align: justify !important;
-    white-space: normal !important;
-  }
-
-  .profissional-bio-coluna h4 {
-    margin-left: 0 !important;
-    text-align: center !important;
-  }
-
-  .agenda-container,
-  .confirmacao-container {
-    width: 100% !important;
-    padding: 15px !important;
-    box-sizing: border-box !important;
-  }
-
-  .agenda-body {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 5px !important;
-  }
-}
 
 
 
@@ -6077,5 +6075,22 @@ body::-webkit-scrollbar-thumb:hover {
 
   50% {
     transform: translateX(5px);
+  }
+}
+
+/* Garantee side-by-side on desktop */
+@media (min-width: 769px) {
+  .agenda-body {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+  }
+
+  .agenda-coluna {
+    width: 45% !important;
+    max-width: 300px !important;
+    margin: 0 10px !important;
   }
 }

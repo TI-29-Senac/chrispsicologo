@@ -518,17 +518,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const horariosManha = horarios.filter(h => parseInt(h.split(':')[0]) < 13);
         const horariosTarde = horarios.filter(h => parseInt(h.split(':')[0]) >= 13);
 
-        let htmlBotoes = '<div class="agenda-coluna">';
+        let htmlBotoes = '<div class="agenda-coluna"><h4>Manhã</h4>';
         if (horariosManha.length > 0) {
             htmlBotoes += horariosManha.map(hora => `<button class="horario-btn" data-horario="${hora}">${hora}</button>`).join('');
         } else {
-            htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários<br>na manhã</p>';
+            htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários</p>';
         }
-        htmlBotoes += '</div><div class="agenda-coluna">';
+        htmlBotoes += '</div><div class="agenda-coluna"><h4>Tarde</h4>';
         if (horariosTarde.length > 0) {
             htmlBotoes += horariosTarde.map(hora => `<button class="horario-btn" data-horario="${hora}">${hora}</button>`).join('');
         } else {
-            htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários<br>à tarde</p>';
+            htmlBotoes += '<p style="font-size: 0.9em; text-align: center;">Sem horários</p>';
         }
         htmlBotoes += '</div>';
 
