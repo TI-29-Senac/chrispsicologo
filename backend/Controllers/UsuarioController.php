@@ -103,47 +103,69 @@ class UsuarioController extends AdminController {
 
     
     public function salvarUsuarios() {
+        // 1. DETECÇÃO DE JSON/API
+        $jsonData = json_decode(file_get_contents('php://input'), true);
         
+        // Se vier JSON válido, usamos ele. Se não, usamos o $_POST normal
+        $dados = $jsonData ?? $_POST;
+        
+        // Se for chamada via API (JSON), não podemos usar redirecionamentos HTML
+        $isApi = !empty($jsonData);
 
-        $erros = UsuarioValidador::ValidarEntradas($_POST);
-        if(!empty($erros)){
+        // Validação
+        $erros = UsuarioValidador::ValidarEntradas($dados);
+        if (!empty($erros)) {
+            if ($isApi) {
+                 header('Content-Type: application/json');
+                 echo json_encode(["success" => false, "erro" => implode(", ", $erros)]);
+                 exit;
+            }
+            
             $mensagemErro = implode("<br>", array_values($erros));
             
-            
-            
-            
-             if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
-                 Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
-             } else {
-                 
-                 
-                 
-                 Flash::set("error", $mensagemErro);
-                 header('Location: /registro.html'); 
-                 exit();
-                 
-             }
+            if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
+                Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
+            } else {
+                Flash::set("error", $mensagemErro);
+                header('Location: /registro.html');
+                exit();
+            }
             return;
         }
 
         try {
+            $tipoUsuario = $dados['tipo_usuario'] ?? 'cliente';
+            if ($tipoUsuario === 'user') $tipoUsuario = 'cliente';
             
-             $tipoUsuario = $_POST['tipo_usuario'] ?? 'cliente';
-             
-             if ($tipoUsuario === 'user') {
-                 $tipoUsuario = 'cliente';
-             }
-
-            $resultado = $this->usuario->inserirUsuario(
-                $_POST['nome_usuario'],
-                $_POST['email_usuario'],
-                $_POST['senha_usuario'],
+            // 2. INSERÇÃO
+            $resultadoId = $this->usuario->inserirUsuario(
+                $dados['nome_usuario'],
+                $dados['email_usuario'],
+                $dados['senha_usuario'], // O Desktop já manda hash em alguns casos
                 $tipoUsuario, 
-                $_POST['cpf'] ?? '' 
+                $dados['cpf'] ?? '' 
             );
 
+            // 3. RETORNO PARA O DESKTOP (API)
+            if ($isApi) {
+                header('Content-Type: application/json');
+                if ($resultadoId) {
+                    echo json_encode([
+                        "success" => true,
+                        "id_gerado" => $resultadoId,
+                        "message" => "Usuário salvo/sincronizado com sucesso"
+                    ]);
+                } else {
+                    echo json_encode(["success" => false, "erro" => "Erro ao inserir no banco"]);
+                }
+                exit;
+            }
+
+            // 4. RETORNO PARA NAVEGADOR
+            // Adaptando $resultadoId para a lógica antiga que esperava verificacao
+            $resultado = $resultadoId;
+
             if($resultado){
-                
                  if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                      Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
                  } else {
@@ -152,7 +174,6 @@ class UsuarioController extends AdminController {
                      exit();
                  }
             } else {
-                 
                  $mensagemErro = "Ocorreu um erro ao registar o utilizador.";
                   if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                       Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
@@ -162,17 +183,42 @@ class UsuarioController extends AdminController {
                       exit();
                   }
             }
+
         } catch (PDOException $e) {
-            
+            if ($isApi) {
+                header('Content-Type: application/json');
+                $msg_api = "Erro de banco de dados: " . $e->getMessage();
+                if ($e->getCode() == 23000 || $e->getCode() == 1062) {
+                     $msg_api = "Email já cadastrado.";
+                }
+                echo json_encode(["success" => false, "erro" => $msg_api]);
+                exit;
+            }
+
             if ($e->getCode() == 23000 || $e->getCode() == 1062) {
                 $mensagemErro = "Erro ao registar: O email fornecido já está em uso.";
             } else {
-                
                  error_log("Erro de PDO ao inserir usuário: " . $e->getMessage()); 
                 $mensagemErro = "Ocorreu um erro inesperado no servidor. Tente novamente mais tarde.";
             }
 
+            if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
+                Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
+            } else {
+                Flash::set("error", $mensagemErro);
+                header('Location: /registro.html');
+                exit();
+            }
+        } catch (Exception $e) {
+             if ($isApi) {
+                header('Content-Type: application/json');
+                echo json_encode(["success" => false, "erro" => $e->getMessage()]);
+                exit;
+            }
             
+            error_log("Erro inesperado ao inserir usuário: " . $e->getMessage());
+            $mensagemErro = "Ocorreu um erro inesperado.";
+
             if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                 Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
             } else {

@@ -1,39 +1,35 @@
 <?php
-
 namespace App\Psico\Rotas;
-
 use Bramus\Router\Router;
 use App\Psico\Core\Auth;
-
 class Rotas {
     public static function register(Router $router){
         $router->setNamespace('App\Psico\Controllers');
-
         // --- MIDDLEWARE DE AUTENTICAÇÃO API ---
         
         // Protege todas as rotas /api/*
         $router->before('GET|POST|PUT|DELETE', '/api/.*', function() {
-            // Lista de rotas públicas que não precisam de token
-            $publicRoutes = [
-                '/backend/api/desktop/login',
-                '/backend/api/contato/enviar',
-                '/backend/api/imagens/.*' // Imagens geralmente são públicas
+            // Lista de SUFIXOS de rotas públicas (mais seguro que caminho absoluto)
+            $publicSuffixes = [
+                '/api/desktop/login',
+                '/api/desktop/refresh-token',
+                '/api/desktop/logout',
+                '/api/contato/enviar',
+                '/api/imagens/quem-somos',
+                '/api/imagens/servicos'
             ];
-
             $currentUri = $_SERVER['REQUEST_URI'];
             
-            // Se a URI atual corresponder a alguma rota pública, pula a verificação
-            foreach ($publicRoutes as $route) {
-                if (preg_match('#^' . $route . '$#', $currentUri)) {
-                    return;
+            // 1. Verifica se a rota atual TERMINA com algum dos sufixos públicos
+            // Isso previne erros se o site estiver em subpastas (ex: /backend/api/...)
+            foreach ($publicSuffixes as $suffix) {
+                if (strpos($currentUri, $suffix) !== false) {
+                    return; // É pública, libera passagem
                 }
             }
-
-            // Para todas as outras rotas /api/, exige Token JWT
+            // 2. Se não for pública, exige Token JWT
             Auth::check();
         });
-
-
         // --- GET ---
         
         // USUARIOS
@@ -52,15 +48,12 @@ class Rotas {
         $router->get('/api/cliente/meus-agendamentos', 'APIAgendamentoController@buscarMeusAgendamentos');
         $router->get('/api/cliente/meu-perfil', 'APIUsuarioController@getMeuPerfil');
         $router->get('/api/cliente/financeiro', 'APIPagamentoController@listarFinanceiro');
-
-
         // AGENDAMENTOS
         $router->get('/agendamentos', 'AgendamentoController@index');
         $router->get('/agendamentos/listar', 'AgendamentoController@viewListarAgendamentos');
         $router->get('/api/agendamentos', 'APIAgendamentoController@getAgendamentos');
         $router->get('/agendamentos/disponibilidade/{id}/{data}', 'PublicAgendamentoController@buscarDisponibilidade');
         $router->get('/agendamentos/detalhe-pagamento/{id}', 'PublicAgendamentoController@getDetalhesPagamento');
-
         // PROFISSIONAIS (Admin)
         $router->get('/profissionais/listar', 'ProfissionalController@viewListarProfissionais');
         $router->get('/profissionais/criar', 'ProfissionalController@viewCriarProfissionais');
@@ -72,13 +65,11 @@ class Rotas {
         // Perfil do Profissional (Logado)
         $router->get('/profissional/meu-perfil', 'ProfissionalController@viewMeuPerfilProfissional');
         $router->post('/profissional/atualizar-meu-perfil', 'ProfissionalController@atualizarMeuPerfilProfissional');
-
         // PROFISSIONAIS (Público/API)
         $router->get('/profissionais/listar-publico', 'PublicProfissionalController@listarPublico');
         $router->get('/profissionais/detalhe/{id}', 'PublicProfissionalController@detalhePublico');
         $router->get('/avaliacoes', 'PublicProfissionalController@buscarAvaliacoes');
         $router->get('/api/profissionais', 'APIProfissionalController@getProfissionais');
-
         // AVALIAÇÕES (Admin)
         $router->get('/avaliacoes/listar', 'AvaliacaoController@viewListarAvaliacoes');
         $router->get('/avaliacoes/criar', 'AvaliacaoController@viewCriarAvaliacoes');
@@ -87,8 +78,6 @@ class Rotas {
         $router->post('/avaliacoes/salvar', 'AvaliacaoController@salvarAvaliacoes');
         $router->post('/avaliacoes/atualizar/{id}', 'AvaliacaoController@atualizarAvaliacoes');
         $router->post('/avaliacoes/deletar/{id}', 'AvaliacaoController@deletarAvaliacoes');
-
-
         // IMAGENS (Admin)
         $router->get('/imagens/listar', 'ImagemController@viewListarImagens');
         $router->get('/imagens/criar', 'ImagemController@viewCriarImagem');
@@ -102,14 +91,11 @@ class Rotas {
         // IMAGENS (Público/API)
         $router->get('/api/imagens/quem-somos', 'ImagemController@listarQuemSomos');
         $router->get('/api/imagens/servicos', 'ImagemController@listarServicos');
-
         // GERAL
         $router->get('/logout', 'UsuarioController@logout');
         $router->get('/dashboard', 'UsuarioController@dashboard');
         $router->get('/meu-perfil', 'UsuarioController@viewMeuPerfil');
-
         // --- POST ---
-
         // USUARIOS
         $router->post('/api/usuarios/salvar', 'APIUsuarioController@salvarUsuario');
         $router->post('/usuario/salvar', 'UsuarioController@salvarUsuarios');
@@ -118,22 +104,23 @@ class Rotas {
         
         // Rota específica do cliente web (perfil)
         $router->post('/api/cliente/atualizar-perfil', 'UsuarioController@atualizarMeuPerfil');
-        $router->post('/api/cliente/avaliar', 'AvaliacaoController@salvarAvaliacaoCliente'); // Alterado para método correto se existir, ou verificar
-
+        $router->post('/api/cliente/avaliar', 'AvaliacaoController@salvarAvaliacaoCliente');
         // Login
         $router->post('/login', 'UsuarioController@login');
+        
+        // ROTAS DO DESKTOP (Atualizado)
         $router->post('/api/desktop/login', 'DesktopApiController@login');
+        $router->post('/api/desktop/refresh-token', 'DesktopApiController@refreshToken');
+        $router->post('/api/desktop/logout', 'DesktopApiController@logout');
         
         // Senha
         $router->post('/recuperar-senha/solicitar', 'UsuarioController@solicitarRecuperacaoSenha');
         $router->post('/recuperar-senha/processar', 'UsuarioController@processarRedefinicaoSenha');
-
         // AGENDAMENTOS
         $router->post('/agendamentos/salvar', 'PublicAgendamentoController@salvarAgendamentos'); 
         $router->post('/api/agendamentos/salvar', 'APIAgendamentoController@salvarAgendamento');
-        $router->post('/agendamentos/confirmar-sinal/{id}', 'PublicAgendamentoController@confirmarSinal'); // Rota para confirmar pagamento
+        $router->post('/agendamentos/confirmar-sinal/{id}', 'PublicAgendamentoController@confirmarSinal'); 
         $router->post('/agendamentos/deletar/{id}', 'AgendamentoController@deletarAgendamentos');
-
         // PAGAMENTOS (Admin)
         $router->get('/pagamentos/listar', 'PagamentoController@viewListarPagamentos');
         $router->get('/pagamentos/criar', 'PagamentoController@viewCriarPagamentos');
@@ -141,11 +128,9 @@ class Rotas {
         $router->get('/pagamentos/excluir/{id}', 'PagamentoController@viewExcluirPagamentos');
         $router->post('/pagamentos/atualizar/{id}', 'PagamentoController@atualizarPagamento');
         $router->post('/pagamentos/deletar/{id}', 'PagamentoController@deletarPagamento');
-
         // PAGAMENTOS (Salvar)
         $router->post('/pagamentos/salvar', 'PagamentoController@salvarPagamentos');
         $router->post('/api/pagamentos/salvar', 'APIPagamentoController@salvarPagamento');
-
         // CONTATO
         $router->post('/enviar-contato', 'ContatoController@processarFormulario');
         $router->post('/api/contato/enviar', 'APIContatoController@enviarMensagem');

@@ -53,10 +53,12 @@ class DesktopApiController {
                 // GERAÇÃO DO TOKEN JWT
                 // Supondo que $usuario->id_usuario e $usuario->tipo_usuario existam
                 $token = \App\Psico\Core\Auth::generate($usuario->id_usuario, $usuario->tipo_usuario);
+                $refreshToken = \App\Psico\Core\Auth::generateRefreshToken($usuario->id_usuario);
 
                 Response::success([
                     'usuario' => $usuario,
-                    'token' => $token
+                    'token' => $token,
+                    'refresh_token' => $refreshToken
                 ]);
             } else {
                 Response::error("Email ou senha incorretos.");
@@ -64,6 +66,63 @@ class DesktopApiController {
         } catch (\Exception $e) { 
             Response::error($e->getMessage(), 500);
         }
+    }
+
+    public function refreshToken() {
+        $this->setCors();
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { http_response_code(200); exit(); }
+
+        $input = $this->getInput();
+        $refreshToken = $input['refresh_token'] ?? null;
+
+        if (!$refreshToken) {
+            Response::error("Refresh token não fornecido.", 400);
+        }
+
+        $userId = \App\Psico\Core\Auth::verifyRefreshToken($refreshToken);
+
+        if (!$userId) {
+            Response::error("Refresh token inválido ou expirado.", 401);
+        }
+
+        try {
+            // Revoga o atual (Rotação)
+            \App\Psico\Core\Auth::revokeRefreshToken($refreshToken);
+
+            // Busca dados do usuário para gerar novo token (precisamos da role)
+            $model = new Usuario($this->db);
+            $usuario = $model->buscarUsuarioPorId($userId);
+
+            if (!$usuario) {
+                Response::error("Usuário não encontrado.", 404);
+            }
+
+            // Gera novos tokens
+            $newToken = \App\Psico\Core\Auth::generate($usuario->id_usuario, $usuario->tipo_usuario);
+            $newRefreshToken = \App\Psico\Core\Auth::generateRefreshToken($usuario->id_usuario);
+
+            Response::success([
+                'token' => $newToken,
+                'refresh_token' => $newRefreshToken
+            ]);
+
+        } catch (\Exception $e) {
+            Response::error("Erro ao renovar token: " . $e->getMessage(), 500);
+        }
+    }
+
+    public function logout() {
+        $this->setCors();
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { http_response_code(200); exit(); }
+
+        $input = $this->getInput();
+        $refreshToken = $input['refresh_token'] ?? null;
+
+        if ($refreshToken) {
+            \App\Psico\Core\Auth::revokeRefreshToken($refreshToken);
+        }
+
+        Response::success(['message' => 'Logout realizado com sucesso.']);
     }
 
     // --- USUÁRIOS ---
