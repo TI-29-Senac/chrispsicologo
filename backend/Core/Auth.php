@@ -58,6 +58,21 @@ class Auth {
         }
 
         $token = $matches[1];
+
+        // 1. Tenta validar como Token Fixo (API_TOKEN do .env)
+        // Isso permite que o Desktop App acesse sem login inicial para sincronizar/logar
+        $apiToken = $_ENV['API_TOKEN'] ?? '';
+        if (!empty($apiToken) && $token === $apiToken) {
+            // Retorna um payload "Mestre" fictício para permitir acesso
+            return (object) [
+                'sub' => 0, // ID 0 ou outro identificador de sistema
+                'role' => 'admin', // Permissão total
+                'iat' => time(),
+                'exp' => time() + 3600 // Válido por 1h (embora não validado por tempo aqui)
+            ];
+        }
+
+        // 2. Se não for Token Fixo, tenta validar como JWT
         $payload = self::validate($token);
 
         if (!$payload) {
