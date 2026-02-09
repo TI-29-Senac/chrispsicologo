@@ -5,14 +5,16 @@ namespace App\Psico\Rotas;
 use Bramus\Router\Router;
 use App\Psico\Core\Auth;
 
-class Rotas {
-    public static function register(Router $router){
+class Rotas
+{
+    public static function register(Router $router)
+    {
         $router->setNamespace('App\Psico\Controllers');
 
         // --- MIDDLEWARE DE AUTENTICAÇÃO API ---
-        
+
         // Protege todas as rotas /api/*
-        $router->before('GET|POST|PUT|DELETE', '/api/.*', function() {
+        $router->before('GET|POST|PUT|DELETE', '/api/.*', function () {
             // Lista de rotas públicas que não precisam de token
             $publicRoutes = [
                 '/backend/api/desktop/login',
@@ -21,7 +23,7 @@ class Rotas {
             ];
 
             $currentUri = $_SERVER['REQUEST_URI'];
-            
+
             // Se a URI atual corresponder a alguma rota pública, pula a verificação
             foreach ($publicRoutes as $route) {
                 if (preg_match('#^' . $route . '$#', $currentUri)) {
@@ -35,19 +37,19 @@ class Rotas {
 
 
         // --- GET ---
-        
+
         // USUARIOS
         $router->get('/usuarios', 'UsuarioController@meuPerfilApi');
         $router->get('/usuario/criar', 'UsuarioController@viewCriarUsuarios');
         $router->get('/usuario/listar', 'UsuarioController@viewListarUsuarios');
         $router->get('/usuario/editar/{id}', 'UsuarioController@viewEditarUsuarios');
         $router->get('/usuario/excluir/{id}', 'UsuarioController@viewExcluirUsuarios');
-        
+
         // API (Protegidas pelo Middleware acima)
-        $router->get('/usuarios/{id}', 'APIUsuarioController@buscarPorId'); 
+        $router->get('/usuarios/{id}', 'APIUsuarioController@buscarPorId');
         $router->get('/api/usuarios', 'APIUsuarioController@getUsuarios');
         $router->get('/api/usuarios/{pagina}', 'APIUsuarioController@getUsuarios');
-        
+
         // Rota específica do cliente web (perfil)
         $router->get('/api/cliente/meus-agendamentos', 'APIAgendamentoController@buscarMeusAgendamentos');
         $router->get('/api/cliente/meu-perfil', 'APIUsuarioController@getMeuPerfil');
@@ -98,7 +100,7 @@ class Rotas {
         $router->post('/imagens/atualizar/{id}', 'ImagemController@atualizarImagem');
         $router->post('/imagens/deletar/{id}', 'ImagemController@deletarImagem');
         $router->get('/api/imagens/secoes/{id}', 'ImagemController@buscarSecoesPorPaginaApi');
-        
+
         // IMAGENS (Público/API)
         $router->get('/api/imagens/quem-somos', 'ImagemController@listarQuemSomos');
         $router->get('/api/imagens/servicos', 'ImagemController@listarServicos');
@@ -114,8 +116,9 @@ class Rotas {
         $router->post('/api/usuarios/salvar', 'APIUsuarioController@salvarUsuario');
         $router->post('/usuario/salvar', 'UsuarioController@salvarUsuarios');
         $router->post('/usuario/atualizar/{id}', 'UsuarioController@atualizarUsuarios');
+        $router->post('/usuario/deletar/{id}', 'UsuarioController@deletarUsuarios');
         $router->post('/usuarios/excluir/{id}', 'APIUsuarioController@deletarUsuario');
-        
+
         // Rota específica do cliente web (perfil)
         $router->post('/api/cliente/atualizar-perfil', 'UsuarioController@atualizarMeuPerfil');
         $router->post('/api/cliente/avaliar', 'AvaliacaoController@salvarAvaliacaoCliente'); // Alterado para método correto se existir, ou verificar
@@ -123,13 +126,13 @@ class Rotas {
         // Login
         $router->post('/login', 'UsuarioController@login');
         $router->post('/api/desktop/login', 'DesktopApiController@login');
-        
+
         // Senha
         $router->post('/recuperar-senha/solicitar', 'UsuarioController@solicitarRecuperacaoSenha');
         $router->post('/recuperar-senha/processar', 'UsuarioController@processarRedefinicaoSenha');
 
         // AGENDAMENTOS
-        $router->post('/agendamentos/salvar', 'PublicAgendamentoController@salvarAgendamentos'); 
+        $router->post('/agendamentos/salvar', 'PublicAgendamentoController@salvarAgendamentos');
         $router->post('/api/agendamentos/salvar', 'APIAgendamentoController@salvarAgendamento');
         $router->post('/agendamentos/confirmar-sinal/{id}', 'PublicAgendamentoController@confirmarSinal'); // Rota para confirmar pagamento
         $router->post('/agendamentos/deletar/{id}', 'AgendamentoController@deletarAgendamentos');
@@ -149,7 +152,7 @@ class Rotas {
         // CONTATO
         $router->post('/enviar-contato', 'ContatoController@processarFormulario');
         $router->post('/api/contato/enviar', 'APIContatoController@enviarMensagem');
-        
+
         // Rotas extras manuais que estavam no index.php
         $router->post('/gerar-pix', 'ApiController@gerarPix');
     }
