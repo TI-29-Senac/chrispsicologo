@@ -472,15 +472,42 @@ class UsuarioController extends AdminController {
       }
     }
 
-    public function meuPerfilApi() {
+    // --- HELPER DE AUTENTICAÇÃO (Sessão ou Token) ---
+    private function getAuthenticatedUserId() {
+        // 1. Tenta via Sessão
         if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+            return $_SESSION['usuario_id'];
+        }
 
-        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        // 2. Tenta via Token (JWT)
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+            try {
+                // Decodifica usando a classe Auth (que já valida assinatura/expiração)
+                $payload = \App\Psico\Core\Auth::validate($token);
+                if ($payload && isset($payload->sub)) {
+                    return $payload->sub; // 'sub' contém o ID do usuário
+                }
+            } catch (\Exception $e) {
+                // Token inválido, apenas retorna false
+            }
+        }
+
+        return false;
+    }
+
+    public function meuPerfilApi() {
+        $id_usuario = $this->getAuthenticatedUserId();
+
+        if (!$id_usuario) {
             \App\Psico\Core\Response::error('Acesso não autorizado.', 401);
             return;
         }
 
-        $id_usuario = $_SESSION['usuario_id'];
         $usuario = null; 
         try {
             $usuario = $this->usuario->buscarUsuarioPorId((int)$id_usuario);
@@ -505,12 +532,13 @@ class UsuarioController extends AdminController {
     public function atualizarMeuPerfil() {
          header('Content-Type: application/json'); 
 
-         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+         $id = $this->getAuthenticatedUserId();
+
+         if (!$id) {
              http_response_code(401);
              echo json_encode(['success' => false, 'message' => 'Acesso não autorizado.']);
              return;
          }
-         $id = $_SESSION['usuario_id'];
          
          // Usa o validador para atualização
          $erros = \App\Psico\Validadores\UsuarioValidador::ValidarEntradas($_POST, true); 
@@ -539,12 +567,13 @@ class UsuarioController extends AdminController {
              );
 
              if ($sucesso) {
-                 if (isset($_POST['nome_usuario'])) {
+                 // Atualiza a sessão se ela estiver ativa
+                 if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] == $id && isset($_POST['nome_usuario'])) {
                       $_SESSION['usuario_nome'] = $_POST['nome_usuario'];
                  }
 
                  http_response_code(200);
-                 echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!', 'userName' => $_SESSION['usuario_nome']]);
+                 echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!', 'userName' => $_POST['nome_usuario']]);
              } else {
                  http_response_code(500);
                  echo json_encode(['success' => false, 'message' => 'Erro ao atualizar perfil.']);
@@ -552,7 +581,7 @@ class UsuarioController extends AdminController {
          } catch (\PDOException $e) {
               if ($e->getCode() == 23000 || $e->getCode() == 1062) {
                  http_response_code(409);
-                 echo json_encode(['success' => false, 'message' => "Erro ao atualizar: O email fornecido já está em uso."]);
+                 echo json_encode(['success' => false, 'message' => "Erro ao atualizar: O email já está em uso."]);
              } else {
                  error_log("Erro de PDO ao atualizar usuário: " . $e->getMessage()); 
                  http_response_code(500);

@@ -112,6 +112,26 @@ class Rotas {
         $router->post('/api/desktop/login', 'DesktopApiController@login');
         $router->post('/api/desktop/refresh-token', 'DesktopApiController@refreshToken');
         $router->post('/api/desktop/logout', 'DesktopApiController@logout');
+
+        // Rotas de Sincronização Desktop
+        // Usuarios
+        $router->get('/api/desktop/usuarios/listar', 'DesktopApiController@listarUsuarios');
+        $router->post('/api/desktop/usuarios/salvar', 'DesktopApiController@criarUsuario');
+        $router->post('/api/desktop/usuarios/editar/{id}', 'DesktopApiController@editarUsuario');
+        $router->post('/api/desktop/usuarios/excluir/{id}', 'DesktopApiController@excluirUsuario');
+        
+        // Agendamentos
+        $router->get('/api/desktop/agendamentos/listar', 'DesktopApiController@listarAgendamentos');
+        $router->post('/api/desktop/agendamentos/salvar', 'DesktopApiController@criarAgendamento');
+        $router->post('/api/desktop/agendamentos/editar/{id}', 'DesktopApiController@editarAgendamento');
+        $router->post('/api/desktop/agendamentos/excluir/{id}', 'DesktopApiController@excluirAgendamento');
+        
+        // Pagamentos
+        $router->get('/api/desktop/pagamentos/listar', 'DesktopApiController@listarPagamentos');
+        $router->post('/api/desktop/pagamentos/salvar', 'DesktopApiController@criarPagamento');
+        $router->post('/api/desktop/pagamentos/editar/{id}', 'DesktopApiController@editarPagamento');
+        $router->post('/api/desktop/pagamentos/excluir/{id}', 'DesktopApiController@excluirPagamento');
+
         
         // Senha
         $router->post('/recuperar-senha/solicitar', 'UsuarioController@solicitarRecuperacaoSenha');

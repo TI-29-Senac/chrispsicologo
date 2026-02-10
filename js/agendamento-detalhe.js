@@ -15,27 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- PROTEÇÃO DA PÁGINA: Verifica se o usuário está logado ---
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-        // Opção 1: Alertar e redirecionar para home onde o modal de login pode ser aberto
-        alert('Você precisa estar logado para realizar um agendamento.');
-
-        // Remove parâmetros da URL para evitar loops ou estados inconsistentes
-        // window.history.replaceState({}, document.title, window.location.pathname);
-
-        // Oculta o conteúdo para não "piscar" informações
-        container.style.display = 'none';
-
-        // Redireciona para a home
-        window.location.href = '/index.html?openLogin=true';
-
-        // Nota: Se preferir abrir o modal diretamente na página, seria necessário
-        // garantir que o login.js já carregou e usar 'abrirLoginModal()', mas
-        // se o usuário não logar, ele veria a página. O bloqueio exige redirecionamento
-        // ou um overlay persistente.
-        return;
-    }
+    // --- PROTEÇÃO DA PÁGINA: REMOVIDA PARA PERMITIR VISUALIZAÇÃO ---
+    // A verificação será feita apenas ao tentar selecionar um horário.
+    // const token = localStorage.getItem('auth_token');
+    // ... (código removido)
     // --- FIM DA PROTEÇÃO ---
 
 
@@ -543,6 +526,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function selecionarHorario(botaoClicado) {
+        // --- VERIFICAÇÃO DE LOGIN ---
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            if (typeof window.abrirAuthWarningModal === 'function') {
+                window.abrirAuthWarningModal();
+            } else {
+                alert("Você precisa estar logado para agendar. Por favor, faça login.");
+                // Fallback simples
+                if (typeof window.abrirLoginModal === 'function') {
+                    window.abrirLoginModal();
+                }
+            }
+            return;
+        }
+        // --- FIM DA VERIFICAÇÃO ---
+
         const container = botaoClicado.closest('.agenda-body');
 
         container.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selecionado'));

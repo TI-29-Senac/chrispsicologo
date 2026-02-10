@@ -1,0 +1,346 @@
+/* #region Sidebar Dashboard Styles - Polished & Branded */
+
+.minha-conta-container {
+    max-width: 1200px;
+    margin: 40px auto 100px auto;
+    /* Increased bottom margin for footer spacing */
+    padding: 0 20px;
+    font-family: 'Questrial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Main Dashboard Card (Fixed Size Container) */
+.dashboard-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 950px;
+    min-height: 580px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid #dcdcdc;
+    align-items: stretch;
+}
+
+/* Sidebar (Left) */
+.sidebar {
+    width: 260px;
+    background-color: #f8f9f9;
+    /* Very light gray/green tint */
+    padding: 25px 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 25px 25px 25px;
+    margin-bottom: 10px;
+}
+
+.user-avatar-small {
+    width: 42px;
+    height: 42px;
+    background-color: #5D6D68;
+    /* Brand Color */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.user-welcome h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #5D6D68;
+    /* Brand Color */
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 25px;
+    text-decoration: none;
+    color: #5D6D68;
+    /* Brand Color Text */
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Questrial', sans-serif;
+    border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+    background-color: rgba(93, 109, 104, 0.08);
+    /* Brand tint */
+    color: #4A5753;
+}
+
+.nav-item.active {
+    background-color: rgba(93, 109, 104, 0.12);
+    /* Stronger Brand tint */
+    color: #5D6D68;
+    font-weight: 700;
+    border-left-color: #5D6D68;
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+    color: #7d8a87;
+}
+
+.nav-item.logout {
+    margin-top: auto;
+    color: #5D6D68;
+    padding-bottom: 25px;
+    opacity: 0.8;
+}
+
+.nav-item.logout:hover {
+    background-color: #fee;
+    color: #d32f2f;
+    opacity: 1;
+    border-left-color: transparent;
+}
+
+/* Content Area (Right) */
+.dashboard-content {
+    flex-grow: 1;
+    background-color: #fdfdfd;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.content-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
+}
+
+.content-header h1 {
+    font-size: 1.6rem;
+    color: #5D6D68;
+    /* Brand Color */
+    margin: 0 0 5px 0;
+    font-weight: 700;
+}
+
+.content-header p {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Card Boxes */
+.card-box {
+    background: #fcfcfc;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+}
+
+.card-header-internal {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.card-header-internal h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #5D6D68;
+    /* Brand Color */
+    font-weight: 600;
+}
+
+.card-header-internal i {
+    font-size: 1.3rem;
+    color: #5D6D68;
+    /* Brand Color */
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    color: #5D6D68;
+    /* Brand Color */
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    background-color: #f0f2f1;
+    /* Light tint background for input */
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    color: #333;
+    font-family: 'Questrial', sans-serif;
+    outline: none;
+    transition: 0.2s;
+}
+
+.form-group input:focus {
+    background-color: #fff;
+    border-color: #5D6D68;
+    box-shadow: 0 0 0 2px rgba(93, 109, 104, 0.1);
+}
+
+.form-group input:disabled {
+    color: #777;
+    background-color: #e5e5e5;
+}
+
+/* Buttons */
+.btn-group-row {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #5D6D68;
+    /* Brand Color */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #4a5753;
+    /* Darker Brand Color */
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #5D6D68;
+    /* Brand Color */
+    border: 1px solid #5D6D68;
+    border-radius: 6px;
+    padding: 9px 18px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #f0f2f1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        flex-direction: column;
+        border-radius: 0;
+        border: none;
+    }
+
+    .minha-conta-container {
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    .nav-item {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: 10px 15px;
+    }
+
+    .nav-item.active {
+        border-bottom-color: #5D6D68;
+        background: none;
+    }
+
+    .btn-group-row {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-group-row button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Scrollbar Polish */
+.dashboard-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dashboard-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.dashboard-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.dashboard-content::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+/* #endregion */
