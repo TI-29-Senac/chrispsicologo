@@ -575,7 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitButton = document.getElementById('btn-confirmar-agendamento');
         const statusMessage = document.getElementById('agendamento-status-message');
 
-        const selectedPayment = document.querySelector('input[name="forma_pagamento"]:checked').value;
+        const formData = new FormData(form);
+        const selectedPayment = formData.get('forma_pagamento');
 
         statusMessage.textContent = 'Solicitando agendamento e pagamento...';
         statusMessage.style.color = '#faf6ee';
@@ -614,28 +615,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const formDataToSend = new FormData();
-        // Copia os dados do form original e adiciona o tipo de pagamento
-        for (var pair of formData.entries()) {
-            formDataToSend.append(pair[0], pair[1]);
+        // Construir JSON Payload
+        const payload = {};
+        formData.forEach((value, key) => { payload[key] = value });
+
+        // Combinar data e hora para formatar conforme esperado pelo backend (YYYY-MM-DD HH:MM)
+        // O backend espera 'data_agendamento'
+        if (payload.data_selecionada && payload.horario_selecionado) {
+            payload.data_agendamento = `${payload.data_selecionada} ${payload.horario_selecionado}`;
         }
-        formDataToSend.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment);
+
+        // Ajustar tipo de pagamento
+        payload.tipo_pagamento = (selectedPayment === 'cartao' ? 'credito' : selectedPayment);
 
         try {
             const token = localStorage.getItem('auth_token');
             const response = await fetch('/backend/agendamentos/salvar', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: new URLSearchParams(formDataToSend)
+                body: JSON.stringify(payload)
             });
 
             const result = await response.json();
 
             if (response.ok && result.success) {
 
-                const agendamentoId = result.agendamentoId;
+                const agendamentoId = result.id_agendamento || result.agendamentoId; // Suporte a ambas as chaves se houver variação
                 let redirectUrl = '';
 
                 switch (selectedPayment) {
@@ -665,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.textContent = `Erro: ${error.message}. Tente novamente.`;
             statusMessage.style.color = 'red';
 
-            if (error.message.includes('horário acabou de ser reservado')) {
+            if (error.message && error.message.includes('horário acabou de ser reservado')) {
                 buscarHorariosDisponiveis();
             }
         } finally {

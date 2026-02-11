@@ -28,7 +28,7 @@
 /* Sidebar (Left) */
 .sidebar {
     width: 260px;
-    background-color: #f8f9f9;
+    background-color: #eee1cb;
     /* Very light gray/green tint */
     padding: 25px 0;
     display: flex;
@@ -131,7 +131,7 @@
 /* Content Area (Right) */
 .dashboard-content {
     flex-grow: 1;
-    background-color: #fdfdfd;
+    background-color: #faf6ee;;
     padding: 40px;
     overflow-y: auto;
 }
@@ -158,7 +158,7 @@
 
 /* Card Boxes */
 .card-box {
-    background: #fcfcfc;
+    background: #d6e3d6;
     border: 1px solid #e6e6e6;
     border-radius: 12px;
     padding: 20px 25px;
@@ -202,7 +202,7 @@
 
 .form-group input {
     width: 100%;
-    background-color: #f0f2f1;
+    background-color: #ffffff;
     /* Light tint background for input */
     border: 1px solid transparent;
     border-radius: 6px;

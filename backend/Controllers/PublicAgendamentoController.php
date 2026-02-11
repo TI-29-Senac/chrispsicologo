@@ -96,9 +96,12 @@ class PublicAgendamentoController {
 
         // Continua com $id_usuario definido...
         
-        $id_profissional = $_POST['id_profissional'] ?? null;
-        $data_selecionada = $_POST['data_selecionada'] ?? null;
-        $horario_selecionado = $_POST['horario_selecionado'] ?? null;
+        // Ler input JSON se disponível, fallback para $_POST
+        $json_input = json_decode(file_get_contents('php://input'), true);
+
+        $id_profissional = $json_input['id_profissional'] ?? $_POST['id_profissional'] ?? null;
+        $data_selecionada = $json_input['data_selecionada'] ?? $_POST['data_selecionada'] ?? null;
+        $horario_selecionado = $json_input['horario_selecionado'] ?? $_POST['horario_selecionado'] ?? null;
 
         
         if (empty($id_profissional) || empty($data_selecionada) || empty($horario_selecionado)) {
