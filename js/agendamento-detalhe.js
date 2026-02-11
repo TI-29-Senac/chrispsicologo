@@ -15,27 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- PROTEÇÃO DA PÁGINA: Verifica se o usuário está logado ---
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-        // Opção 1: Alertar e redirecionar para home onde o modal de login pode ser aberto
-        alert('Você precisa estar logado para realizar um agendamento.');
-
-        // Remove parâmetros da URL para evitar loops ou estados inconsistentes
-        // window.history.replaceState({}, document.title, window.location.pathname);
-
-        // Oculta o conteúdo para não "piscar" informações
-        container.style.display = 'none';
-
-        // Redireciona para a home
-        window.location.href = '/index.html?openLogin=true';
-
-        // Nota: Se preferir abrir o modal diretamente na página, seria necessário
-        // garantir que o login.js já carregou e usar 'abrirLoginModal()', mas
-        // se o usuário não logar, ele veria a página. O bloqueio exige redirecionamento
-        // ou um overlay persistente.
-        return;
-    }
+    // --- PROTEÇÃO DA PÁGINA: REMOVIDA PARA PERMITIR VISUALIZAÇÃO ---
+    // A verificação será feita apenas ao tentar selecionar um horário.
+    // const token = localStorage.getItem('auth_token');
+    // ... (código removido)
     // --- FIM DA PROTEÇÃO ---
 
 
@@ -543,6 +526,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function selecionarHorario(botaoClicado) {
+        // --- VERIFICAÇÃO DE LOGIN ---
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            if (typeof window.abrirAuthWarningModal === 'function') {
+                window.abrirAuthWarningModal();
+            } else {
+                alert("Você precisa estar logado para agendar. Por favor, faça login.");
+                // Fallback simples
+                if (typeof window.abrirLoginModal === 'function') {
+                    window.abrirLoginModal();
+                }
+            }
+            return;
+        }
+        // --- FIM DA VERIFICAÇÃO ---
+
         const container = botaoClicado.closest('.agenda-body');
 
         container.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selecionado'));
@@ -576,7 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitButton = document.getElementById('btn-confirmar-agendamento');
         const statusMessage = document.getElementById('agendamento-status-message');
 
-        const selectedPayment = document.querySelector('input[name="forma_pagamento"]:checked').value;
+        const formData = new FormData(form);
+        const selectedPayment = formData.get('forma_pagamento');
 
         statusMessage.textContent = 'Solicitando agendamento e pagamento...';
         statusMessage.style.color = '#faf6ee';
@@ -615,28 +615,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const formDataToSend = new FormData();
-        // Copia os dados do form original e adiciona o tipo de pagamento
-        for (var pair of formData.entries()) {
-            formDataToSend.append(pair[0], pair[1]);
+        // Construir JSON Payload
+        const payload = {};
+        formData.forEach((value, key) => { payload[key] = value });
+
+        // Combinar data e hora para formatar conforme esperado pelo backend (YYYY-MM-DD HH:MM)
+        // O backend espera 'data_agendamento'
+        if (payload.data_selecionada && payload.horario_selecionado) {
+            payload.data_agendamento = `${payload.data_selecionada} ${payload.horario_selecionado}`;
         }
-        formDataToSend.append('tipo_pagamento', selectedPayment === 'cartao' ? 'credito' : selectedPayment);
+
+        // Ajustar tipo de pagamento
+        payload.tipo_pagamento = (selectedPayment === 'cartao' ? 'credito' : selectedPayment);
 
         try {
             const token = localStorage.getItem('auth_token');
             const response = await fetch('/backend/agendamentos/salvar', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: new URLSearchParams(formDataToSend)
+                body: JSON.stringify(payload)
             });
 
             const result = await response.json();
 
             if (response.ok && result.success) {
 
-                const agendamentoId = result.agendamentoId;
+                const agendamentoId = result.id_agendamento || result.agendamentoId; // Suporte a ambas as chaves se houver variação
                 let redirectUrl = '';
 
                 switch (selectedPayment) {
@@ -666,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.textContent = `Erro: ${error.message}. Tente novamente.`;
             statusMessage.style.color = 'red';
 
-            if (error.message.includes('horário acabou de ser reservado')) {
+            if (error.message && error.message.includes('horário acabou de ser reservado')) {
                 buscarHorariosDisponiveis();
             }
         } finally {

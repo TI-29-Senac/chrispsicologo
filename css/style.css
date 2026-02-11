@@ -1487,7 +1487,10 @@ header {
 .contato-hero {
   width: 100%;
   margin-top: 150px;
-  height: 820px;
+  min-height: 80vh;
+  /* Changed from fixed height */
+  height: auto;
+  /* Allow growth */
   background-image: url(/img/banners/banner_1.png);
   background-repeat: no-repeat;
   background-size: cover;

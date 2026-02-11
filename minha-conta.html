@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Conta - Chris Psicologia</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=brandColors">
+    <link rel="stylesheet" href="css/minha-conta.css?v=brandColors">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
+
 <body>
     <div id="navbar"></div>
 
@@ -23,39 +27,46 @@
             </div>
 
             <section class="contato-section">
+                <!-- Alterado ID container para garantir reset -->
                 <div class="minha-conta-container" id="minha-conta-container">
-                    <p style="text-align: center; color: #5D6D68; font-family: 'Questrial', sans-serif; padding-top: 50px;">
-                        Carregando informações da conta...
+                    <p
+                        style="text-align: center; color: #5D6D68; font-family: 'Questrial', sans-serif; padding-top: 50px;">
+                        Carregando Dashboard...
                     </p>
                 </div>
             </section>
         </section>
-        <div id="modal-avaliacao-overlay" class="login-modal-overlay" style="z-index: 10001;"> <div class="login-modal-content" style="max-width: 500px;">
-        <span class="modal-close" onclick="fecharModalAvaliacao()">&times;</span>
-        <h3 id="modal-avaliacao-titulo">Avaliar Atendimento</h3>
-        <p id="modal-avaliacao-subtitulo" style="margin-bottom: 20px; font-size: 1rem;"></p>
+        </section>
+        <div id="modal-avaliacao-overlay" class="login-modal-overlay" style="z-index: 10001;">
+            <div class="login-modal-content" style="max-width: 500px;">
+                <span class="modal-close" onclick="fecharModalAvaliacao()">&times;</span>
+                <h3 id="modal-avaliacao-titulo">Avaliar Atendimento</h3>
+                <p id="modal-avaliacao-subtitulo" style="margin-bottom: 20px; font-size: 1rem;"></p>
 
-        <form id="form-avaliacao-cliente">
-            <input type="hidden" id="avaliacao-id-profissional" name="id_profissional">
-            <input type="hidden" id="avaliacao-id-agendamento" name="id_agendamento">
+                <form id="form-avaliacao-cliente">
+                    <input type="hidden" id="avaliacao-id-profissional" name="id_profissional">
+                    <input type="hidden" id="avaliacao-id-agendamento" name="id_agendamento">
 
-            <div class="avaliacao-estrelas-container" style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 10px; font-weight: bold;">Sua Nota:</label>
-                <div class="estrelas-input">
+                    <div class="avaliacao-estrelas-container" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: bold;">Sua Nota:</label>
+                        <div class="estrelas-input">
+                        </div>
+                        <input type="hidden" id="avaliacao-nota" name="nota_avaliacao" value="0">
                     </div>
-                <input type="hidden" id="avaliacao-nota" name="nota_avaliacao" value="0">
-            </div>
 
-            <div class="form-grupo">
-                <label for="avaliacao-descricao">Seu Comentário:</label>
-                <textarea id="avaliacao-descricao" name="descricao_avaliacao" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; color: #5D6D68;" required></textarea>
-            </div>
+                    <div class="form-grupo">
+                        <label for="avaliacao-descricao">Seu Comentário:</label>
+                        <textarea id="avaliacao-descricao" name="descricao_avaliacao" rows="4"
+                            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; color: #5D6D68;"
+                            required></textarea>
+                    </div>
 
-            <button type="submit" id="btn-enviar-avaliacao" style="margin-top: 20px;">Enviar Avaliação</button>
-            <p id="status-mensagem-avaliacao" style="margin-top: 15px; text-align: center; font-size: 0.95rem;"></p>
-        </form>
-    </div>
-</div>
+                    <button type="submit" id="btn-enviar-avaliacao" style="margin-top: 20px;">Enviar Avaliação</button>
+                    <p id="status-mensagem-avaliacao" style="margin-top: 15px; text-align: center; font-size: 0.95rem;">
+                    </p>
+                </form>
+            </div>
+        </div>
     </main>
 
     <div class="barra-quebra-foot">Cuidar da mente é um ato de coragem</div>
@@ -63,9 +74,10 @@
 
     <script src="js/header.js" defer></script>
     <script src="js/footer.js" defer></script>
-    <script src="js/login-modal-injector.js" defer></script> 
+    <script src="js/login-modal-injector.js" defer></script>
     <script src="js/login.js" defer></script>
-    <script src="js/minha-conta.js" defer></script> 
+    <script src="js/dashboard-cliente.js" defer></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </body>
+
 </html>

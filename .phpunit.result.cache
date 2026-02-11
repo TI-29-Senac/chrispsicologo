@@ -1,1 +1,0 @@
-{"version":2,"defects":[],"times":{"Tests\\Unit\\AuthTest::testGenerateToken":0.017,"Tests\\Unit\\AuthTest::testValidateToken":0.002,"Tests\\Unit\\AuthTest::testInvalidToken":0}}

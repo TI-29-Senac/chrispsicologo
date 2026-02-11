@@ -103,47 +103,69 @@ class UsuarioController extends AdminController {
 
     
     public function salvarUsuarios() {
+        // 1. DETECÇÃO DE JSON/API
+        $jsonData = json_decode(file_get_contents('php://input'), true);
         
+        // Se vier JSON válido, usamos ele. Se não, usamos o $_POST normal
+        $dados = $jsonData ?? $_POST;
+        
+        // Se for chamada via API (JSON), não podemos usar redirecionamentos HTML
+        $isApi = !empty($jsonData);
 
-        $erros = UsuarioValidador::ValidarEntradas($_POST);
-        if(!empty($erros)){
+        // Validação
+        $erros = UsuarioValidador::ValidarEntradas($dados);
+        if (!empty($erros)) {
+            if ($isApi) {
+                 header('Content-Type: application/json');
+                 echo json_encode(["success" => false, "erro" => implode(", ", $erros)]);
+                 exit;
+            }
+            
             $mensagemErro = implode("<br>", array_values($erros));
             
-            
-            
-            
-             if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
-                 Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
-             } else {
-                 
-                 
-                 
-                 Flash::set("error", $mensagemErro);
-                 header('Location: /registro.html'); 
-                 exit();
-                 
-             }
+            if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
+                Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
+            } else {
+                Flash::set("error", $mensagemErro);
+                header('Location: /registro.html');
+                exit();
+            }
             return;
         }
 
         try {
+            $tipoUsuario = $dados['tipo_usuario'] ?? 'cliente';
+            if ($tipoUsuario === 'user') $tipoUsuario = 'cliente';
             
-             $tipoUsuario = $_POST['tipo_usuario'] ?? 'cliente';
-             
-             if ($tipoUsuario === 'user') {
-                 $tipoUsuario = 'cliente';
-             }
-
-            $resultado = $this->usuario->inserirUsuario(
-                $_POST['nome_usuario'],
-                $_POST['email_usuario'],
-                $_POST['senha_usuario'],
+            // 2. INSERÇÃO
+            $resultadoId = $this->usuario->inserirUsuario(
+                $dados['nome_usuario'],
+                $dados['email_usuario'],
+                $dados['senha_usuario'], // O Desktop já manda hash em alguns casos
                 $tipoUsuario, 
-                $_POST['cpf'] ?? '' 
+                $dados['cpf'] ?? '' 
             );
 
+            // 3. RETORNO PARA O DESKTOP (API)
+            if ($isApi) {
+                header('Content-Type: application/json');
+                if ($resultadoId) {
+                    echo json_encode([
+                        "success" => true,
+                        "id_gerado" => $resultadoId,
+                        "message" => "Usuário salvo/sincronizado com sucesso"
+                    ]);
+                } else {
+                    echo json_encode(["success" => false, "erro" => "Erro ao inserir no banco"]);
+                }
+                exit;
+            }
+
+            // 4. RETORNO PARA NAVEGADOR
+            // Adaptando $resultadoId para a lógica antiga que esperava verificacao
+            $resultado = $resultadoId;
+
             if($resultado){
-                
                  if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                      Redirect::redirecionarComMensagem("usuario/listar", "success", "Usuário criado com sucesso!");
                  } else {
@@ -152,7 +174,6 @@ class UsuarioController extends AdminController {
                      exit();
                  }
             } else {
-                 
                  $mensagemErro = "Ocorreu um erro ao registar o utilizador.";
                   if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                       Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
@@ -162,17 +183,42 @@ class UsuarioController extends AdminController {
                       exit();
                   }
             }
+
         } catch (PDOException $e) {
-            
+            if ($isApi) {
+                header('Content-Type: application/json');
+                $msg_api = "Erro de banco de dados: " . $e->getMessage();
+                if ($e->getCode() == 23000 || $e->getCode() == 1062) {
+                     $msg_api = "Email já cadastrado.";
+                }
+                echo json_encode(["success" => false, "erro" => $msg_api]);
+                exit;
+            }
+
             if ($e->getCode() == 23000 || $e->getCode() == 1062) {
                 $mensagemErro = "Erro ao registar: O email fornecido já está em uso.";
             } else {
-                
                  error_log("Erro de PDO ao inserir usuário: " . $e->getMessage()); 
                 $mensagemErro = "Ocorreu um erro inesperado no servidor. Tente novamente mais tarde.";
             }
 
+            if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
+                Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
+            } else {
+                Flash::set("error", $mensagemErro);
+                header('Location: /registro.html');
+                exit();
+            }
+        } catch (Exception $e) {
+             if ($isApi) {
+                header('Content-Type: application/json');
+                echo json_encode(["success" => false, "erro" => $e->getMessage()]);
+                exit;
+            }
             
+            error_log("Erro inesperado ao inserir usuário: " . $e->getMessage());
+            $mensagemErro = "Ocorreu um erro inesperado.";
+
             if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin') {
                 Redirect::redirecionarComMensagem("usuario/criar", "error", $mensagemErro);
             } else {
@@ -426,15 +472,42 @@ class UsuarioController extends AdminController {
       }
     }
 
-    public function meuPerfilApi() {
+    // --- HELPER DE AUTENTICAÇÃO (Sessão ou Token) ---
+    private function getAuthenticatedUserId() {
+        // 1. Tenta via Sessão
         if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+            return $_SESSION['usuario_id'];
+        }
 
-        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        // 2. Tenta via Token (JWT)
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+            try {
+                // Decodifica usando a classe Auth (que já valida assinatura/expiração)
+                $payload = \App\Psico\Core\Auth::validate($token);
+                if ($payload && isset($payload->sub)) {
+                    return $payload->sub; // 'sub' contém o ID do usuário
+                }
+            } catch (\Exception $e) {
+                // Token inválido, apenas retorna false
+            }
+        }
+
+        return false;
+    }
+
+    public function meuPerfilApi() {
+        $id_usuario = $this->getAuthenticatedUserId();
+
+        if (!$id_usuario) {
             \App\Psico\Core\Response::error('Acesso não autorizado.', 401);
             return;
         }
 
-        $id_usuario = $_SESSION['usuario_id'];
         $usuario = null; 
         try {
             $usuario = $this->usuario->buscarUsuarioPorId((int)$id_usuario);
@@ -459,12 +532,13 @@ class UsuarioController extends AdminController {
     public function atualizarMeuPerfil() {
          header('Content-Type: application/json'); 
 
-         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+         $id = $this->getAuthenticatedUserId();
+
+         if (!$id) {
              http_response_code(401);
              echo json_encode(['success' => false, 'message' => 'Acesso não autorizado.']);
              return;
          }
-         $id = $_SESSION['usuario_id'];
          
          // Usa o validador para atualização
          $erros = \App\Psico\Validadores\UsuarioValidador::ValidarEntradas($_POST, true); 
@@ -493,12 +567,13 @@ class UsuarioController extends AdminController {
              );
 
              if ($sucesso) {
-                 if (isset($_POST['nome_usuario'])) {
+                 // Atualiza a sessão se ela estiver ativa
+                 if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] == $id && isset($_POST['nome_usuario'])) {
                       $_SESSION['usuario_nome'] = $_POST['nome_usuario'];
                  }
 
                  http_response_code(200);
-                 echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!', 'userName' => $_SESSION['usuario_nome']]);
+                 echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!', 'userName' => $_POST['nome_usuario']]);
              } else {
                  http_response_code(500);
                  echo json_encode(['success' => false, 'message' => 'Erro ao atualizar perfil.']);
@@ -506,7 +581,7 @@ class UsuarioController extends AdminController {
          } catch (\PDOException $e) {
               if ($e->getCode() == 23000 || $e->getCode() == 1062) {
                  http_response_code(409);
-                 echo json_encode(['success' => false, 'message' => "Erro ao atualizar: O email fornecido já está em uso."]);
+                 echo json_encode(['success' => false, 'message' => "Erro ao atualizar: O email já está em uso."]);
              } else {
                  error_log("Erro de PDO ao atualizar usuário: " . $e->getMessage()); 
                  http_response_code(500);

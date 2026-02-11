@@ -44,10 +44,12 @@ class DesktopApiController {
                 // GERAÇÃO DO TOKEN JWT
                 // Supondo que $usuario->id_usuario e $usuario->tipo_usuario existam
                 $token = \App\Psico\Core\Auth::generate($usuario->id_usuario, $usuario->tipo_usuario);
+                $refreshToken = \App\Psico\Core\Auth::generateRefreshToken($usuario->id_usuario);
 
                 Response::success([
                     'usuario' => $usuario,
-                    'token' => $token
+                    'token' => $token,
+                    'refresh_token' => $refreshToken
                 ]);
             } else {
                 Response::error("Email ou senha incorretos.");
@@ -55,6 +57,63 @@ class DesktopApiController {
         } catch (\Exception $e) { 
             Response::error($e->getMessage(), 500);
         }
+    }
+
+    public function refreshToken() {
+        $this->setCors();
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { http_response_code(200); exit(); }
+
+        $input = $this->getInput();
+        $refreshToken = $input['refresh_token'] ?? null;
+
+        if (!$refreshToken) {
+            Response::error("Refresh token não fornecido.", 400);
+        }
+
+        $userId = \App\Psico\Core\Auth::verifyRefreshToken($refreshToken);
+
+        if (!$userId) {
+            Response::error("Refresh token inválido ou expirado.", 401);
+        }
+
+        try {
+            // Revoga o atual (Rotação)
+            \App\Psico\Core\Auth::revokeRefreshToken($refreshToken);
+
+            // Busca dados do usuário para gerar novo token (precisamos da role)
+            $model = new Usuario($this->db);
+            $usuario = $model->buscarUsuarioPorId($userId);
+
+            if (!$usuario) {
+                Response::error("Usuário não encontrado.", 404);
+            }
+
+            // Gera novos tokens
+            $newToken = \App\Psico\Core\Auth::generate($usuario->id_usuario, $usuario->tipo_usuario);
+            $newRefreshToken = \App\Psico\Core\Auth::generateRefreshToken($usuario->id_usuario);
+
+            Response::success([
+                'token' => $newToken,
+                'refresh_token' => $newRefreshToken
+            ]);
+
+        } catch (\Exception $e) {
+            Response::error("Erro ao renovar token: " . $e->getMessage(), 500);
+        }
+    }
+
+    public function logout() {
+        $this->setCors();
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { http_response_code(200); exit(); }
+
+        $input = $this->getInput();
+        $refreshToken = $input['refresh_token'] ?? null;
+
+        if ($refreshToken) {
+            \App\Psico\Core\Auth::revokeRefreshToken($refreshToken);
+        }
+
+        Response::success(['message' => 'Logout realizado com sucesso.']);
     }
 
     // --- USUÁRIOS ---
@@ -147,11 +206,72 @@ class DesktopApiController {
         } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
+    public function editarAgendamento($id) {
+        $input = $this->getInput();
+        try {
+            $model = new Agendamento($this->db);
+            $agendamentoAtual = $model->buscarAgendamentoPorId($id);
+
+            if (!$agendamentoAtual) {
+                Response::error("Agendamento não encontrado.", 404);
+            }
+
+            $model->atualizarAgendamento(
+                $id,
+                $input['data_agendamento'] ?? $agendamentoAtual['data_agendamento'],
+                $input['status_consulta'] ?? $agendamentoAtual['status_consulta'],
+                $input['id_profissional'] ?? null, // Opcional
+                $input['id_usuario'] ?? null       // Opcional (Corrigido de id_cliente para id_usuario conforme Model)
+            );
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
+    }
+
     // --- PAGAMENTOS ---
     public function listarPagamentos() {
         try {
             $model = new Pagamento($this->db);
             Response::success(['data' => $model->buscarTodosPagamentos()]);
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
+    }
+
+    public function criarPagamento() {
+        $input = $this->getInput();
+        try {
+            $model = new Pagamento($this->db);
+            // Pagamento Model requer id_agendamento e tipo_pagamento
+            // verificar se 'tipo_pagamento' vem como string (pix, credito...) ou ID
+            // O model Pagamento::inserirPagamento espera string no 2o argumento.
+            $model->inserirPagamento(
+                $input['id_agendamento'],
+                $input['tipo_pagamento']
+            );
+            Response::success();
+        } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
+    }
+
+    public function editarPagamento($id) {
+        $input = $this->getInput();
+        try {
+            $model = new Pagamento($this->db);
+            $pagamentoAtual = $model->buscarPagamentoPorId($id);
+
+            if (!$pagamentoAtual) {
+                Response::error("Pagamento não encontrado.", 404);
+            }
+            
+            // O model Pagamento::atualizarPagamento requer valor_consulta também, 
+            // pois atualiza a tabela profissional junto (regra de negócio antiga?)
+            // Vamos manter a consistência com o Model existente.
+            
+            $valorConsulta = $input['valor_consulta'] ?? $pagamentoAtual['valor_consulta'];
+            
+            $model->atualizarPagamento(
+                $id,
+                $input['tipo_pagamento'] ?? $pagamentoAtual['tipo_pagamento'], // O model converte string para ID
+                $valorConsulta
+            );
+            Response::success();
         } catch (\Exception $e) { Response::error($e->getMessage(), 500); }
     }
 
@@ -168,5 +288,9 @@ class DesktopApiController {
         return json_decode(file_get_contents('php://input'), true);
     }
     
-    // Método erro removido pois agora usamos Response::error
+    private function setCors() {
+        // Implementar se necessário, ou deixar que o framework/servidor lide com isso
+        // Por enquanto vazio pois o Response helper já manda alguns headers, 
+        // mas para preflight (OPTIONS) às vezes é necessário explícito.
+    }
 }

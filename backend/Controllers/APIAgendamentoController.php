@@ -36,32 +36,36 @@ class APIAgendamentoController {
     }
 
     public function salvarAgendamento() {
-        // A autenticação já é garantida pelo middleware check() em Rotas.php
-        $payload = Auth::check(); // Obtém dados do usuário logado (opcional, para validação extra)
+        // Garante autenticação via Token
+        $payload = Auth::check(); 
+        $idUsuarioToken = $payload->sub;
 
         $input = json_decode(file_get_contents('php://input'), true);
 
         if (empty($input) || !is_array($input)) {
             Response::error('JSON inválido.', 400);
+            return;
         }
 
-        if (empty($input['id_usuario']) || empty($input['id_profissional']) || empty($input['data_agendamento'])) {
-            Response::error('Campos obrigatórios: id_usuario, id_profissional, data_agendamento.', 400);
+        // Validação básica
+        if (empty($input['id_profissional']) || empty($input['data_agendamento'])) {
+            Response::error('Campos obrigatórios: id_profissional, data_agendamento.', 400);
+            return;
         }
 
         try {
-            // Conversão de status (opcional: garantir que status_consulta seja válido)
-            $status = $input['status_consulta'] ?? 'pendente';
+            // Força o ID do usuário logado
+            $status = 'pendente'; 
              
             $novoId = $this->agendamentoModel->inserirAgendamento(
-                (int)$input['id_usuario'],
+                (int)$idUsuarioToken, // Usa ID do Token
                 (int)$input['id_profissional'],
-                $input['data_agendamento'],
+                $input['data_agendamento'], // Verificar formato YYYY-MM-DD HH:MM
                 $status
             );
 
             if ($novoId) {
-                Response::success(['message' => 'Agendamento criado.', 'id_agendamento' => $novoId], 201);
+                Response::success(['message' => 'Agendamento criado com sucesso.', 'id_agendamento' => $novoId], 201);
             } else {
                 Response::error('Erro ao salvar no banco.', 500);
             }

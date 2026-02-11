@@ -4,6 +4,8 @@ namespace App\Psico\Core;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use App\Psico\Core\Response;
+use App\Psico\Database\Database;
+use PDO;
 
 class Auth {
     private static $algorithm = 'HS256';
@@ -83,4 +85,55 @@ class Auth {
         // Opcional: Retorna o payload para uso no controller
         return $payload;
     }
+
+    /**
+     * Gera um Refresh Token (aleatório, opaco), salva no banco (hash) e retorna o token puro.
+     * Validade: 30 dias.
+     */
+    public static function generateRefreshToken(int $userId) {
+        $token = bin2hex(random_bytes(32)); // 64 chars
+        $hash = hash('sha256', $token);
+        
+        $expiresAt = date('Y-m-d H:i:s', time() + (60 * 60 * 24 * 30)); // 30 dias
+
+        $db = Database::getInstance();
+        $stmt = $db->prepare("INSERT INTO refresh_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)");
+        $stmt->execute([$userId, $hash, $expiresAt]);
+
+        return $token;
+    }
+
+    /**
+     * Verifica se o refresh token é válido e retorna o user_id.
+     * Retorna false se inválido ou expirado.
+     */
+    public static function verifyRefreshToken($token) {
+        $hash = hash('sha256', $token);
+        $db = Database::getInstance();
+        
+        $stmt = $db->prepare("SELECT user_id, expires_at FROM refresh_tokens WHERE token_hash = ?");
+        $stmt->execute([$hash]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) return false;
+
+        if (strtotime($row['expires_at']) < time()) {
+            // Expirado
+            self::revokeRefreshToken($token);
+            return false;
+        }
+
+        return (int)$row['user_id'];
+    }
+
+    /**
+     * Remove o refresh token do banco.
+     */
+    public static function revokeRefreshToken($token) {
+        $hash = hash('sha256', $token);
+        $db = Database::getInstance();
+        $stmt = $db->prepare("DELETE FROM refresh_tokens WHERE token_hash = ?");
+        $stmt->execute([$hash]);
+    }
 }
+
