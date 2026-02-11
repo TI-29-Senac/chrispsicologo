@@ -804,11 +804,29 @@ class UsuarioController extends AdminController {
     public function dashboard() {
         
         $this->verificarAcesso(['admin', 'recepcionista', 'profissional']);
+        $tipoUsuario = $_SESSION['usuario_tipo'] ?? '';
+        $idUsuario = $_SESSION['usuario_id'] ?? null;
+        $idProfissional = null;
 
-        // --- DADOS DOS CARDS (JÁ EXISTENTES) ---
-        $totalUsuarios = count($this->usuario->buscarTodosUsuarios());
-        $totalAgendamentos = count($this->agendamento->buscarAgendamentos()); 
-        $totalProfissionais = count($this->profissional->listarProfissionais()); 
+        // Se for profissional, descobre o ID dele na tabela profissional
+        if ($tipoUsuario === 'profissional' && $idUsuario) {
+            $profissionalData = $this->profissional->buscarProfissionalPorUsuarioId($idUsuario);
+            if ($profissionalData) {
+                $idProfissional = $profissionalData->id_profissional;
+            }
+        }
+
+        // --- DADOS DOS CARDS ---
+        // Se for profissional, não deve ver usuários gerais, talvez ver seus pacientes?
+        // Por simplificação: Admin vê tudo, Profissional vê seus agendamentos.
+        
+        $totalUsuarios = count($this->usuario->buscarTodosUsuarios()); // Admin vê todos
+        // TODO: Futuramente filtrar "Meus Pacientes" para profissional
+
+        // Filtra agendamentos se houver ID de profissional
+        $totalAgendamentos = count($this->agendamento->buscarAgendamentos($idProfissional)); 
+        
+        $totalProfissionais = count($this->profissional->listarProfissionais()); // Todos podem ver a qtde de colegas (ou filtrar se quiser)
 
         $stats = [
              [
@@ -836,8 +854,8 @@ class UsuarioController extends AdminController {
         // Carrega o model de Pagamento
         $pagamentoModel = new \App\Psico\Models\Pagamento($this->db);
 
-        // 1. Gráfico de Agendamentos
-        $agendamentosData = $this->agendamento->getAgendamentosPorMes();
+        // 1. Gráfico de Agendamentos (Filtrado)
+        $agendamentosData = $this->agendamento->getAgendamentosPorMes($idProfissional);
         $chartAgendamentosLabels = [];
         $chartAgendamentosValores = [];
         foreach ($agendamentosData as $data) {
@@ -847,6 +865,7 @@ class UsuarioController extends AdminController {
         }
 
         // 2. Gráfico de Novos Clientes
+        // (Mantém global por enquanto, ou implementa lógica complexa de "primeira consulta com este profissional")
         $novosClientesData = $this->usuario->getNovosClientesPorMes();
         $chartNovosClientesLabels = [];
         $chartNovosClientesValores = [];
@@ -855,8 +874,8 @@ class UsuarioController extends AdminController {
             $chartNovosClientesValores[] = $data->total;
         }
 
-        // 3. Gráfico de Faturamento
-        $faturamentoData = $pagamentoModel->getFaturamentoPorMes();
+        // 3. Gráfico de Faturamento (Filtrado)
+        $faturamentoData = $pagamentoModel->getFaturamentoPorMes($idProfissional);
         $chartFaturamentoLabels = [];
         $chartFaturamentoValores = [];
         foreach ($faturamentoData as $data) {

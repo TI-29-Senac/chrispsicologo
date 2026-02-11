@@ -164,7 +164,12 @@ class Pagamento {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getFaturamentoPorMes() {
+    public function getFaturamentoPorMes(?int $id_profissional = null) {
+
+        $whereClause = "WHERE p.criado_em >= (NOW() - INTERVAL 6 MONTH)";
+        if ($id_profissional) {
+            $whereClause .= " AND a.id_profissional = :id_profissional";
+        }
 
         $sql = "
             SELECT
@@ -183,13 +188,16 @@ class Pagamento {
             /* JOIN para encontrar o profissional e seu valor */
             JOIN profissional prof ON a.id_profissional = prof.id_profissional
 
-            WHERE p.criado_em >= (NOW() - INTERVAL 6 MONTH)
+            {$whereClause}
             GROUP BY mes_ano
             ORDER BY mes_ano;
         ";
 
         try {
             $stmt = $this->db->prepare($sql);
+            if ($id_profissional) {
+                $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+            }
             $stmt->execute();
             $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
             // O helper para preencher meses ausentes está correto

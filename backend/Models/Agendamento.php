@@ -24,7 +24,7 @@ class Agendamento {
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-    public function buscarAgendamentos(): array {
+    public function buscarAgendamentos(?int $id_profissional = null): array {
         $sql = "
             SELECT 
                 a.*,
@@ -35,7 +35,17 @@ class Agendamento {
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario profissional ON p.id_usuario = profissional.id_usuario
         ";
+        
+        if ($id_profissional) {
+            $sql .= " WHERE a.id_profissional = :id_profissional ";
+        }
+        
         $stmt = $this->db->prepare($sql);
+        
+        if ($id_profissional) {
+            $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -154,26 +164,41 @@ class Agendamento {
         }
     }
 
-    public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
+    public function paginacao(int $pagina = 1, int $por_pagina = 5, ?int $id_profissional = null): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a WHERE a.excluido_em IS NULL"; // Considera soft delete
-        $totalStmt = $this->db->query($totalQuery);
+        // Construção da cláusula WHERE
+        $whereClause = "WHERE a.excluido_em IS NULL";
+        if ($id_profissional) {
+            $whereClause .= " AND a.id_profissional = :id_profissional";
+        }
+
+        // Query de Contagem
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a {$whereClause}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        if ($id_profissional) {
+            $totalStmt->bindValue(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        }
+        $totalStmt->execute();
         $total_de_registros = $totalStmt->fetchColumn();
 
+        // Query de Dados
         $dataQuery = "
             SELECT a.*, paciente.nome_usuario as nome_paciente, prof_usuario.nome_usuario as nome_profissional
             FROM {$this->table} a
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
-            WHERE a.excluido_em IS NULL -- Considera soft delete
-            ORDER BY a.data_agendamento ASC -- Ordena pela data do agendamento
+            {$whereClause}
+            ORDER BY a.data_agendamento ASC
             LIMIT :limit OFFSET :offset";
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
         $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        if ($id_profissional) {
+            $dataStmt->bindValue(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        }
         $dataStmt->execute();
         $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -247,20 +272,28 @@ ORDER BY a.data_agendamento DESC
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAgendamentosPorMes() {
+    public function getAgendamentosPorMes(?int $id_profissional = null) {
         
+        $whereClause = "WHERE data_agendamento >= (NOW() - INTERVAL 6 MONTH)";
+        if ($id_profissional) {
+            $whereClause .= " AND id_profissional = :id_profissional";
+        }
+
         $sql = "
             SELECT 
-              DATE_FORMAT(data_agendamento, '%Y-%m-01') AS mes_ano, -- <<< CORRIGIDO AQUI
+              DATE_FORMAT(data_agendamento, '%Y-%m-01') AS mes_ano, 
               COUNT(id_agendamento) AS total
             FROM agendamento
-            WHERE data_agendamento >= (NOW() - INTERVAL 6 MONTH) -- <<< DESCOMENTAR E CORRIGIR AQUI
+            {$whereClause}
             GROUP BY mes_ano
             ORDER BY mes_ano;
         ";
         
         try {
             $stmt = $this->db->prepare($sql);
+            if ($id_profissional) {
+                $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+            }
             $stmt->execute();
             $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
             return $this->preencherMesesAusentes($data); 
