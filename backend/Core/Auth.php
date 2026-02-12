@@ -14,8 +14,10 @@ class Auth {
      * Retorna a chave secreta do .env
      */
     private static function getSecretKey() {
-        // A chave deve ter pelo menos 32 caracteres (256 bits) para HS256
-        return $_ENV['JWT_SECRET'] ?? $_ENV['API_TOKEN'] ?? 'default_unsafe_secret_change_me_to_be_32_chars_long';
+        if (!isset($_ENV['JWT_SECRET']) || empty($_ENV['JWT_SECRET'])) {
+            throw new \Exception('FATAL: JWT_SECRET não configurada no arquivo .env');
+        }
+        return $_ENV['JWT_SECRET'];
     }
 
     /**

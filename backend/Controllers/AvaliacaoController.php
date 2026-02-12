@@ -10,18 +10,27 @@ use App\Psico\Validadores\AvaliacaoValidador;
  
 class AvaliacaoController extends AdminController{
     public $avaliacao;
+    public $agendamento; // Inject Agendamento Model
     public $db;
  
     public function __construct()
     {
         $this->db = Database::getInstance();
         $this->avaliacao = new Avaliacao($this->db);
+        $this->agendamento = new \App\Psico\Models\Agendamento($this->db);
     }
  
     public function viewListarAvaliacoes()
     {
         $pagina = $_GET['pagina'] ?? 1;
-        $dadosPaginados = $this->avaliacao->paginacao((int)$pagina, 10);
+
+        $filtros = [
+            'nome_cliente' => $_GET['cliente'] ?? null,
+            'nome_profissional' => $_GET['profissional'] ?? null,
+            'nota_avaliacao' => $_GET['nota'] ?? null,
+        ];
+
+        $dadosPaginados = $this->avaliacao->buscarComFiltros($filtros, (int)$pagina, 10);
 
         $todasAvaliacoes = $this->avaliacao->buscarAvaliacoes();
         $totalAvaliacoes = count($todasAvaliacoes);
@@ -208,7 +217,12 @@ class AvaliacaoController extends AdminController{
             http_response_code(400); // Bad Request
             echo json_encode(['success' => false, 'message' => implode("\n", $erros)]);
             return;
-        }
+        // 3.5. Verificar se o cliente tem agendamento CONCLUÍDO com este profissional
+        if (!$this->agendamento->verificarAgendamentoConcluido((int)$id_cliente, (int)$id_profissional)) {
+            http_response_code(403); // Forbidden
+            echo json_encode(['success' => false, 'message' => 'Você só pode avaliar profissionais com quem já teve uma consulta concluída.']);
+            return;
+        }}
 
         
         $avaliacaoExistente = $this->avaliacao->buscarAvaliacaoPorClienteEProfissional($id_cliente, (int)$id_profissional);

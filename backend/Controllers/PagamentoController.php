@@ -29,7 +29,18 @@ class PagamentoController extends AuthenticatedController{
     public function viewListarPagamentos() {
         $this->verificarAcesso(['admin', 'recepcionista']);
         $pagina = $_GET['pagina'] ?? 1;
-        $dadosPaginados = $this->pagamento->paginacao((int)$pagina, 10);
+        
+        $filtros = [
+            'nome_cliente' => $_GET['cliente'] ?? null,
+            'tipo_pagamento' => $_GET['tipo'] ?? null,
+            'data_pagamento' => $_GET['data'] ?? null,
+        ];
+
+        // Se houver filtros, usa buscarComFiltros, senão usa a paginação padrão (ou buscarComFiltros vazio)
+        // Como implementamos buscarComFiltros para lidar com array vazio, podemos usar sempre ele
+        // Mas a paginação original tinha uma query ligeiramente diferente? 
+        // A nossa nova query cobre a original.
+        $dadosPaginados = $this->pagamento->buscarComFiltros($filtros, (int)$pagina, 10);
 
         $todosPagamentos = $this->pagamento->buscarTodosPagamentos();
         
@@ -141,12 +152,14 @@ class PagamentoController extends AuthenticatedController{
 
         try {
             // --- CONFIGURAÇÃO DO PIX ---
-            // Substitua pelos seus dados reais.
-            // A chave PIX pode ser CPF, CNPJ, E-mail, Telefone ou Chave Aleatória.
-            $chavePix      = 'seu-email@provedor.com'; // <-- IMPORTANTE: TROQUE PELA SUA CHAVE PIX
-            $nomeRecebedor = 'Chris Psicologia';       // Nome que aparecerá para quem paga
-            $cidade        = 'SAO PAULO';              // Cidade do recebedor
-            $txid          = 'AGENDAMENTO123';         // Um identificador único para a transação
+            $chavePix      = $_ENV['PIX_KEY'] ?? null;
+            $nomeRecebedor = $_ENV['PIX_MERCHANT_NAME'] ?? 'Chris Psicologia';
+            $cidade        = $_ENV['PIX_MERCHANT_CITY'] ?? 'SAO PAULO';
+            $txid          = 'AGENDAMENTO' . time(); // Identificador único dinâmico
+
+            if (!$chavePix) {
+                throw new \Exception("Chave PIX não configurada no servidor.");
+            }
 
             // Cria a estrutura do payload do PIX - Agora com a classe importada
             $payload = (new StaticPayload())

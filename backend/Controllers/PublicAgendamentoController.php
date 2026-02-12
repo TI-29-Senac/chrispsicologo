@@ -129,25 +129,33 @@ class PublicAgendamentoController {
 
 
         
-        $resultado = $this->agendamento->inserirAgendamento(
-            (int)$id_usuario,
-            (int)$id_profissional,
-            $data_agendamento->format('Y-m-d H:i:s'), 
-            'pendente' 
-        );
+        try {
+            $resultado = $this->agendamento->inserirAgendamento(
+                (int)$id_usuario,
+                (int)$id_profissional,
+                $data_agendamento->format('Y-m-d H:i:s'), 
+                'pendente' 
+            );
 
-        if($resultado){
-            http_response_code(201); 
-            
-            echo json_encode([
-                'success' => true,
-                'message' => 'Agendamento solicitado com sucesso! Efetue o pagamento do sinal para confirmar.',
-                'agendamentoId' => $resultado
+            if($resultado){
+                http_response_code(201); 
                 
-            ]);
-        } else {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Erro ao salvar o agendamento no banco de dados.']);
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Agendamento solicitado com sucesso! Efetue o pagamento do sinal para confirmar.',
+                    'agendamentoId' => $resultado
+                    
+                ]);
+            } else {
+                throw new \Exception("Erro ao salvar o agendamento no banco de dados.");
+            }
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Este horário já está reservado.") {
+                http_response_code(409); // Conflict
+            } else {
+                http_response_code(500);
+            }
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 

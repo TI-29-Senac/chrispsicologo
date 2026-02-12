@@ -10,6 +10,94 @@ class Pagamento {
         $this->db = $db;
     }
 
+    public function buscarComFiltros(array $filtros, int $pagina = 1, int $por_pagina = 10): array {
+        $where = [];
+        $params = [];
+        
+        // Base joins needed for filtering and selecting
+        $joins = "JOIN agendamento a ON p.id_agendamento = a.id_agendamento
+                  JOIN usuario cliente ON a.id_usuario = cliente.id_usuario
+                  JOIN profissional prof ON a.id_profissional = prof.id_profissional
+                  JOIN usuario profissional_usuario ON prof.id_usuario = profissional_usuario.id_usuario
+                  JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento";
+
+        // Filter by Client Name
+        if (!empty($filtros['nome_cliente'])) {
+            $where[] = "cliente.nome_usuario LIKE :nome_cliente";
+            $params[':nome_cliente'] = '%' . $filtros['nome_cliente'] . '%';
+        }
+
+        // Filter by Payment Type (Pix, Cartão, etc - stored as nome_forma_pagamento in DB? or ID?)
+        // The view says "Pix, Cartão". DB has `formas_pagamento` table.
+        // Assuming the select in view will send 'pix', 'credito', etc or the name.
+        // Let's check `inserirPagamento` map: 'pix' => 1, 'credito' => 2...
+        // The view probably sends the text key or id. 
+        // If the user wants "Pix", we should probably filter by `nome_forma_pagamento` or `id_forma_pagamento`.
+        // Let's assume the view sends the string match for `nome_forma_pagamento` or specific keys.
+        // For simplicity and matching `inserirPagamento`, let's check what the view will send.
+        // The prompt says "Select: Pix, Cartão".
+        // If I make the select values correspond to IDs or reliable strings. 
+        // Let's use `nome_forma_pagamento LIKE ...` for flexibility or specific mapping.
+        if (!empty($filtros['tipo_pagamento'])) {
+            // Mapping common terms to IDs if needed, or searching string
+             $where[] = "fp.nome_forma_pagamento LIKE :tipo_pagamento";
+             $params[':tipo_pagamento'] = '%' . $filtros['tipo_pagamento'] . '%';
+        }
+
+        // Filter by Date
+        if (!empty($filtros['data_pagamento'])) {
+            $where[] = "DATE(p.criado_em) = :data_pagamento";
+            $params[':data_pagamento'] = $filtros['data_pagamento'];
+        }
+
+        $whereSql = '';
+        if (!empty($where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        // Pagination
+        $offset = ($pagina - 1) * $por_pagina;
+
+        // Total Count
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} p {$joins} {$whereSql}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        $totalStmt->execute($params);
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        // Data Query
+        $dataQuery = "
+            SELECT
+                p.id_pagamento,
+                fp.nome_forma_pagamento as tipo_pagamento, 
+                p.criado_em as data_pagamento,
+                cliente.nome_usuario AS nome_cliente,
+                profissional_usuario.nome_usuario AS nome_profissional,
+                prof.valor_consulta
+            FROM {$this->table} p
+            {$joins}
+            {$whereSql}
+            ORDER BY p.criado_em DESC
+            LIMIT :limit OFFSET :offset
+        ";
+
+        $dataStmt = $this->db->prepare($dataQuery);
+        foreach ($params as $key => $val) {
+            $dataStmt->bindValue($key, $val);
+        }
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
+
     public function inserirPagamento(int $id_agendamento, string $tipo_pagamento) {
         $mapaFormaPagamento = [
             'pix' => 1,

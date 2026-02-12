@@ -10,6 +10,71 @@ class Profissional {
         $this->db = $db;
     }
 
+    public function buscarComFiltros(array $filtros, int $pagina = 1, int $por_pagina = 10): array {
+        $where = [];
+        $params = [];
+
+        $joins = "JOIN usuario u ON p.id_usuario = u.id_usuario";
+
+        // Filter by Name
+        if (!empty($filtros['nome'])) {
+            $where[] = "u.nome_usuario LIKE :nome";
+            $params[':nome'] = '%' . $filtros['nome'] . '%';
+        }
+
+        // Filter by Specialty
+        if (!empty($filtros['especialidade'])) {
+            $where[] = "p.especialidade LIKE :especialidade";
+            $params[':especialidade'] = '%' . $filtros['especialidade'] . '%';
+        }
+
+        // Filter by Status
+        if (!empty($filtros['status'])) {
+            $where[] = "u.status_usuario = :status";
+            $params[':status'] = $filtros['status'];
+        }
+
+        $whereSql = '';
+        if (!empty($where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        // Pagination
+        $offset = ($pagina - 1) * $por_pagina;
+
+        // Count
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} p {$joins} {$whereSql}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        $totalStmt->execute($params);
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        // Data
+        $dataQuery = "
+            SELECT p.*, u.nome_usuario, u.email_usuario, u.status_usuario, u.tipo_usuario
+            FROM {$this->table} p
+            {$joins}
+            {$whereSql}
+            ORDER BY u.nome_usuario ASC
+            LIMIT :limit OFFSET :offset";
+
+        $dataStmt = $this->db->prepare($dataQuery);
+        foreach ($params as $key => $val) {
+            $dataStmt->bindValue($key, $val);
+        }
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_OBJ);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
+
     // --- MÉTODO INSERIR ATUALIZADO ---
     public function inserirProfissional(
         int $id_usuario,

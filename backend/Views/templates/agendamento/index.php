@@ -8,6 +8,34 @@
         </div>
     </div>
   
+    <div class="w3-card w3-round-large w3-margin-bottom" style="padding: 16px;">
+        <form action="/backend/agendamentos/listar" method="GET">
+            <div class="w3-row-padding">
+                <div class="w3-col m3">
+                    <label>Paciente</label>
+                    <input class="w3-input w3-border w3-round" type="text" name="paciente" placeholder="Buscar paciente..." value="<?= htmlspecialchars($_GET['paciente'] ?? '') ?>">
+                </div>
+                <div class="w3-col m3">
+                    <label>Profissional</label>
+                    <input class="w3-input w3-border w3-round" type="text" name="profissional" placeholder="Buscar profissional..." value="<?= htmlspecialchars($_GET['profissional'] ?? '') ?>">
+                </div>
+                <div class="w3-col m3">
+                    <label>Status</label>
+                    <select class="w3-select w3-border w3-round" name="status">
+                        <option value="">Todos</option>
+                        <option value="confirmada" <?= ($_GET['status'] ?? '') == 'confirmada' ? 'selected' : '' ?>>Confirmada</option>
+                        <option value="cancelada" <?= ($_GET['status'] ?? '') == 'cancelada' ? 'selected' : '' ?>>Cancelada</option>
+                        <option value="pendente" <?= ($_GET['status'] ?? '') == 'pendente' ? 'selected' : '' ?>>Pendente</option>
+                    </select>
+                </div>
+                <div class="w3-col m3">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="w3-button w3-round w3-block" style="background-color: #5D6D68; color: white;">Filtrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <div class="w3-responsive">
         <table class="w3-table-all w3-card-4 w3-hoverable w3-white">
             <thead style="background-color: #5D6D68; color: white;">
@@ -52,16 +80,23 @@
     <?php if (isset($paginacao) && $paginacao['ultima_pagina'] > 1): ?>
     <div class="w3-center">
         <div class="w3-bar">
+            <?php
+            $queryString = '';
+            if (isset($_GET['paciente'])) $queryString .= '&paciente=' . urlencode($_GET['paciente']);
+            if (isset($_GET['profissional'])) $queryString .= '&profissional=' . urlencode($_GET['profissional']);
+            if (isset($_GET['status'])) $queryString .= '&status=' . urlencode($_GET['status']);
+            ?>
+
             <?php if ($paginacao['pagina_atual'] > 1): ?>
-                <a href="?pagina=<?= $paginacao['pagina_atual'] - 1 ?>" class="w3-button">&laquo;</a>
+                <a href="?pagina=<?= $paginacao['pagina_atual'] - 1 . $queryString ?>" class="w3-button">&laquo;</a>
             <?php endif; ?>
 
             <?php for ($i = 1; $i <= $paginacao['ultima_pagina']; $i++): ?>
-                <a href="?pagina=<?= $i ?>" class="w3-button <?= ($i == $paginacao['pagina_atual']) ? 'w3-green' : '' ?>"><?= $i ?></a>
+                <a href="?pagina=<?= $i . $queryString ?>" class="w3-button <?= ($i == $paginacao['pagina_atual']) ? 'w3-green' : '' ?>"><?= $i ?></a>
             <?php endfor; ?>
 
             <?php if ($paginacao['pagina_atual'] < $paginacao['ultima_pagina']): ?>
-                <a href="?pagina=<?= $paginacao['pagina_atual'] + 1 ?>" class="w3-button">&raquo;</a>
+                <a href="?pagina=<?= $paginacao['pagina_atual'] + 1 . $queryString ?>" class="w3-button">&raquo;</a>
             <?php endif; ?>
         </div>
     </div>

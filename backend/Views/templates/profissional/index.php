@@ -8,6 +8,33 @@
         </div>
     </div>
     
+    <div class="w3-card w3-round-large w3-margin-bottom" style="padding: 16px;">
+        <form action="/backend/profissionais/listar" method="GET">
+            <div class="w3-row-padding">
+                <div class="w3-col m3">
+                    <label>Nome</label>
+                    <input class="w3-input w3-border w3-round" type="text" name="nome" placeholder="Buscar por nome..." value="<?= htmlspecialchars($_GET['nome'] ?? '') ?>">
+                </div>
+                <div class="w3-col m3">
+                    <label>Especialidade</label>
+                    <input class="w3-input w3-border w3-round" type="text" name="especialidade" placeholder="Ex: Psicologia Clínica" value="<?= htmlspecialchars($_GET['especialidade'] ?? '') ?>">
+                </div>
+                <div class="w3-col m3">
+                    <label>Status</label>
+                    <select class="w3-select w3-border w3-round" name="status">
+                        <option value="">Todos</option>
+                        <option value="ativo" <?= ($_GET['status'] ?? '') == 'ativo' ? 'selected' : '' ?>>Ativo</option>
+                        <option value="inativo" <?= ($_GET['status'] ?? '') == 'inativo' ? 'selected' : '' ?>>Inativo</option>
+                    </select>
+                </div>
+                <div class="w3-col m3">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="w3-button w3-round w3-block" style="background-color: #5D6D68; color: white;">Filtrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <div class="w3-responsive">
         <table class="w3-table-all w3-card-4 w3-hoverable w3-white" style="border-radius: 8px; overflow: hidden;">
           <thead style="background-color: #5D6D68; color: white;">
@@ -50,16 +77,23 @@
     <?php if (isset($paginacao) && $paginacao['ultima_pagina'] > 1): ?>
     <div class="w3-center">
         <div class="w3-bar">
+            <?php
+            $queryString = '';
+            if (isset($_GET['nome'])) $queryString .= '&nome=' . urlencode($_GET['nome']);
+            if (isset($_GET['especialidade'])) $queryString .= '&especialidade=' . urlencode($_GET['especialidade']);
+            if (isset($_GET['status'])) $queryString .= '&status=' . urlencode($_GET['status']);
+            ?>
+
             <?php if ($paginacao['pagina_atual'] > 1): ?>
-                <a href="?pagina=<?= $paginacao['pagina_atual'] - 1 ?>" class="w3-button">&laquo;</a>
+                <a href="?pagina=<?= $paginacao['pagina_atual'] - 1 . $queryString ?>" class="w3-button">&laquo;</a>
             <?php endif; ?>
 
             <?php for ($i = 1; $i <= $paginacao['ultima_pagina']; $i++): ?>
-                <a href="?pagina=<?= $i ?>" class="w3-button <?= ($i == $paginacao['pagina_atual']) ? 'w3-green' : '' ?>"><?= $i ?></a>
+                <a href="?pagina=<?= $i . $queryString ?>" class="w3-button <?= ($i == $paginacao['pagina_atual']) ? 'w3-green' : '' ?>"><?= $i ?></a>
             <?php endfor; ?>
 
             <?php if ($paginacao['pagina_atual'] < $paginacao['ultima_pagina']): ?>
-                <a href="?pagina=<?= $paginacao['pagina_atual'] + 1 ?>" class="w3-button">&raquo;</a>
+                <a href="?pagina=<?= $paginacao['pagina_atual'] + 1 . $queryString ?>" class="w3-button">&raquo;</a>
             <?php endif; ?>
         </div>
     </div>

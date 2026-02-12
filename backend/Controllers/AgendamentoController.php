@@ -45,8 +45,15 @@ class AgendamentoController extends AuthenticatedController {
         }
 
         $pagina = $_GET['pagina'] ?? 1;
-        // Passa o $idProfissional (pode ser null) para a paginação
-        $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10, $idProfissional);
+        
+        $filtros = [
+            'nome_paciente' => $_GET['paciente'] ?? null,
+            'nome_profissional' => $_GET['profissional'] ?? null,
+            'status_consulta' => $_GET['status'] ?? null,
+        ];
+
+        // Passa o $idProfissional (pode ser null) como filtro de sessão para o método
+        $dadosPaginados = $this->agendamento->buscarComFiltros($filtros, (int)$pagina, 10, $idProfissional);
 
         $totalAgendamentos = $dadosPaginados['total'];
 

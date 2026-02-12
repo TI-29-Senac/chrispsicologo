@@ -9,6 +9,76 @@ class Avaliacao {
     public function __construct(PDO $db){
         $this->db = $db;
     }
+
+    public function buscarComFiltros(array $filtros, int $pagina = 1, int $por_pagina = 10): array {
+        $where = ["a.excluido_em IS NULL"];
+        $params = [];
+
+        $joins = "JOIN usuario u_cliente ON a.id_cliente = u_cliente.id_usuario
+                  JOIN profissional p ON a.id_profissional = p.id_profissional
+                  JOIN usuario u_prof ON p.id_usuario = u_prof.id_usuario";
+
+        // Filtro por Cliente
+        if (!empty($filtros['nome_cliente'])) {
+            $where[] = "u_cliente.nome_usuario LIKE :nome_cliente";
+            $params[':nome_cliente'] = '%' . $filtros['nome_cliente'] . '%';
+        }
+
+        // Filtro por Profissional
+        if (!empty($filtros['nome_profissional'])) {
+            $where[] = "u_prof.nome_usuario LIKE :nome_profissional";
+            $params[':nome_profissional'] = '%' . $filtros['nome_profissional'] . '%';
+        }
+
+        // Filtro por Nota
+        if (!empty($filtros['nota_avaliacao'])) {
+            $where[] = "a.nota_avaliacao = :nota_avaliacao";
+            $params[':nota_avaliacao'] = $filtros['nota_avaliacao'];
+        }
+
+        $whereSql = '';
+        if (!empty($where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        // Pagination
+        $offset = ($pagina - 1) * $por_pagina;
+
+        // Count
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a {$joins} {$whereSql}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        $totalStmt->execute($params);
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        // Data
+        $dataQuery = "
+            SELECT 
+                a.*, 
+                u_cliente.nome_usuario as nome_cliente,
+                u_prof.nome_usuario as nome_profissional
+            FROM {$this->table} a
+            {$joins}
+            {$whereSql}
+            ORDER BY a.criado_em DESC
+            LIMIT :limit OFFSET :offset"; 
+
+        $dataStmt = $this->db->prepare($dataQuery);
+        foreach ($params as $key => $val) {
+            $dataStmt->bindValue($key, $val);
+        }
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
  
     public function inserirAvaliacao(int $id_cliente, int $id_profissional, string $descricao, int $nota) {
         $sql = "INSERT INTO {$this->table} (id_cliente, id_profissional, descricao_avaliacao, nota_avaliacao)
