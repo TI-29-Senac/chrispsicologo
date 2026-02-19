@@ -56,7 +56,8 @@ $usuario = $dados['usuario'];
                 <div class="w3-row-padding w3-section">
                     <div class="w3-half">
                         <label for="cpf"><b>CPF</b></label>
-                        <input class="w3-input w3-border" id="cpf" name="cpf" type="text" value="<?= htmlspecialchars($usuario->cpf ?? '') ?>">
+                        <input class="w3-input w3-border w3-light-grey" id="cpf" type="text" value="<?= htmlspecialchars($usuario->cpf ?? '') ?>" readonly disabled>
+                        <input type="hidden" name="cpf" value="<?= htmlspecialchars($usuario->cpf ?? '') ?>">
                     </div>
                     <div class="w3-half">
                         <label for="status_usuario"><b>Status</b></label>

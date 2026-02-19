@@ -571,7 +571,7 @@ class UsuarioController extends AdminController {
                  $_POST['email_usuario'],
                  $_POST['senha_usuario'] ?? null, 
                  $usuarioAtual->tipo_usuario,
-                 $_POST['cpf'] ?? '', 
+                 $usuarioAtual->cpf, // CPF nunca pode ser alterado pelo usuário
                  $usuarioAtual->status_usuario
              );
 
