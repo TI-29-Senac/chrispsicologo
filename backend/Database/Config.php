@@ -17,26 +17,31 @@ class Config {
             // Silencia erro se não achar .env em produção (assume variáveis de sistema)
         }
 
+        // Helper: lê de $_ENV primeiro, depois getenv() (compatível com Vercel e outros serverless)
+        $env = function(string $key, $default = '') {
+            return $_ENV[$key] ?? getenv($key) ?: $default;
+        };
+
         return [
             'database' => [
                 'driver' => 'mysql',
                 'mysql' => [
-                    'host' => $_ENV['DB_HOST'] ?? 'localhost',
-                    'db_name' => $_ENV['DB_NAME'] ?? '',
-                    'username' => $_ENV['DB_USER'] ?? '',
-                    'password' => $_ENV['DB_PASS'] ?? '',
-                    'charset' => 'utf8mb4',
-                    'port' => $_ENV['DB_PORT'] ?? 3306
+                    'host'     => $env('DB_HOST', 'localhost'),
+                    'db_name'  => $env('DB_NAME'),
+                    'username' => $env('DB_USER'),
+                    'password' => $env('DB_PASS'),
+                    'charset'  => 'utf8mb4',
+                    'port'     => $env('DB_PORT', 3306)
                 ]
             ],
             'mailer' => [
-                'host' => $_ENV['MAIL_HOST'] ?? 'localhost',
-                'port' => (int)($_ENV['MAIL_PORT'] ?? 587),
-                'username' => $_ENV['MAIL_USERNAME'] ?? '',
-                'password' => $_ENV['MAIL_PASSWORD'] ?? '',
-                'encryption' => $_ENV['MAIL_ENCRYPTION'] ?? '',
-                'from_address' => $_ENV['MAIL_FROM_ADDRESS'] ?? 'nao-responda@localhost',
-                'from_name' => trim($_ENV['MAIL_FROM_NAME'] ?? 'Chris Psicologia'),
+                'host'         => $env('MAIL_HOST', 'localhost'),
+                'port'         => (int)$env('MAIL_PORT', 587),
+                'username'     => $env('MAIL_USERNAME'),
+                'password'     => $env('MAIL_PASSWORD'),
+                'encryption'   => $env('MAIL_ENCRYPTION'),
+                'from_address' => $env('MAIL_FROM_ADDRESS', 'nao-responda@localhost'),
+                'from_name'    => trim($env('MAIL_FROM_NAME', 'Chris Psicologia')),
             ]
         ];
     }

@@ -53,8 +53,22 @@ class Auth {
      * Pode ser chamado no início de rotas protegidas.
      */
     public static function check() {
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        // Lê o header Authorization com fallbacks para ambientes serverless (ex: Vercel)
+        $authHeader = '';
+
+        // Prioridade 1: $_SERVER['HTTP_AUTHORIZATION'] (padrão CGI/FastCGI)
+        if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        }
+        // Prioridade 2: $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] (quando há rewrite rules)
+        elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        }
+        // Prioridade 3: getallheaders() (Apache mod_php)
+        elseif (function_exists('getallheaders')) {
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        }
 
         if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             Response::error('Token não fornecido ou inválido.', 401);

@@ -480,9 +480,17 @@ class UsuarioController extends AdminController {
             return $_SESSION['usuario_id'];
         }
 
-        // 2. Tenta via Token (JWT)
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        // 2. Tenta via Token (JWT) — lê Authorization com fallbacks para ambientes serverless (Vercel)
+        $authHeader = '';
+
+        if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        } elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } elseif (function_exists('getallheaders')) {
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        }
         
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $token = $matches[1];
@@ -499,6 +507,7 @@ class UsuarioController extends AdminController {
 
         return false;
     }
+
 
     public function meuPerfilApi() {
         $id_usuario = $this->getAuthenticatedUserId();

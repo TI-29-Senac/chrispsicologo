@@ -16,11 +16,6 @@ class APIUsuarioController {
     }
 
     public function getUsuarios($pagina = 0){
-        // Auth::check() já é chamado pelo Middleware na Rotas.php, 
-        // mas pode ser chamado aqui também para garantir o payload do usuário se necessário.
-        // Como o middleware já barra, aqui assumimos autenticado ou re-verificamos.
-        // Se quisermos o ID do usuário: $payload = Auth::check();
-        
         $registros_por_pagina = $pagina === 0 ? 200 : 10;
         $pagina = $pagina === 0 ? 1 : (int)$pagina;
 
@@ -47,16 +42,42 @@ class APIUsuarioController {
     }
 
     public function salvarUsuario(){
-        // Nota: Se esta rota for pública para registro, remova a proteção no Rotas.php ou aqui.
-        // Assumindo criação via Admin/Auth por enquanto.
-        
-        $input = json_decode(file_get_contents('php://input'), true);
-
-        if (empty($input['nome_usuario']) || empty($input['email_usuario']) || empty($input['senha_usuario'])) {
-            Response::error('Parâmetros obrigatórios faltando (nome, email, senha).', 400);
+    $input = json_decode(file_get_contents('php://input'), true);
+    // Validação básica
+    if (empty($input['email_usuario'])) {
+        Response::error('Email obrigatório.', 400);
+    }
+    try {
+        // 1. Tenta achar o usuário pelo ID ou Email
+        $usuarioExistente = null;
+        if (!empty($input['id_usuario'])) {
+            $usuarioExistente = $this->usuarioModel->buscarPorId($input['id_usuario']);
         }
-
-        try {
+        if (!$usuarioExistente && !empty($input['email_usuario'])) {
+            $usuarioExistente = $this->usuarioModel->buscarPorEmail($input['email_usuario']);
+        }
+        if ($usuarioExistente) {
+            // --- ATUALIZAR (UPDATE) ---
+            // Prepara dados para atualização
+            $dados = [
+                'nome_usuario' => $input['nome_usuario'],
+                'tipo_usuario' => $input['tipo_usuario'] ?? 'cliente',
+                'cpf' => $input['cpf'] ?? '',
+                'atualizado_em' => date('Y-m-d H:i:s')
+            ];
+            // O PULO DO GATO: Se vier excluido_em, salvamos ele!
+            if (array_key_exists('excluido_em', $input)) {
+                $dados['excluido_em'] = $input['excluido_em']; // Pode ser NULL (restaurar) ou DATA (excluir)
+            }
+            // Se vier senha nova, atualiza
+            if (!empty($input['senha_usuario'])) {
+                $dados['senha_usuario'] = $input['senha_usuario'];
+            }
+            // Chama o método de editar do seu Model
+            $this->usuarioModel->editarUsuario($usuarioExistente['id_usuario'], $dados);
+            Response::success(['message' => 'Usuário atualizado com sucesso.', 'id_usuario' => $usuarioExistente['id_usuario']], 200);
+        } else {
+            // --- INSERIR (CREATE) ---
             $novoId = $this->usuarioModel->inserirUsuario(
                 $input["nome_usuario"],
                 $input["email_usuario"],
@@ -64,20 +85,20 @@ class APIUsuarioController {
                 $input["tipo_usuario"] ?? 'cliente',
                 $input["cpf"] ?? ''
             );
-
             if ($novoId) {
                 Response::success(['message' => 'Usuário criado.', 'id_usuario' => $novoId], 201);
             } else {
-                Response::error("Falha na inserção do banco de dados.", 500);
+                Response::error("Falha na inserção.", 500);
             }
-        } catch (\Exception $e) {
-            // Verifica duplicidade (código 23000 usualmente)
-            if (strpos($e->getMessage(), 'Duplicate') !== false || $e->getCode() == 23000) {
-                 Response::error('Email já cadastrado.', 409);
-            }
-            Response::error($e->getMessage(), 500);
         }
+    } catch (\Exception $e) {
+        // Se der erro de duplicidade
+        if (strpos($e->getMessage(), 'Duplicate') !== false || $e->getCode() == 23000) {
+             Response::error('Email já cadastrado.', 409);
+        }
+        Response::error("Erro no servidor: " . $e->getMessage(), 500);
     }
+}
 
     public function deletarUsuario($id){
         // Exemplo de verificação de permissão: Apenas admin
