@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <input type="email" name="email_usuario" value="${emailSeguro}">
                                 </div>
                                 <div class="form-group">
-                                    <label>CPF (Opcional)</label>
-                                    <input type="text" name="cpf" value="${cpfSeguro}">
+                                    <label>CPF</label>
+                                    <input type="text" name="cpf" value="${cpfSeguro}" readonly style="opacity: 0.6; cursor: not-allowed; background-color: rgba(0,0,0,0.1); color: #ffffff;">
                                 </div>
                             </form>
                         </div>
@@ -244,14 +244,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             if (response.ok && result.success) {
                 statusMsg.textContent = 'Salvo com sucesso!';
-                statusMsg.style.color = 'green';
+                statusMsg.style.color = '#ffffff';
+                statusMsg.style.fontWeight = 'bold';
                 setTimeout(() => statusMsg.textContent = '', 3000);
             } else {
                 throw new Error(result.message || 'Erro ao salvar');
             }
         } catch (e) {
             statusMsg.textContent = 'Erro: ' + e.message;
-            statusMsg.style.color = 'red';
+            statusMsg.style.color = '#ffcccc';
+            statusMsg.style.fontWeight = 'bold';
         }
     }
 
