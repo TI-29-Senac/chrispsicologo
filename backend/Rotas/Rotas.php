@@ -48,6 +48,10 @@ class Rotas {
         // AGENDAMENTOS
         $router->get('/agendamentos', 'AgendamentoController@index');
         $router->get('/agendamentos/listar', 'AgendamentoController@viewListarAgendamentos');
+        $router->get('/agendamentos/criar', 'AgendamentoController@viewCriarAgendamentos');
+        $router->get('/agendamentos/editar/{id}', 'AgendamentoController@viewEditarAgendamentos');
+        $router->get('/agendamentos/excluir/{id}', 'AgendamentoController@viewExcluirAgendamentos');
+        $router->post('/agendamentos/atualizar/{id}', 'AgendamentoController@atualizarAgendamentos');
         $router->get('/api/agendamentos', 'APIAgendamentoController@getAgendamentos');
         $router->get('/agendamentos/disponibilidade/{id}/{data}', 'PublicAgendamentoController@buscarDisponibilidade');
         $router->get('/agendamentos/detalhe-pagamento/{id}', 'PublicAgendamentoController@getDetalhesPagamento');

@@ -13,7 +13,101 @@ class Agendamento {
         $this->db = $db;
     }
 
+    public function buscarComFiltros(array $filtros, int $pagina = 1, int $por_pagina = 10, ?int $id_profissional_sessao = null): array {
+        $where = ["a.excluido_em IS NULL"];
+        $params = [];
+        
+        $joins = "JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
+                  JOIN profissional p ON a.id_profissional = p.id_profissional
+                  JOIN usuario profissional ON p.id_usuario = profissional.id_usuario";
+
+        // Filtro de Sessão (Se for profissional logado, só vê os seus)
+        if ($id_profissional_sessao) {
+            $where[] = "a.id_profissional = :id_profissional_sessao";
+            $params[':id_profissional_sessao'] = $id_profissional_sessao;
+        }
+
+        // Filtro por Paciente
+        if (!empty($filtros['nome_paciente'])) {
+            $where[] = "paciente.nome_usuario LIKE :nome_paciente";
+            $params[':nome_paciente'] = '%' . $filtros['nome_paciente'] . '%';
+        }
+
+        // Filtro por Profissional (Nome)
+        if (!empty($filtros['nome_profissional'])) {
+            $where[] = "profissional.nome_usuario LIKE :nome_profissional";
+            $params[':nome_profissional'] = '%' . $filtros['nome_profissional'] . '%';
+        }
+
+        // Filtro por Status
+        if (!empty($filtros['status_consulta'])) {
+            $where[] = "a.status_consulta = :status_consulta";
+            $params[':status_consulta'] = $filtros['status_consulta'];
+        }
+
+        $whereSql = '';
+        if (!empty($where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        // Paginação
+        $offset = ($pagina - 1) * $por_pagina;
+
+        // Count
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a {$joins} {$whereSql}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        $totalStmt->execute($params);
+        $total_de_registros = $totalStmt->fetchColumn();
+
+        // Dados
+        $dataQuery = "
+            SELECT 
+                a.*,
+                paciente.nome_usuario as nome_paciente,
+                profissional.nome_usuario as nome_profissional
+            FROM {$this->table} a
+            {$joins}
+            {$whereSql}
+            ORDER BY a.data_agendamento ASC
+            LIMIT :limit OFFSET :offset
+        ";
+
+        $dataStmt = $this->db->prepare($dataQuery);
+        foreach ($params as $key => $val) {
+            $dataStmt->bindValue($key, $val);
+        }
+        $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'data' => $dados,
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) ceil($total_de_registros / $por_pagina)
+        ];
+    }
+
     public function inserirAgendamento(int $id_usuario, int $id_profissional, string $data_agendamento, string $status_consulta = 'pendente') {
+        // Verificar se já existe agendamento para este profissional nesta data/hora
+        // Ignora agendamentos cancelados ou excluídos
+        $sqlCheck = "SELECT COUNT(*) FROM {$this->table} 
+                     WHERE id_profissional = :id_profissional 
+                     AND data_agendamento = :data_agendamento
+                     AND status_consulta != 'cancelada'
+                     AND excluido_em IS NULL";
+        
+        $stmtCheck = $this->db->prepare($sqlCheck);
+        $stmtCheck->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmtCheck->bindParam(':data_agendamento', $data_agendamento);
+        $stmtCheck->execute();
+        
+        if ($stmtCheck->fetchColumn() > 0) {
+            throw new \Exception("Este horário já está reservado.");
+        }
+
         $sql = "INSERT INTO {$this->table} (id_usuario, id_profissional, data_agendamento, status_consulta)
                 VALUES (:id_usuario, :id_profissional, :data_agendamento, :status_consulta)";
         $stmt = $this->db->prepare($sql);
@@ -24,7 +118,26 @@ class Agendamento {
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-    public function buscarAgendamentos(): array {
+    /**
+     * Verifica se o cliente tem um agendamento CONCLUÍDO (confirmada ou realizada) com o profissional.
+     * Usado para permitir avaliação.
+     */
+    public function verificarAgendamentoConcluido(int $id_cliente, int $id_profissional): bool {
+        $sql = "SELECT COUNT(*) FROM {$this->table} 
+                WHERE id_usuario = :id_cliente
+                AND id_profissional = :id_profissional
+                AND (status_consulta = 'confirmada' OR status_consulta = 'realizada')
+                AND excluido_em IS NULL";
+                
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
+        $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function buscarAgendamentos(?int $id_profissional = null): array {
         $sql = "
             SELECT 
                 a.*,
@@ -35,7 +148,17 @@ class Agendamento {
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario profissional ON p.id_usuario = profissional.id_usuario
         ";
+        
+        if ($id_profissional) {
+            $sql .= " WHERE a.id_profissional = :id_profissional ";
+        }
+        
         $stmt = $this->db->prepare($sql);
+        
+        if ($id_profissional) {
+            $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -154,26 +277,41 @@ class Agendamento {
         }
     }
 
-    public function paginacao(int $pagina = 1, int $por_pagina = 5): array {
+    public function paginacao(int $pagina = 1, int $por_pagina = 5, ?int $id_profissional = null): array {
         $offset = ($pagina - 1) * $por_pagina;
 
-        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a WHERE a.excluido_em IS NULL"; // Considera soft delete
-        $totalStmt = $this->db->query($totalQuery);
+        // Construção da cláusula WHERE
+        $whereClause = "WHERE a.excluido_em IS NULL";
+        if ($id_profissional) {
+            $whereClause .= " AND a.id_profissional = :id_profissional";
+        }
+
+        // Query de Contagem
+        $totalQuery = "SELECT COUNT(*) FROM {$this->table} a {$whereClause}";
+        $totalStmt = $this->db->prepare($totalQuery);
+        if ($id_profissional) {
+            $totalStmt->bindValue(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        }
+        $totalStmt->execute();
         $total_de_registros = $totalStmt->fetchColumn();
 
+        // Query de Dados
         $dataQuery = "
             SELECT a.*, paciente.nome_usuario as nome_paciente, prof_usuario.nome_usuario as nome_profissional
             FROM {$this->table} a
             JOIN usuario paciente ON a.id_usuario = paciente.id_usuario
             JOIN profissional p ON a.id_profissional = p.id_profissional
             JOIN usuario prof_usuario ON p.id_usuario = prof_usuario.id_usuario
-            WHERE a.excluido_em IS NULL -- Considera soft delete
-            ORDER BY a.data_agendamento ASC -- Ordena pela data do agendamento
+            {$whereClause}
+            ORDER BY a.data_agendamento ASC
             LIMIT :limit OFFSET :offset";
 
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
         $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        if ($id_profissional) {
+            $dataStmt->bindValue(':id_profissional', $id_profissional, PDO::PARAM_INT);
+        }
         $dataStmt->execute();
         $dados = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -247,20 +385,28 @@ ORDER BY a.data_agendamento DESC
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAgendamentosPorMes() {
+    public function getAgendamentosPorMes(?int $id_profissional = null) {
         
+        $whereClause = "WHERE data_agendamento >= (NOW() - INTERVAL 6 MONTH)";
+        if ($id_profissional) {
+            $whereClause .= " AND id_profissional = :id_profissional";
+        }
+
         $sql = "
             SELECT 
-              DATE_FORMAT(data_agendamento, '%Y-%m-01') AS mes_ano, -- <<< CORRIGIDO AQUI
+              DATE_FORMAT(data_agendamento, '%Y-%m-01') AS mes_ano, 
               COUNT(id_agendamento) AS total
             FROM agendamento
-            WHERE data_agendamento >= (NOW() - INTERVAL 6 MONTH) -- <<< DESCOMENTAR E CORRIGIR AQUI
+            {$whereClause}
             GROUP BY mes_ano
             ORDER BY mes_ano;
         ";
         
         try {
             $stmt = $this->db->prepare($sql);
+            if ($id_profissional) {
+                $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+            }
             $stmt->execute();
             $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
             return $this->preencherMesesAusentes($data); 

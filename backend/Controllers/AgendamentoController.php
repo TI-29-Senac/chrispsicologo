@@ -32,12 +32,33 @@ class AgendamentoController extends AuthenticatedController {
 
     public function viewListarAgendamentos() {
         $this->verificarAcesso(['admin', 'profissional', 'recepcionista']);
+        
+        $tipoUsuario = $_SESSION['usuario_tipo'] ?? '';
+        $idUsuario = $_SESSION['usuario_id'] ?? null;
+        $idProfissional = null;
+
+        if ($tipoUsuario === 'profissional' && $idUsuario) {
+            $profissionalData = $this->profissional->buscarProfissionalPorUsuarioId($idUsuario);
+            if ($profissionalData) {
+                $idProfissional = $profissionalData->id_profissional;
+            }
+        }
+
         $pagina = $_GET['pagina'] ?? 1;
-        $dadosPaginados = $this->agendamento->paginacao((int)$pagina, 10);
+        
+        $filtros = [
+            'nome_paciente' => $_GET['paciente'] ?? null,
+            'nome_profissional' => $_GET['profissional'] ?? null,
+            'status_consulta' => $_GET['status'] ?? null,
+        ];
+
+        // Passa o $idProfissional (pode ser null) como filtro de sessão para o método
+        $dadosPaginados = $this->agendamento->buscarComFiltros($filtros, (int)$pagina, 10, $idProfissional);
 
         $totalAgendamentos = $dadosPaginados['total'];
 
-        $todosAgendamentos = $this->agendamento->buscarAgendamentos();
+        // Também filtra a busca global para calcular as estatísticas dos cards (pendentes, confirmados...)
+        $todosAgendamentos = $this->agendamento->buscarAgendamentos($idProfissional);
 
         $pendentes = 0;
         $confirmados = 0;

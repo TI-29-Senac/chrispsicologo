@@ -39,7 +39,14 @@ class ProfissionalController extends AuthenticatedController {
     public function viewListarProfissionais(){
         $this->verificarAcesso(['admin', 'profissional']);
         $pagina = $_GET['pagina'] ?? 1;
-        $dadosPaginados = $this->profissional->paginacao((int)$pagina, 10);
+
+        $filtros = [
+            'nome' => $_GET['nome'] ?? null,
+            'especialidade' => $_GET['especialidade'] ?? null,
+            'status' => $_GET['status'] ?? null,
+        ];
+
+        $dadosPaginados = $this->profissional->buscarComFiltros($filtros, (int)$pagina, 10);
         
         $todosProfissionais = $this->profissional->listarProfissionais();
         $totalProfissionais = count($todosProfissionais);

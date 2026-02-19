@@ -20,10 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Auth Check ---
     if (!userName) {
         container.innerHTML = `
-            <div style="text-align: center; padding: 50px;">
-                <h3>Acesso Restrito</h3>
-                <p>Você precisa fazer login para acessar esta página.</p>
-                <button onclick="abrirLoginModal()" class="btn-primary" style="margin: 20px auto;">Fazer Login</button>
+            <div style="display: flex; justify-content: center; align-items: center; min-height: 400px; width: 100%;">
+                <div class="card-box" style="text-align: center; max-width: 450px; padding: 40px; background-color: #fff; border: 1px solid #ffcccc;">
+                    <i class="ph ph-lock-key" style="font-size: 3rem; color: #d32f2f; margin-bottom: 20px;"></i>
+                    <h3 style="color: #d32f2f; margin-bottom: 15px;">Acesso Restrito</h3>
+                    <p style="color: #555; margin-bottom: 25px; font-size: 1.1rem;">Você precisa fazer login para acessar esta página.</p>
+                    <button onclick="abrirLoginModal()" class="btn-primary" style="margin: 0 auto; min-width: 200px; justify-content: center; background-color: #5D6D68; color: #ffffff;">
+                        Fazer Login
+                    </button>
+                    <p style="margin-top: 15px; font-size: 0.9rem;">
+                        <a href="/index.html" style="color: #666; text-decoration: underline;">Voltar para o Início</a>
+                    </p>
+                </div>
             </div>
         `;
         return;
@@ -91,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <!-- Seção Perfil -->
                     <div id="section-perfil" class="dashboard-section">
-                        <div class="section-label"><i class="ph ph-user-circle"></i> Meu Perfil</div>
                         
                         <div class="card-box">
                             <div class="card-header-internal">
@@ -156,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="card-header-internal">
                                 <i class="ph ph-shield-check"></i> <h3>Segurança e Privacidade</h3>
                             </div>
-                            <p style="margin-bottom: 20px; color: #666;">Gerencie suas credenciais de acesso.</p>
+                            <p style="margin-bottom: 20px; color: #ffffffff;">Gerencie suas credenciais de acesso.</p>
                              <form id="form-seguranca-only" onsubmit="atualizarSenhaSeparado(event)">
                                 <div class="form-group">
                                     <label>Nova Senha</label>
@@ -335,11 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <strong style="color: #333; font-size: 1.1rem;">${ag.nome_profissional}</strong>
-                                <div style="color: #666; font-size: 0.9rem; margin-top: 5px;">
+                                <strong style="color: #ffffffff; font-size: 1.1rem;">${ag.nome_profissional}</strong>
+                                <div style="color: #ffffffff; font-size: 0.9rem; margin-top: 5px;">
                                     <i class="ph ph-calendar"></i> ${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                 </div>
-                                <span style="display: inline-block; background: #e0e0e0; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-top: 8px;">
+                                </div>
+                                <span class="status-badge ${getStatusClass(ag.status_consulta)}">
                                     ${ag.status_consulta}
                                 </span>
                             </div>
@@ -415,6 +423,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Helpers ---
     function getAuthHeaders() {
         return { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` };
+    }
+
+    function getStatusClass(status) {
+        if (!status) return '';
+        switch (status.toLowerCase()) {
+            case 'realizada': return 'status-realizada';
+            case 'confirmada': return 'status-confirmada';
+            case 'pendente': return 'status-pendente';
+            case 'cancelada': return 'status-cancelada';
+            default: return '';
+        }
     }
 
     async function carregarDadosDoPerfil() {

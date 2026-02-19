@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    color: #ffffff;
 }
 
 /* Main Dashboard Card (Fixed Size Container) */
@@ -28,7 +29,7 @@
 /* Sidebar (Left) */
 .sidebar {
     width: 260px;
-    background-color: #eee1cb;
+    background-color: #5c746b;
     /* Very light gray/green tint */
     padding: 25px 0;
     display: flex;
@@ -61,7 +62,7 @@
 .user-welcome h3 {
     margin: 0;
     font-size: 1rem;
-    color: #5D6D68;
+    color: #ffffff;
     /* Brand Color */
     font-weight: 700;
     display: flex;
@@ -81,7 +82,7 @@
     gap: 12px;
     padding: 12px 25px;
     text-decoration: none;
-    color: #5D6D68;
+    color: #ffffff;
     /* Brand Color Text */
     font-size: 0.95rem;
     font-weight: 500;
@@ -96,34 +97,34 @@
 }
 
 .nav-item:hover {
-    background-color: rgba(93, 109, 104, 0.08);
+    background-color: rgb(244, 241, 234, 0.5);
     /* Brand tint */
-    color: #4A5753;
+    color: #ffffff;
 }
 
 .nav-item.active {
     background-color: rgba(93, 109, 104, 0.12);
     /* Stronger Brand tint */
-    color: #5D6D68;
+    color: #ffffff;
     font-weight: 700;
     border-left-color: #5D6D68;
 }
 
 .nav-item i {
     font-size: 1.2rem;
-    color: #7d8a87;
+    color: #ffffff;
 }
 
 .nav-item.logout {
     margin-top: auto;
-    color: #5D6D68;
-    padding-bottom: 25px;
+    color: #ffffff;
     opacity: 0.8;
 }
 
 .nav-item.logout:hover {
-    background-color: #fee;
-    color: #d32f2f;
+    background-color: rgb(244, 241, 234, 0.5);
+    ;
+    color: #ffffff;
     opacity: 1;
     border-left-color: transparent;
 }
@@ -131,7 +132,7 @@
 /* Content Area (Right) */
 .dashboard-content {
     flex-grow: 1;
-    background-color: #faf6ee;;
+    background-color: #5D6D68;
     padding: 40px;
     overflow-y: auto;
 }
@@ -144,21 +145,21 @@
 
 .content-header h1 {
     font-size: 1.6rem;
-    color: #5D6D68;
+    color: #ffffff;
     /* Brand Color */
     margin: 0 0 5px 0;
     font-weight: 700;
 }
 
 .content-header p {
-    color: #888;
+    color: #ffffff;
     font-size: 0.9rem;
     margin: 0;
 }
 
 /* Card Boxes */
 .card-box {
-    background: #d6e3d6;
+    background: #8FAE9D15;
     border: 1px solid #e6e6e6;
     border-radius: 12px;
     padding: 20px 25px;
@@ -175,14 +176,14 @@
 .card-header-internal h3 {
     margin: 0;
     font-size: 1.1rem;
-    color: #5D6D68;
+    color: #ffffff;
     /* Brand Color */
     font-weight: 600;
 }
 
 .card-header-internal i {
     font-size: 1.3rem;
-    color: #5D6D68;
+    color: #ffffff;
     /* Brand Color */
 }
 
@@ -208,7 +209,7 @@
     border-radius: 6px;
     padding: 10px 15px;
     font-size: 0.95rem;
-    color: #333;
+    color: #ffffff;
     font-family: 'Questrial', sans-serif;
     outline: none;
     transition: 0.2s;
@@ -235,9 +236,9 @@
 }
 
 .btn-primary {
-    background-color: #5D6D68;
+    background-color: #F5F2EC;
     /* Brand Color */
-    color: white;
+    color: #5D6D68;
     border: none;
     border-radius: 6px;
     padding: 10px 20px;
@@ -251,13 +252,14 @@
 }
 
 .btn-primary:hover {
-    background-color: #4a5753;
+    background-color: #A3B8A1;
     /* Darker Brand Color */
     transform: translateY(-1px);
+    color: #ffffff;
 }
 
 .btn-secondary {
-    background-color: transparent;
+    background-color: #F5F2EC;
     color: #5D6D68;
     /* Brand Color */
     border: 1px solid #5D6D68;
@@ -272,7 +274,43 @@
 }
 
 .btn-secondary:hover {
-    background-color: #f0f2f1;
+    background-color: #A3B8A1;
+    color: #ffffff;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-realizada {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-confirmada {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.status-pendente {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.status-cancelada {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 /* Responsive */

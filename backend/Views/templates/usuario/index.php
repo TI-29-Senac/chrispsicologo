@@ -35,6 +35,7 @@
                 <tr class="w3-light-grey">
                     <th>ID</th>
                     <th>Nome</th>
+                    <th>CPF</th>
                     <th>Email</th>
                     <th>Tipo</th>
                     <th>Status</th>
@@ -47,6 +48,7 @@
                     <tr>
                         <td><?= htmlspecialchars($usuario->id_usuario); ?></td>
                         <td><?= htmlspecialchars($usuario->nome_usuario); ?></td>
+                        <td><?= htmlspecialchars($usuario->cpf ?? ''); ?></td>
                         <td><?= htmlspecialchars($usuario->email_usuario); ?></td>
                         <td><?= htmlspecialchars(ucfirst($usuario->tipo_usuario)); ?></td>
                         <td><span class="w3-tag <?= $usuario->status_usuario === 'ativo' ? 'w3-green' : 'w3-red'; ?>"><?= ucfirst($usuario->status_usuario); ?></span></td>
