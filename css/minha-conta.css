@@ -195,7 +195,7 @@
 .form-group label {
     display: block;
     font-size: 0.9rem;
-    color: #5D6D68;
+    color: #ffffff;
     /* Brand Color */
     margin-bottom: 6px;
     font-weight: 500;
@@ -209,7 +209,7 @@
     border-radius: 6px;
     padding: 10px 15px;
     font-size: 0.95rem;
-    color: #ffffff;
+    color: #5D6D68;
     font-family: 'Questrial', sans-serif;
     outline: none;
     transition: 0.2s;
